@@ -366,7 +366,7 @@ struct AgeGenderDetection : BaseDetection {
         /** Read network model **/
         netReader.ReadNetwork(FLAGS_m_ag);
 
-        /** Set batch size to 16 **/
+        /** Set batch size **/
         netReader.getNetwork().setBatchSize(maxBatch);
         slog::info << "Batch size is set to " << netReader.getNetwork().getBatchSize() << " for Age Gender" << slog::endl;
 

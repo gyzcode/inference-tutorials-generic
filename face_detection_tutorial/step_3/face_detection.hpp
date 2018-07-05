@@ -51,7 +51,7 @@ static const char target_device_message_ag[] = "Specify the target device for Ag
 "Sample will look for a suitable plugin for device specified.";
 
 /// @brief message for number of simultaneously age gender detections using dynamic batch
-static const char num_batch_ag_message[] = "Specify number of maximum simultaneously processed faces for Age Gender Detection ( default is 16).";
+static const char num_batch_ag_message[] = "Specify number of maximum simultaneously processed faces for Age Gender Detection ( default is 1).";
 
 /// @brief message for performance counters
 static const char performance_counter_message[] = "Enables per-layer performance report.";
