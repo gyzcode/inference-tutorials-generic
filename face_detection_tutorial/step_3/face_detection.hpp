@@ -99,7 +99,7 @@ DEFINE_string(d, "CPU", target_device_message);
 DEFINE_string(d_ag, "CPU", target_device_message_ag);
 
 /// \brief device the target device for age gender detection on <br>
-DEFINE_uint32(n_ag, 16, num_batch_ag_message);
+DEFINE_uint32(n_ag, 1, num_batch_ag_message);
 
 /// \brief Enable per-layer performance report
 DEFINE_bool(pc, false, performance_counter_message);

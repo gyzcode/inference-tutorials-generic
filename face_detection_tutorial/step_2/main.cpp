@@ -101,7 +101,7 @@ int matU8ToBlob(const cv::Mat& orig_image, Blob::Ptr& blob, float scaleFactor = 
 
 struct BaseDetection {
     ExecutableNetwork net;
-    InferenceEngine::InferencePlugin * plugin;
+    InferenceEngine::InferencePlugin * plugin = NULL;
     InferRequest::Ptr request;
     std::string & commandLineFlag;
     std::string topoName;
@@ -151,8 +151,8 @@ struct BaseDetection {
 struct FaceDetectionClass : BaseDetection {
     std::string input;
     std::string output;
-    int maxProposalCount;
-    int objectSize;
+    int maxProposalCount = 0;
+    int objectSize = 0;
     int enquedFrames = 0;
     float width = 0;
     float height = 0;

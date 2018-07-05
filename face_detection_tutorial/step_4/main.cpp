@@ -109,7 +109,7 @@ int matU8ToBlob(const cv::Mat& orig_image, Blob::Ptr& blob, float scaleFactor = 
 
 struct BaseDetection {
     ExecutableNetwork net;
-    InferenceEngine::InferencePlugin * plugin;
+    InferenceEngine::InferencePlugin * plugin = NULL;
     InferRequest::Ptr request;
     std::string & commandLineFlag;
     std::string topoName;
@@ -159,8 +159,8 @@ struct BaseDetection {
 struct FaceDetectionClass : BaseDetection {
     std::string input;
     std::string output;
-    int maxProposalCount;
-    int objectSize;
+    int maxProposalCount = 0;
+    int objectSize = 0;
     int enquedFrames = 0;
     float width = 0;
     float height = 0;
@@ -731,6 +731,8 @@ int main(int argc, char *argv[]) {
 		wallclockStart = std::chrono::high_resolution_clock::now();
         /** Start inference & calc performance **/
         while (true) {
+        	double secondDetection = 0;
+
             /** requesting new frame if any*/
             cap.grab();
 
@@ -747,37 +749,82 @@ int main(int argc, char *argv[]) {
             t1 = std::chrono::high_resolution_clock::now();
             ms detection = std::chrono::duration_cast<ms>(t1 - t0);
 
+            // fetch all face results
             FaceDetection.fetchResults();
-            for (auto && face : FaceDetection.results) {
-                if (AgeGender.enabled() || HeadPose.enabled()) {
-                    auto clippedRect = face.location & cv::Rect(0, 0, width, height);
-                    auto face = frame(clippedRect);
-                    if (AgeGender.enabled()) {
-                    	AgeGender.enqueue(face);
-                    }
 
-                    if (HeadPose.enabled()) {
-                    	HeadPose.enqueue(face);
-                    }
-                }
-            }
+            // track and store age and gender results for all faces
+            std::vector<AgeGenderDetection::Result> ageGenderResults;
+            int ageGenderFaceIdx = 0;
+            int ageGenderNumFacesInferred = 0;
 
-            // ----------------------------Run age-gender, and head pose detection simultaneously----------------
-            t0 = std::chrono::high_resolution_clock::now();
-            if (AgeGender.enabled()) {
-                AgeGender.submitRequest();
+            // track and store head pose results for all faces
+            std::vector<HeadPoseDetection::Results> headPoseResults;
+            int headPoseFaceIdx = 0;
+            int headPoseNumFacesInferred = 0;
+
+            int numFacesToInfer = FaceDetection.results.size();
+
+           while((AgeGender.enabled() && (ageGenderFaceIdx < numFacesToInfer))
+        		   || (HeadPose.enabled() && (headPoseFaceIdx < numFacesToInfer))) {
+
+            	// enqueue input batch
+            	while (((ageGenderFaceIdx < numFacesToInfer) && (AgeGender.enquedFaces < AgeGender.maxBatch))
+            			|| ((headPoseFaceIdx < numFacesToInfer) && (HeadPose.enquedFaces < HeadPose.maxBatch))) {
+            		if (AgeGender.enquedFaces < AgeGender.maxBatch) {
+						if (AgeGender.enabled()) {
+							FaceDetectionClass::Result faceResult = FaceDetection.results[ageGenderFaceIdx];
+							auto clippedRect = faceResult.location & cv::Rect(0, 0, width, height);
+							auto face = frame(clippedRect);
+							AgeGender.enqueue(face);
+							ageGenderFaceIdx++;
+						}
+            		}
+            		if (HeadPose.enquedFaces < HeadPose.maxBatch) {
+						if (HeadPose.enabled()) {
+							FaceDetectionClass::Result faceResult = FaceDetection.results[headPoseFaceIdx];
+							auto clippedRect = faceResult.location & cv::Rect(0, 0, width, height);
+							auto face = frame(clippedRect);
+							HeadPose.enqueue(face);
+							headPoseFaceIdx++;
+						}
+            		}
+            	}
+
+				t0 = std::chrono::high_resolution_clock::now();
+
+            	// if faces are enqueued, then start inference
+            	if (AgeGender.enquedFaces > 0) {
+					AgeGender.submitRequest();
+            	}
+            	if (HeadPose.enquedFaces > 0) {
+            		HeadPose.submitRequest();
+            	}
+
+            	// if there are outstanding results, then wait for inference to complete
+            	if (ageGenderNumFacesInferred < ageGenderFaceIdx) {
+					AgeGender.wait();
+            	}
+            	if (headPoseNumFacesInferred < headPoseFaceIdx) {
+            		HeadPose.wait();
+            	}
+
+				t1 = std::chrono::high_resolution_clock::now();
+				secondDetection += std::chrono::duration_cast<ms>(t1 - t0).count();
+
+				// process results if there are any
+				if (ageGenderNumFacesInferred < ageGenderFaceIdx) {
+					for(int ri = 0; ri < AgeGender.maxBatch; ri++) {
+						ageGenderResults.push_back(AgeGender[ri]);
+						ageGenderNumFacesInferred++;
+					}
+            	}
+				if (headPoseNumFacesInferred < headPoseFaceIdx) {
+					for(int ri = 0; ri < HeadPose.maxBatch; ri++) {
+						headPoseResults.push_back(HeadPose[ri]);
+						headPoseNumFacesInferred++;
+					}
+            	}
             }
-            if (HeadPose.enabled()) {
-                HeadPose.submitRequest();
-            }
-            if (AgeGender.enabled()) {
-                AgeGender.wait();
-            }
-            if (HeadPose.enabled()) {
-                HeadPose.wait();
-            }
-            t1 = std::chrono::high_resolution_clock::now();
-            ms secondDetection = std::chrono::duration_cast<ms>(t1 - t0);
 
             // ----------------------------Processing outputs-----------------------------------------------------
             std::ostringstream out;
@@ -797,32 +844,33 @@ int main(int argc, char *argv[]) {
                 out << (AgeGender.enabled() ? "Age Gender"  : "")
                     << (AgeGender.enabled() && HeadPose.enabled() ? "+"  : "")
                     << (HeadPose.enabled() ? "Head Pose "  : "")
-                    << "time: "<< std::fixed << std::setprecision(2) << secondDetection.count()
+                    << "time: "<< std::fixed << std::setprecision(2) << secondDetection
                     << " ms ";
                 if (!FaceDetection.results.empty()) {
-                    out << "(" << 1000.f / secondDetection.count() << " fps)";
+                    out << "(" << 1000.f / secondDetection << " fps)";
                 }
                 cv::putText(frame, out.str(), cv::Point2f(0, 65), cv::FONT_HERSHEY_TRIPLEX, 0.5, cv::Scalar(255, 0, 0));
             }
 
-            int i = 0;
-            for (auto & result : FaceDetection.results) {
-                cv::Rect rect = result.location;
+            // render results
+            for(int ri = 0; ri < FaceDetection.results.size(); ri++) {
+            	FaceDetectionClass::Result faceResult = FaceDetection.results[ri];
+                cv::Rect rect = faceResult.location;
 
                 out.str("");
 
-                if (AgeGender.enabled() && i < AgeGender.maxBatch) {
-                    out << (AgeGender[i].maleProb > 0.5 ? "M" : "F");
-                    out << std::fixed << std::setprecision(0) << "," << AgeGender[i].age;
+                if (AgeGender.enabled()) {
+                    out << (ageGenderResults[ri].maleProb > 0.5 ? "M" : "F");
+                    out << std::fixed << std::setprecision(0) << "," << ageGenderResults[ri].age;
                 } else {
-                    out << (result.label < FaceDetection.labels.size() ? FaceDetection.labels[result.label] :
-                             std::string("label #") + std::to_string(result.label))
-                        << ": " << std::fixed << std::setprecision(3) << result.confidence;
+                    out << (faceResult.label < FaceDetection.labels.size() ? FaceDetection.labels[faceResult.label] :
+                             std::string("label #") + std::to_string(faceResult.label))
+                        << ": " << std::fixed << std::setprecision(3) << faceResult.confidence;
                 }
 
                 cv::putText(frame,
                             out.str(),
-                            cv::Point2f(result.location.x, result.location.y - 15),
+                            cv::Point2f(faceResult.location.x, faceResult.location.y - 15),
                             cv::FONT_HERSHEY_COMPLEX_SMALL,
                             0.8,
                             cv::Scalar(0, 0, 255));
@@ -831,17 +879,16 @@ int main(int argc, char *argv[]) {
                     std::cout << "Predicted gender, age = " << out.str() << std::endl;
                 }
 
-                if (HeadPose.enabled() && i < HeadPose.maxBatch) {
+                if (HeadPose.enabled()) {
                     cv::Point3f center(rect.x + rect.width / 2, rect.y + rect.height / 2, 0);
-                    HeadPose.drawAxes(frame, center, HeadPose[i], 50);
+                    HeadPose.drawAxes(frame, center, headPoseResults[ri], 50);
                 }
 
                 auto genderColor =
-                		(AgeGender.enabled() && (i < AgeGender.maxBatch)) ?
-                              ((AgeGender[i].maleProb < 0.5) ? cv::Scalar(0, 0, 255) : cv::Scalar(255, 0, 0)) :
+                		(AgeGender.enabled()) ?
+                              ((ageGenderResults[ri].maleProb < 0.5) ? cv::Scalar(0, 0, 255) : cv::Scalar(255, 0, 0)) :
                               cv::Scalar(0, 255, 0);
-                cv::rectangle(frame, result.location, genderColor, 2);
-                i++;
+                cv::rectangle(frame, faceResult.location, genderColor, 2);
             }
             int keyPressed;
             if (-1 != (keyPressed = cv::waitKey(1)))
