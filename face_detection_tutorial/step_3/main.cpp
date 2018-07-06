@@ -551,18 +551,16 @@ int main(int argc, char *argv[]) {
             std::vector<AgeGenderDetection::Result> ageGenderResults;
             int ageGenderFaceIdx = 0;
             int ageGenderNumFacesInferred = 0;
-            int numFacesToInfer = FaceDetection.results.size();
+            int ageGenderNumFacesToInfer = AgeGender.enabled() ? FaceDetection.results.size() : 0;
 
-            while(AgeGender.enabled() && (ageGenderFaceIdx < numFacesToInfer)) {
+            while(ageGenderFaceIdx < ageGenderNumFacesToInfer) {
             	// enqueue input batch
-            	while ((ageGenderFaceIdx < numFacesToInfer) && (AgeGender.enquedFaces < AgeGender.maxBatch)) {
+            	while ((ageGenderFaceIdx < ageGenderNumFacesToInfer) && (AgeGender.enquedFaces < AgeGender.maxBatch)) {
 					FaceDetectionClass::Result faceResult = FaceDetection.results[ageGenderFaceIdx];
 					auto clippedRect = faceResult.location & cv::Rect(0, 0, width, height);
 					auto face = frame(clippedRect);
-					if (AgeGender.enabled()) {
-						AgeGender.enqueue(face);
-						ageGenderFaceIdx++;
-					}
+					AgeGender.enqueue(face);
+					ageGenderFaceIdx++;
             	}
 
 				t0 = std::chrono::high_resolution_clock::now();

@@ -756,38 +756,32 @@ int main(int argc, char *argv[]) {
             std::vector<AgeGenderDetection::Result> ageGenderResults;
             int ageGenderFaceIdx = 0;
             int ageGenderNumFacesInferred = 0;
+            int ageGenderNumFacesToInfer = AgeGender.enabled() ? FaceDetection.results.size() : 0;
 
             // track and store head pose results for all faces
             std::vector<HeadPoseDetection::Results> headPoseResults;
             int headPoseFaceIdx = 0;
             int headPoseNumFacesInferred = 0;
+            int headPoseNumFacesToInfer = HeadPose.enabled() ? FaceDetection.results.size() : 0;
 
-            int numFacesToInfer = FaceDetection.results.size();
 
-           while((AgeGender.enabled() && (ageGenderFaceIdx < numFacesToInfer))
-        		   || (HeadPose.enabled() && (headPoseFaceIdx < numFacesToInfer))) {
-
+            while((ageGenderFaceIdx < ageGenderNumFacesToInfer)
+        		   || (headPoseFaceIdx < headPoseNumFacesToInfer)) {
             	// enqueue input batch
-            	while (((ageGenderFaceIdx < numFacesToInfer) && (AgeGender.enquedFaces < AgeGender.maxBatch))
-            			|| ((headPoseFaceIdx < numFacesToInfer) && (HeadPose.enquedFaces < HeadPose.maxBatch))) {
-            		if (AgeGender.enquedFaces < AgeGender.maxBatch) {
-						if (AgeGender.enabled()) {
-							FaceDetectionClass::Result faceResult = FaceDetection.results[ageGenderFaceIdx];
-							auto clippedRect = faceResult.location & cv::Rect(0, 0, width, height);
-							auto face = frame(clippedRect);
-							AgeGender.enqueue(face);
-							ageGenderFaceIdx++;
-						}
-            		}
-            		if (HeadPose.enquedFaces < HeadPose.maxBatch) {
-						if (HeadPose.enabled()) {
-							FaceDetectionClass::Result faceResult = FaceDetection.results[headPoseFaceIdx];
-							auto clippedRect = faceResult.location & cv::Rect(0, 0, width, height);
-							auto face = frame(clippedRect);
-							HeadPose.enqueue(face);
-							headPoseFaceIdx++;
-						}
-            		}
+            	while ((ageGenderFaceIdx < ageGenderNumFacesToInfer) && (AgeGender.enquedFaces < AgeGender.maxBatch)) {
+					FaceDetectionClass::Result faceResult = FaceDetection.results[ageGenderFaceIdx];
+					auto clippedRect = faceResult.location & cv::Rect(0, 0, width, height);
+					auto face = frame(clippedRect);
+					AgeGender.enqueue(face);
+					ageGenderFaceIdx++;
+            	}
+
+            	while ((headPoseFaceIdx < headPoseNumFacesToInfer) && (HeadPose.enquedFaces < HeadPose.maxBatch)) {
+					FaceDetectionClass::Result faceResult = FaceDetection.results[headPoseFaceIdx];
+					auto clippedRect = faceResult.location & cv::Rect(0, 0, width, height);
+					auto face = frame(clippedRect);
+					HeadPose.enqueue(face);
+					headPoseFaceIdx++;
             	}
 
 				t0 = std::chrono::high_resolution_clock::now();
