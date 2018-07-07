@@ -184,7 +184,7 @@ The next function we will walkthrough is the HeadPoseDetection::read() function 
 ```
 
 
-2. The maximum batch size is set to maxBatch (set using FLAGS_n_hp which defaults to 16).
+2. The maximum batch size is set to maxBatch (set using FLAGS_n_hp which defaults to 1).
 
 ```cpp
         /** Set batch size to maximum currently set to one provided from command line **/
@@ -323,55 +323,102 @@ Load(HeadPose).into(pluginsForDevices[FLAGS_d_hp]);
 
 In the main "while(true)" loop, the inference results from the face detection model are used as input to the head pose detection model.  
 
-1. The results are fetched and the loop to iterate through them started.
+1. The loop to iterate through the fetched results is started.  The loop will infer faces in batches until all have been inferred.  The vector headPoseResults is used to store the head pose results while headPoseFaceIdx tracks the index of the next face to infer and headPoseNumFacesInferred tracks how many faces have been inferred.  headPoseNumFacesToInfer is set to the number of faces to be inferred which is always 0 if not enabled.
 
-```cpp
-for (auto && face : FaceDetection.results) {
+```Cpp
+            // fetch all face results
+            FaceDetection.fetchResults();
+
+            //...AgeGender code...
+
+            // track and store head pose results for all faces
+            std::vector<HeadPoseDetection::Results> headPoseResults;
+            int headPoseFaceIdx = 0;
+            int headPoseNumFacesInferred = 0;
+            int headPoseNumFacesToInfer = HeadPose.enabled() ? FaceDetection.results.size() : 0;
+
+            while((ageGenderFaceIdx < ageGenderNumFacesToInfer)
+        		   || (headPoseFaceIdx < headPoseNumFacesToInfer)) {
 ```
 
 
-2. A check is made to see if the head pose model is enabled.  If so, then get the ROI for the face by clipping the face location from the input image frame.
+2. A loop to enqueue a batch of faces is begun if there are faces still to infer and continues until either the batch is full (maxBatch) or there are no more faces to infer.
 
-```cpp
-   if (AgeGender.enabled() || HeadPose.enabled()) {
-      auto clippedRect = face.location & cv::Rect(0, 0, width, height);
-      auto face = frame(clippedRect);
+```Cpp
+            	// enqueue input batch
+            	//...AgeGender code...
+            	while ((headPoseFaceIdx < headPoseNumFacesToInfer) && (HeadPose.enquedFaces < HeadPose.maxBatch)) {
 ```
 
 
-3. The face data is enqueed for processing.
+3. Get the ROI for the face by clipping the face location from the input image frame.
 
 ```cpp
-      if (HeadPose.enabled()) {
-         HeadPose.enqueue(face);
-      }
-   }
-}
+				FaceDetectionClass::Result faceResult = FaceDetection.results[headPoseFaceIdx];
+				auto clippedRect = faceResult.location & cv::Rect(0, 0, width, height);
+				auto face = frame(clippedRect);
 ```
 
 
-4. The head pose detection model is run to infer on the faces using submitRequest(), then the results are waited on using wait().  The submit-then-wait is enveloped with timing functions to measure how long the inference takes.
+4. If the age and gender model is enabled, enqueue the face and increment ageGenderFaceIdx to the next face index.
 
 ```cpp
-t0 = std::chrono::high_resolution_clock::now();
-if (AgeGender.enabled()) {
-   AgeGender.submitRequest();
-}
-if (HeadPose.enabled()) {
-   HeadPose.submitRequest();
-}
-if (AgeGender.enabled()) {
-   AgeGender.wait();
-}
-if (HeadPose.enabled()) {
-   HeadPose.wait();
-}
-t1 = std::chrono::high_resolution_clock::now();
-ms secondDetection = std::chrono::duration_cast<ms>(t1 - t0);
+				HeadPose.enqueue(face);
+				headPoseFaceIdx++;
+            	}
 ```
 
 
-5. The timing metrics for inference are output with the results for the head pose inference added to the output window.
+5. The start time is stored in t0 and if there are faces enqueued, start inference for the batch.  Note that by starting both before waiting for results, the age and gender model is run in parallel with the head pose model.
+
+```Cpp
+			t0 = std::chrono::high_resolution_clock::now();
+
+            	if (AgeGender.enquedFaces > 0) {
+				AgeGender.submitRequest();
+            	}
+
+            	// if faces are enqueued, then start inference
+            	if (HeadPose.enquedFaces > 0) {
+            		HeadPose.submitRequest();
+            	}
+```
+
+
+6. If inference of a batch of faces has begun, then wait for the results.
+
+```cpp
+            	// if there are outstanding results, then wait for inference to complete
+                  //...AgeGender code...
+            	if (headPoseNumFacesInferred < headPoseFaceIdx) {
+            		HeadPose.wait();
+            	}
+```
+
+
+7. Record the end time of inference in t1 and accumulate the total time of all batches in secondDetection.  Note that the time is for both models.
+
+```Cpp
+			t1 = std::chrono::high_resolution_clock::now();
+			secondDetection += std::chrono::duration_cast<ms>(t1 - t0).count();
+```
+
+
+8. If there are inference results, loop through them storing in ageGenderResults to be rendered later.
+
+```Cpp
+			// process results if there are any
+                  //...AgeGender code...
+			if (headPoseNumFacesInferred < headPoseFaceIdx) {
+				for(int ri = 0; ri < HeadPose.maxBatch; ri++) {
+					headPoseResults.push_back(HeadPose[ri]);
+					headPoseNumFacesInferred++;
+            		}
+            	}
+```
+
+
+9. The timing metrics for inference are output with the results for the head pose inference added to the output window.
 
 ```cpp
 if (HeadPose.enabled() || AgeGender.enabled()) {
@@ -380,10 +427,10 @@ if (HeadPose.enabled() || AgeGender.enabled()) {
        << (AgeGender.enabled() && HeadPose.enabled() ? "+"  : "")
        << (HeadPose.enabled() ? "Head Pose "  : "")
        << "time: "<< std::fixed << std::setprecision(2) 
-       << secondDetection.count()
+       << secondDetection
        << " ms ";
    if (!FaceDetection.results.empty()) {
-      out << "(" << 1000.f / secondDetection.count() << " fps)";
+      out << "(" << 1000.f / secondDetection << " fps)";
    }
    cv::putText(frame, out.str(), cv::Point2f(0, 65),
       cv::FONT_HERSHEY_TRIPLEX, 0.5, cv::Scalar(255, 0, 0));
@@ -391,12 +438,12 @@ if (HeadPose.enabled() || AgeGender.enabled()) {
 ```
 
 
-6. The output image is updated with the head pose results for each detected face by drawing the yaw, pitch, and roll axes over the face.
+10. The output image is updated with the head pose results for each detected face by drawing the yaw, pitch, and roll axes over the face.
 
 ```cpp
-if (HeadPose.enabled() && i < HeadPose.maxBatch) {
+if (HeadPose.enabled()) {
    cv::Point3f center(rect.x + rect.width / 2, rect.y + rect.height / 2, 0);
-   HeadPose.drawAxes(frame, center, HeadPose[i], 50);
+   HeadPose.drawAxes(frame, center, headPoseResults[ri], 50);
 }
 ```
 
@@ -555,12 +602,12 @@ Before we can get started, let us go over the command line parameters again.  We
 </table>
 
 
-As we mentioned in the Key Concepts section, the batch size is the number of input data that the models will work on.  For the face detection model, the batch size is fixed to 1.  Even when processing input from a video or a camera, it will only processes a single image/frame at a time.  Depending on the content of the image data, it can return any number of faces.  The application lets us set the batch size on the other models dynamically and we have set a default batch size of 16 for the age and gender and head pose models.  This is fine when they are run on the CPU and GPU, however the Myriad which requires batch size of 1.  So, when we want to run those two models on the Myriad, we must specify a batch size of 1.  Since we are not expecting many results in the test video provided, to simplify things and keep batch size from affecting performance results (something covered better in the Car Detection Tutorial), we will set batch size to 1 for all models.
+As we mentioned in the Key Concepts section, the batch size is the number of input data that the models will work on.  For the face detection model, the batch size is fixed to 1.  Even when processing input from a video or a camera, it will only processes a single image/frame at a time.  Depending on the content of the image data, it can return any number of faces.  The application lets us set the batch size on the other models dynamically and the default batch size is 1 for the age and gender and head pose models.  This will work for the Myriad which has a maximum batch size of 1.  Since we are not expecting many results in the test video provided, to simplify things and keep batch size from affecting performance results (something covered in the Car Detection Tutorial), we will use the default batch size of 1 for all models.
 
 Let us look at a sample command line that uses all the parameters so that we can see what it looks like.  For this example, we are running the application from the "step_4/build" directory.
 
 ```bash
-./intel64/Release/face_detection_tutorial -m $mFDA32 -d GPU -m_ag $mAG16 -d_ag MYRIAD -n_ag 1 -m_hp $mHP16 -d_hp GPU -n_hp 1 -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
+./intel64/Release/face_detection_tutorial -m $mFDA32 -d GPU -m_ag $mAG16 -d_ag MYRIAD -m_hp $mHP16 -d_hp GPU -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
 ```
 
 
@@ -586,7 +633,7 @@ Command combinations run:
 
 ```Bash
 # Command line #1
-./intel64/Release/face_detection_tutorial -m $mFDA32 -d CPU -m_ag $mAG32 -d_ag CPU -n_ag 1 -m_hp $mHP32 -d_hp CPU -n_hp 1 -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
+./intel64/Release/face_detection_tutorial -m $mFDA32 -d CPU -m_ag $mAG32 -d_ag CPU -m_hp $mHP32 -d_hp CPU -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
 ```
 
 
@@ -624,33 +671,33 @@ Command combinations run:
 
 ```Bash
 # Command line #1
-./intel64/Release/face_detection_tutorial -m $mFDA32 -d GPU -m_ag $mAG32 -d_ag CPU -n_ag 1 -m_hp $mHP32 -d_hp CPU -n_hp 1 -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
+./intel64/Release/face_detection_tutorial -m $mFDA32 -d GPU -m_ag $mAG32 -d_ag CPU -m_hp $mHP32 -d_hp CPU -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
 # Command line #2
-./intel64/Release/face_detection_tutorial -m $mFDA32 -d CPU -m_ag $mAG32 -d_ag CPU -n_ag 1 -m_hp $mHP32 -d_hp GPU -n_hp 1 -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
+./intel64/Release/face_detection_tutorial -m $mFDA32 -d CPU -m_ag $mAG32 -d_ag CPU -m_hp $mHP32 -d_hp GPU -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
 # Command line #3
-./intel64/Release/face_detection_tutorial -m $mFDA32 -d CPU -m_ag $mAG32 -d_ag CPU -n_ag 1 -m_hp $mHP16 -d_hp GPU -n_hp 1 -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
+./intel64/Release/face_detection_tutorial -m $mFDA32 -d CPU -m_ag $mAG32 -d_ag CPU -m_hp $mHP16 -d_hp GPU -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
 # Command line #4
-./intel64/Release/face_detection_tutorial -m $mFDA32 -d CPU -m_ag $mAG32 -d_ag GPU -n_ag 1 -m_hp $mHP32 -d_hp CPU -n_hp 1 -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
+./intel64/Release/face_detection_tutorial -m $mFDA32 -d CPU -m_ag $mAG32 -d_ag GPU -m_hp $mHP32 -d_hp CPU -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
 # Command line #5
-./intel64/Release/face_detection_tutorial -m $mFDA16 -d GPU -m_ag $mAG32 -d_ag CPU -n_ag 1 -m_hp $mHP32 -d_hp CPU -n_hp 1 -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
+./intel64/Release/face_detection_tutorial -m $mFDA16 -d GPU -m_ag $mAG32 -d_ag CPU -m_hp $mHP32 -d_hp CPU -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
 # Command line #6
-./intel64/Release/face_detection_tutorial -m $mFDA32 -d CPU -m_ag $mAG16 -d_ag GPU -n_ag 1 -m_hp $mHP32 -d_hp CPU -n_hp 1 -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
+./intel64/Release/face_detection_tutorial -m $mFDA32 -d CPU -m_ag $mAG16 -d_ag GPU -m_hp $mHP32 -d_hp CPU -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
 # Command line #7
-./intel64/Release/face_detection_tutorial -m $mFDA32 -d GPU -m_ag $mAG32 -d_ag GPU -n_ag 1 -m_hp $mHP32 -d_hp GPU -n_hp 1 -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
+./intel64/Release/face_detection_tutorial -m $mFDA32 -d GPU -m_ag $mAG32 -d_ag GPU -m_hp $mHP32 -d_hp GPU -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
 # Command line #8
-./intel64/Release/face_detection_tutorial -m $mFDA32 -d GPU -m_ag $mAG32 -d_ag CPU -n_ag 1 -m_hp $mHP32 -d_hp GPU -n_hp 1 -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
+./intel64/Release/face_detection_tutorial -m $mFDA32 -d GPU -m_ag $mAG32 -d_ag CPU -m_hp $mHP32 -d_hp GPU -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
 # Command line #9
-./intel64/Release/face_detection_tutorial -m $mFDA32 -d GPU -m_ag $mAG32 -d_ag GPU -n_ag 1 -m_hp $mHP32 -d_hp CPU -n_hp 1 -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
+./intel64/Release/face_detection_tutorial -m $mFDA32 -d GPU -m_ag $mAG32 -d_ag GPU -m_hp $mHP32 -d_hp CPU -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
 # Command line #10
-./intel64/Release/face_detection_tutorial -m $mFDA16 -d GPU -m_ag $mAG32 -d_ag CPU -n_ag 1 -m_hp $mHP16 -d_hp GPU -n_hp 1 -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
+./intel64/Release/face_detection_tutorial -m $mFDA16 -d GPU -m_ag $mAG32 -d_ag CPU -m_hp $mHP16 -d_hp GPU -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
 # Command line #11
-./intel64/Release/face_detection_tutorial -m $mFDA16 -d GPU -m_ag $mAG16 -d_ag GPU -n_ag 1 -m_hp $mHP32 -d_hp CPU -n_hp 1 -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
+./intel64/Release/face_detection_tutorial -m $mFDA16 -d GPU -m_ag $mAG16 -d_ag GPU -m_hp $mHP32 -d_hp CPU -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
 # Command line #12
-./intel64/Release/face_detection_tutorial -m $mFDA16 -d GPU -m_ag $mAG16 -d_ag GPU -n_ag 1 -m_hp $mHP16 -d_hp GPU -n_hp 1 -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
+./intel64/Release/face_detection_tutorial -m $mFDA16 -d GPU -m_ag $mAG16 -d_ag GPU -m_hp $mHP16 -d_hp GPU -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
 # Command line #13
-./intel64/Release/face_detection_tutorial -m $mFDA32 -d CPU -m_ag $mAG32 -d_ag GPU -n_ag 1 -m_hp $mHP32 -d_hp GPU -n_hp 1 -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
+./intel64/Release/face_detection_tutorial -m $mFDA32 -d CPU -m_ag $mAG32 -d_ag GPU -m_hp $mHP32 -d_hp GPU -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
 # Command line #14
-./intel64/Release/face_detection_tutorial -m $mFDA32 -d CPU -m_ag $mAG16 -d_ag GPU -n_ag 1 -m_hp $mHP16 -d_hp GPU -n_hp 1 -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
+./intel64/Release/face_detection_tutorial -m $mFDA32 -d CPU -m_ag $mAG16 -d_ag GPU -m_hp $mHP16 -d_hp GPU -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
 ```
 
 
@@ -792,17 +839,17 @@ Command combinations run:
 
 ```Bash
 # Command line #1
-./intel64/Release/face_detection_tutorial -m $mFDA16 -d MYRIAD -m_ag $mAG32 -d_ag CPU -n_ag 1 -m_hp $mHP32 -d_hp CPU -n_hp 1 -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
+./intel64/Release/face_detection_tutorial -m $mFDA16 -d MYRIAD -m_ag $mAG32 -d_ag CPU -m_hp $mHP32 -d_hp CPU -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
 # Command line #2
-./intel64/Release/face_detection_tutorial -m $mFDA16 -d MYRIAD -m_ag $mAG16 -d_ag MYRIAD -n_ag 1 -m_hp $mHP32 -d_hp CPU -n_hp 1 -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
+./intel64/Release/face_detection_tutorial -m $mFDA16 -d MYRIAD -m_ag $mAG16 -d_ag MYRIAD -m_hp $mHP32 -d_hp CPU -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
 # Command line #3
-./intel64/Release/face_detection_tutorial -m $mFDA16 -d MYRIAD -m_ag $mAG32 -d_ag CPU -n_ag 1 -m_hp $mHP16 -d_hp MYRIAD -n_hp 1 -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
+./intel64/Release/face_detection_tutorial -m $mFDA16 -d MYRIAD -m_ag $mAG32 -d_ag CPU -m_hp $mHP16 -d_hp MYRIAD -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
 # Command line #4
-./intel64/Release/face_detection_tutorial -m $mFDA32 -d CPU -m_ag $mAG32 -d_ag CPU -n_ag 1 -m_hp $mHP16 -d_hp MYRIAD -n_hp 1 -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
+./intel64/Release/face_detection_tutorial -m $mFDA32 -d CPU -m_ag $mAG32 -d_ag CPU -m_hp $mHP16 -d_hp MYRIAD -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
 # Command line #5
-./intel64/Release/face_detection_tutorial -m $mFDA32 -d CPU -m_ag $mAG16 -d_ag MYRIAD -n_ag 1 -m_hp $mHP32 -d_hp CPU -n_hp 1 -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
+./intel64/Release/face_detection_tutorial -m $mFDA32 -d CPU -m_ag $mAG16 -d_ag MYRIAD -m_hp $mHP32 -d_hp CPU -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
 # Command line #6
-./intel64/Release/face_detection_tutorial -m $mFDA32 -d CPU -m_ag $mAG16 -d_ag MYRIAD -n_ag 1 -m_hp $mHP16 -d_hp MYRIAD -n_hp 1 -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
+./intel64/Release/face_detection_tutorial -m $mFDA32 -d CPU -m_ag $mAG16 -d_ag MYRIAD -m_hp $mHP16 -d_hp MYRIAD -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
 ```
 
 
@@ -880,37 +927,37 @@ Command combinations run:
 
 ```Bash
 # Command line #1
-./intel64/Release/face_detection_tutorial -m $mFDA16 -d MYRIAD -m_ag $mAG32 -d_ag GPU -n_ag 1 -m_hp $mHP32 -d_hp CPU -n_hp 1 -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
+./intel64/Release/face_detection_tutorial -m $mFDA16 -d MYRIAD -m_ag $mAG32 -d_ag GPU -m_hp $mHP32 -d_hp CPU -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
 # Command line #2
-./intel64/Release/face_detection_tutorial -m $mFDA16 -d MYRIAD -m_ag $mAG32 -d_ag CPU -n_ag 1 -m_hp $mHP32 -d_hp GPU -n_hp 1 -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
+./intel64/Release/face_detection_tutorial -m $mFDA16 -d MYRIAD -m_ag $mAG32 -d_ag CPU -m_hp $mHP32 -d_hp GPU -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
 # Command line #3
-./intel64/Release/face_detection_tutorial -m $mFDA16 -d MYRIAD -m_ag $mAG32 -d_ag CPU -n_ag 1 -m_hp $mHP16 -d_hp GPU -n_hp 1 -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
+./intel64/Release/face_detection_tutorial -m $mFDA16 -d MYRIAD -m_ag $mAG32 -d_ag CPU -m_hp $mHP16 -d_hp GPU -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
 # Command line #4
-./intel64/Release/face_detection_tutorial -m $mFDA16 -d MYRIAD -m_ag $mAG16 -d_ag GPU -n_ag 1 -m_hp $mHP32 -d_hp CPU -n_hp 1 -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
+./intel64/Release/face_detection_tutorial -m $mFDA16 -d MYRIAD -m_ag $mAG16 -d_ag GPU -m_hp $mHP32 -d_hp CPU -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
 # Command line #5
-./intel64/Release/face_detection_tutorial -m $mFDA16 -d MYRIAD -m_ag $mAG32 -d_ag GPU -n_ag 1 -m_hp $mHP32 -d_hp GPU -n_hp 1 -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
+./intel64/Release/face_detection_tutorial -m $mFDA16 -d MYRIAD -m_ag $mAG32 -d_ag GPU -m_hp $mHP32 -d_hp GPU -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
 # Command line #6
-./intel64/Release/face_detection_tutorial -m $mFDA16 -d MYRIAD -m_ag $mAG16 -d_ag GPU -n_ag 1 -m_hp $mHP16 -d_hp GPU -n_hp 1 -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
+./intel64/Release/face_detection_tutorial -m $mFDA16 -d MYRIAD -m_ag $mAG16 -d_ag GPU -m_hp $mHP16 -d_hp GPU -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
 # Command line #7
-./intel64/Release/face_detection_tutorial -m $mFDA32 -d GPU -m_ag $mAG16 -d_ag MYRIAD -n_ag 1 -m_hp $mHP16 -d_hp MYRIAD -n_hp 1 -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
+./intel64/Release/face_detection_tutorial -m $mFDA32 -d GPU -m_ag $mAG16 -d_ag MYRIAD -m_hp $mHP16 -d_hp MYRIAD -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
 # Command line #8
-./intel64/Release/face_detection_tutorial -m $mFDA16 -d GPU -m_ag $mAG16 -d_ag MYRIAD -n_ag 1 -m_hp $mHP16 -d_hp MYRIAD -n_hp 1 -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
+./intel64/Release/face_detection_tutorial -m $mFDA16 -d GPU -m_ag $mAG16 -d_ag MYRIAD -m_hp $mHP16 -d_hp MYRIAD -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
 # Command line #9
-./intel64/Release/face_detection_tutorial -m $mFDA32 -d GPU -m_ag $mAG16 -d_ag MYRIAD -n_ag 1 -m_hp $mHP32 -d_hp CPU -n_hp 1 -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
+./intel64/Release/face_detection_tutorial -m $mFDA32 -d GPU -m_ag $mAG16 -d_ag MYRIAD -m_hp $mHP32 -d_hp CPU -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
 # Command line #10
-./intel64/Release/face_detection_tutorial -m $mFDA32 -d GPU -m_ag $mAG32 -d_ag CPU -n_ag 1 -m_hp $mHP16 -d_hp MYRIAD -n_hp 1 -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
+./intel64/Release/face_detection_tutorial -m $mFDA32 -d GPU -m_ag $mAG32 -d_ag CPU -m_hp $mHP16 -d_hp MYRIAD -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
 # Command line #11
-./intel64/Release/face_detection_tutorial -m $mFDA16 -d GPU -m_ag $mAG16 -d_ag MYRIAD -n_ag 1 -m_hp $mHP32 -d_hp CPU -n_hp 1 -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
+./intel64/Release/face_detection_tutorial -m $mFDA16 -d GPU -m_ag $mAG16 -d_ag MYRIAD -m_hp $mHP32 -d_hp CPU -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
 # Command line #12
-./intel64/Release/face_detection_tutorial -m $mFDA16 -d GPU -m_ag $mAG32 -d_ag CPU -n_ag 1 -m_hp $mHP16 -d_hp MYRIAD -n_hp 1 -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
+./intel64/Release/face_detection_tutorial -m $mFDA16 -d GPU -m_ag $mAG32 -d_ag CPU -m_hp $mHP16 -d_hp MYRIAD -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
 # Command line #13
-./intel64/Release/face_detection_tutorial -m $mFDA32 -d CPU -m_ag $mAG16 -d_ag MYRIAD -n_ag 1 -m_hp $mHP16 -d_hp GPU -n_hp 1 -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
+./intel64/Release/face_detection_tutorial -m $mFDA32 -d CPU -m_ag $mAG16 -d_ag MYRIAD -m_hp $mHP16 -d_hp GPU -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
 # Command line #14
-./intel64/Release/face_detection_tutorial -m $mFDA32 -d CPU -m_ag $mAG16 -d_ag MYRIAD -n_ag 1 -m_hp $mHP32 -d_hp GPU -n_hp 1 -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
+./intel64/Release/face_detection_tutorial -m $mFDA32 -d CPU -m_ag $mAG16 -d_ag MYRIAD -m_hp $mHP32 -d_hp GPU -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
 # Command line #15
-./intel64/Release/face_detection_tutorial -m $mFDA32 -d CPU -m_ag $mAG16 -d_ag GPU -n_ag 1 -m_hp $mHP16 -d_hp MYRIAD -n_hp 1 -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
+./intel64/Release/face_detection_tutorial -m $mFDA32 -d CPU -m_ag $mAG16 -d_ag GPU -m_hp $mHP16 -d_hp MYRIAD -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
 # Command line #16
-./intel64/Release/face_detection_tutorial -m $mFDA32 -d CPU -m_ag $mAG32 -d_ag GPU -n_ag 1 -m_hp $mHP16 -d_hp MYRIAD -n_hp 1 -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
+./intel64/Release/face_detection_tutorial -m $mFDA32 -d CPU -m_ag $mAG32 -d_ag GPU -m_hp $mHP16 -d_hp MYRIAD -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
 ```
 
 

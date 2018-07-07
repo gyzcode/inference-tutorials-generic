@@ -169,10 +169,10 @@ The next function we will walkthrough is the AgeGenderDetection::read() function
 ```
 
 
-2. The maximum batch size is set to maxBatch (set using FLAGS_n_ag which defaults to 16).
+2. The maximum batch size is set to maxBatch (set using FLAGS_n_ag which defaults to 1).
 
 ```cpp
-        /** Set batch size to 16 **/
+        /** Set batch size **/
         netReader.getNetwork().setBatchSize(maxBatch);
         slog::info << "Batch size is set to " << netReader.getNetwork().getBatchSize() << " for Age Gender" << slog::endl;
 ```
@@ -297,118 +297,163 @@ Load(AgeGender).into(pluginsForDevices[FLAGS_d_ag]);
 
 In the main "while(true)" loop, the inference results from the face detection model are used as input to the age and gender detection model.  
 
-1. The loop to iterate through the fetched results is started.
+1. The loop to iterate through the fetched results is started.  The loop will infer faces in batches until all have been inferred.  The vector ageGenderResults is used to store the age and gender results while ageGenderFaceIdx tracks the index of the next face to infer and ageGenderNumFacesInferred tracks how many faces have been inferred.  ageGenderNumFacesToInfer is set to the number of faces to be inferred which is always 0 if not enabled.
 
-```cpp
-FaceDetection.fetchResults();
-for (auto && face : FaceDetection.results) {
+```Cpp
+            // fetch all face results
+            FaceDetection.fetchResults();
+
+            // track and store age and gender results for all faces
+            std::vector<AgeGenderDetection::Result> ageGenderResults;
+            int ageGenderFaceIdx = 0;
+            int ageGenderNumFacesInferred = 0;
+            int ageGenderNumFacesToInfer = AgeGender.enabled() ? FaceDetection.results.size() : 0;
+
+            while(ageGenderFaceIdx < ageGenderNumFacesToInfer) {
 ```
 
 
-2. A check is made to see if the age and gender model is enabled.  If so, then get the ROI for the face by clipping the face location from the input image frame.
+2. A loop to enqueue a batch of faces is begun if there are faces still to infer and continues until either the batch is full (maxBatch) or there are no more faces to infer.
 
-```cpp
-   if (AgeGender.enabled()) {
-      auto clippedRect = face.location & cv::Rect(0, 0, width, height);
-      auto face = frame(clippedRect);
+```Cpp
+            	// enqueue input batch
+            	while ((ageGenderFaceIdx < ageGenderNumFacesToInfer) && (AgeGender.enquedFaces < AgeGender.maxBatch)) {
 ```
 
 
-3. The face data is enqueued for processing.
+3. Get the ROI for the face by clipping the face location from the input image frame.
 
 ```cpp
-      if (AgeGender.enabled()) {
-         AgeGender.enqueue(face);
-      }
-   }
-}
+				FaceDetectionClass::Result faceResult = FaceDetection.results[ageGenderFaceIdx];
+				auto clippedRect = faceResult.location & cv::Rect(0, 0, width, height);
+				auto face = frame(clippedRect);
 ```
 
 
-4. The age and gender detection model is run to infer on the faces using submitRequest(), then the results are waited on using wait().  The submit-then-wait is enveloped with timing functions to measure how long the inference takes.
+4. Enqueue the face and increment ageGenderFaceIdx to the next face index.
 
 ```cpp
-t0 = std::chrono::high_resolution_clock::now();
-if (AgeGender.enabled()) {
-   AgeGender.submitRequest();
-   AgeGender.wait();
-}
-t1 = std::chrono::high_resolution_clock::now();
-ms secondDetection = std::chrono::duration_cast<ms>(t1 - t0);
+				AgeGender.enqueue(face);
+				ageGenderFaceIdx++;
+            	}
 ```
 
 
-5. The timing metrics for inference are output with the results for the age and gender inference added to the output window.
+5. The start time is stored in t0 and if there are faces enqueued, start inference for the batch.
+
+```Cpp
+			t0 = std::chrono::high_resolution_clock::now();
+
+            	// if faces are enqueued, then start inference
+            	if (AgeGender.enquedFaces > 0) {
+					AgeGender.submitRequest();
+            	}
+```
+
+
+6. If inference of a batch of faces has begun, then wait for the results.
+
+```cpp
+            	// if there are outstanding results, then wait for inference to complete
+            	if (ageGenderNumFacesInferred < ageGenderFaceIdx) {
+					AgeGender.wait();
+            	}
+```
+
+
+7. Record the end time of inference in t1 and accumulate the total time of all batches in secondDetection.
+
+```Cpp
+				t1 = std::chrono::high_resolution_clock::now();
+				secondDetection += std::chrono::duration_cast<ms>(t1 - t0).count();
+```
+
+
+8. If there are inference results, loop through them storing in ageGenderResults to be rendered later.
+
+```Cpp
+				// process results if there are any
+				if (ageGenderNumFacesInferred < ageGenderFaceIdx) {
+					for(int ri = 0; ri < AgeGender.maxBatch; ri++) {
+						ageGenderResults.push_back(AgeGender[ri]);
+						ageGenderNumFacesInferred++;
+					}
+            	}
+            }
+```
+
+
+9. The timing metrics for inference are output with the results for the age and gender inference added to the output window.
 
 ```cpp
 if (AgeGender.enabled()) {
    out.str("");
    out << (AgeGender.enabled() ? "Age Gender"  : "")
-       << "time: "<< std::fixed << std::setprecision(2) << secondDetection.count()
+       << "time: "<< std::fixed << std::setprecision(2) << secondDetection
        << " ms ";
    if (!FaceDetection.results.empty()) {
-      out << "(" << 1000.f / secondDetection.count() << " fps)";
+      out << "(" << 1000.f / secondDetection << " fps)";
    }
    cv::putText(frame, out.str(), cv::Point2f(0, 65), cv::FONT_HERSHEY_TRIPLEX, 0.5, cv::Scalar(255, 0, 0));
 }
 ```
 
 
-6. The output image label is updated with the age and gender results for each detected face.  
+10. Loop through all the detected faces to update the output image adding a label with the age and gender results for each detected face.  
 
-```cpp
-int i = 0;
-for (auto & result : FaceDetection.results) {
-   cv::Rect rect = result.location;
+```Cpp
+            // render results
+            for(int ri = 0; ri < FaceDetection.results.size(); ri++) {
+            	FaceDetectionClass::Result faceResult = FaceDetection.results[ri];
+                cv::Rect rect = faceResult.location;
 ```
 
 
-7. The decision is made to use a simple label or age and gender results if model enabled.
+11. Label the fae with age and gender results if the model is enabled otherwise use a simple label.
 
 ```cpp
-   out.str("");
-   if (AgeGender.enabled() && i < AgeGender.maxBatch) {
-      out << (AgeGender[i].maleProb > 0.5 ? "M" : "F");
-      out << std::fixed << std::setprecision(0) << "," << AgeGender[i].age;
-   } else {
-      out << (result.label < FaceDetection.labels.size() ? FaceDetection.labels[result.label] :
-      std::string("label #") + std::to_string(result.label))
-          << ": " << std::fixed << std::setprecision(3) << result.confidence;
-   }
+                out.str("");
+                if (AgeGender.enabled()) {
+                    out << (ageGenderResults[ri].maleProb > 0.5 ? "M" : "F");
+                    out << std::fixed << std::setprecision(0) << "," << ageGenderResults[ri].age;
+                } else {
+                    out << (faceResult.label < FaceDetection.labels.size() ? FaceDetection.labels[faceResult.label] :
+                             std::string("label #") + std::to_string(faceResult.label))
+                        << ": " << std::fixed << std::setprecision(3) << faceResult.confidence;
+                }
 ```
 
 
-8. A label is placed on the output image for current result.
+12. A label is placed on the output image for current result.
 
 ```cpp
   cv::putText(frame,
                out.str(),
-               cv::Point2f(result.location.x, result.location.y - 15),
+               cv::Point2f(faceResult.location.x, faceResult.location.y - 15),
                cv::FONT_HERSHEY_COMPLEX_SMALL,
                0.8,
                cv::Scalar(0, 0, 255));
 ```
 
 
-9. The color of the box around face is chosen based on the age and gender model’s confidence that the face is male.
+13. The color of the box around face is chosen based on the age and gender model’s confidence that the face is male.
 
 ```cpp
    auto genderColor =
-         (AgeGender.enabled() && (i < AgeGender.maxBatch)) ?
-            ((AgeGender[i].maleProb < 0.5) ? cv::Scalar(0, 0, 255) : cv::Scalar(255, 0, 0)) :
+         (AgeGender.enabled()) ?
+            ((ageGenderResults[ri].maleProb < 0.5) ? cv::Scalar(0, 0, 255) : cv::Scalar(255, 0, 0)) :
             cv::Scalar(0, 255, 0);
 ```
 
 
-10. A rectangle is dranw around the face on the output image.
+14. A rectangle is drawn around the face on the output image.
 
-```   cv::rectangle(frame, result.location, genderColor, 2);
-   i++;
+```   cv::rectangle(frame, faceResult.location, genderColor, 2);
 }
 ```
 
 
-11. Finally, the final results are displayed for the frame while measuring the time it took to show the image.
+15. Finally, the final results are displayed for the frame while measuring the time it took to show the image.
 
 ```cpp
 t0 = std::chrono::high_resolution_clock::now();
@@ -520,4 +565,3 @@ Building on the single model application from Tutorial Step 2, this step has sho
 [Face Detection Tutorial Step 2](../step_2/Readme.md)
 
 [Face Detection Tutorial Step 4](../step_4/Readme.md)
-

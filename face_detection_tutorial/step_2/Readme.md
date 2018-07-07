@@ -139,30 +139,23 @@ for (auto && option : cmdOptions) {
          slog::info << "Loading plugin " << deviceName << slog::endl;
             InferencePlugin plugin = PluginDispatcher({"../../../lib/intel64", ""}).getPluginByDevice(deviceName);
 ```
-
-
 6. The plugin details are printed out:
 
 ```cpp 
            /** Printing plugin version **/
             printPluginVersion(plugin, std::cout);
 ```
-
-
 7. The created plugin is stored to be found by device name later:
 
 ```cpp
             pluginsForDevices[deviceName] = plugin;
 ```
-
-
 8. Finally the model is loaded passing in the plugin created for the specified device, again using the name given same as it appears on the command line ("Load" class will be described later):
 
 ```cpp
        // --------------------Load networks (Generated xml/bin files)-------------------------------------------
         Load(FaceDetection).into(pluginsForDevices[FLAGS_d]);
 ```
-
 
 ### Verifying Which Device is Running the Model
 
@@ -179,17 +172,11 @@ InferenceEngine:
 [ INFO ] Parsing input parameters
 [ INFO ] Reading input
 ```
-
-
 The application reporting that it is loading the CPU plugin:
-
 ```bash
 [ INFO ] Loading plugin CPU
 ```
-
-
 Inference Engine reports that it has loaded the CPU plugin (MKLDNNPlugin) and its version:
-
 ```bash
 	API version ............ 1.0
 	Build .................. lnx_20180314
@@ -199,15 +186,11 @@ Inference Engine reports that it has loaded the CPU plugin (MKLDNNPlugin) and it
 [ INFO ] Checking Face Detection inputs
 [ INFO ] Checking Face Detection outputs
 ```
-
-
 The application reporting that it is loading the CPU plugin for the face detection model:
-
 ```bash
 [ INFO ] Loading Face Detection model to the CPU plugin
 [ INFO ] Start inference
 ```
-
 
 Later in Tutorial Step 4, we cover loading multiple models onto different devices.  We will also look at how the models perform on different devices.  Until then, we will let all the models load and run on the default CPU device.
 
@@ -314,7 +297,7 @@ Now we are going to walkthrough the BaseDetection class that is used to abstract
 ```cpp
 struct BaseDetection {
     ExecutableNetwork net;
-    InferenceEngine::InferencePlugin * plugin;
+    InferenceEngine::InferencePlugin * plugin = NULL;
     InferRequest::Ptr request;
     std::string & commandLineFlag;
     std::string topoName;
@@ -415,8 +398,8 @@ FaceDetectionClass is derived from the BaseDetection class and adding some new m
 struct FaceDetectionClass : BaseDetection {
     std::string input;
     std::string output;
-    int maxProposalCount;
-    int objectSize;
+    int maxProposalCount = 0;
+    int objectSize = 0;
     int enquedFrames = 0;
     float width = 0;
     float height = 0;
@@ -958,45 +941,42 @@ make
    2. "-m \<model-xml-file\>"  to specify where to find the module.  For example: -m  /opt/intel/computer_vision_sdk/deployment_tools/intel_models/face-detection-adas-0001/FP32/face-detection-adas-0001.xml”
 
    3. That is a lot to type and keep straight, so to help make the model names shorter to type  and easier to read, let us use the helper script scripts/setupenv.sh that sets up shell variables we can use.  For reference, here are the contents of scripts/setupenv.sh:
-
-```bash
-# Create variables for all models used by the tutorials to make
-#  it easier to reference them with short names
-
-# check for variable set by setupvars.sh in the SDK, need it to find models
-: ${InferenceEngine_DIR:?Must source the setupvars.sh in the SDK to set InferenceEngine_DIR}
-
-modelDir=$InferenceEngine_DIR/../../intel_models
-
-# Face Detection Model - ADAS
-modName=face-detection-adas-0001
-export mFDA16=$modelDir/$modName/FP16/$modName.xml
-export mFDA32=$modelDir/$modName/FP32/$modName.xml
-
-# Face Detection Model - Retail
-modName=face-detection-retail-0004
-export mFDR16=$modelDir/$modName/FP16/$modName.xml
-export mFDR32=$modelDir/$modName/FP32/$modName.xml
-
-# Age and Gender Model
-modName=age-gender-recognition-retail-0013
-export mAG16=$modelDir/$modName/FP16/$modName.xml
-export mAG32=$modelDir/$modName/FP32/$modName.xml
-
-# Head Pose Estimation Model
-modName=head-pose-estimation-adas-0001
-export mHP16=$modelDir/$modName/FP16/$modName.xml
-export mHP32=$modelDir/$modName/FP32/$modName.xml
-```
-
-
+   ```bash
+   # Create variables for all models used by the tutorials to make
+   #  it easier to reference them with short names
+   
+   # check for variable set by setupvars.sh in the SDK, need it to find models
+   : ${InferenceEngine_DIR:?Must source the setupvars.sh in the SDK to set InferenceEngine_DIR}
+   
+   modelDir=$InferenceEngine_DIR/../../intel_models
+   
+   # Face Detection Model - ADAS
+   modName=face-detection-adas-0001
+   export mFDA16=$modelDir/$modName/FP16/$modName.xml
+   export mFDA32=$modelDir/$modName/FP32/$modName.xml
+   
+   # Face Detection Model - Retail
+   modName=face-detection-retail-0004
+   export mFDR16=$modelDir/$modName/FP16/$modName.xml
+   export mFDR32=$modelDir/$modName/FP32/$modName.xml
+   
+   # Age and Gender Model
+   modName=age-gender-recognition-retail-0013
+   export mAG16=$modelDir/$modName/FP16/$modName.xml
+   export mAG32=$modelDir/$modName/FP32/$modName.xml
+   
+   # Head Pose Estimation Model
+   modName=head-pose-estimation-adas-0001
+   export mHP16=$modelDir/$modName/FP16/$modName.xml
+   export mHP32=$modelDir/$modName/FP32/$modName.xml
+   ```
+   
    4. To use the script we source it: 
 
-```bash
-source ../../scripts/setupenv.sh 
-```
-
-
+   ```bash
+   source ../../scripts/setupenv.sh 
+   ```
+    
    5. And now we can start referencing the variables for each model as: $mFDA16, $mFDA32, $mFDR16, $mFDR32, $mAG16, $mAG32, $mHP16, $mHP32
 
 2. Again, we will be using images and video files that are included with this tutorial or part of the OpenVINO toolkit installation in our sample instructions.  Once you have seen the application working, feel free to try it on your own images and videos.
@@ -1085,10 +1065,8 @@ Total time: 91233    microseconds
 Congratulations on using a CNN model to detect faces!  You have now seen that the process can be done quite quickly.  The classes and helper functions that we added here are aimed at making it easy to add more models to the application by following the same pattern.  We will see it again in action in Step 3, when we add an age and gender inferring model, and then again in Step 4, when we add head pose estimation.
 
 # Navigation
-
 [Face Detection Tutorial](../Readme.md)
 
 [Face Detection Tutorial Step 1](../step_1/Readme.md)
 
 [Face Detection Tutorial Step 3](../step_3/Readme.md)
-
