@@ -8,13 +8,13 @@
 
 # Introduction
 
-Welcome to Car Detection Tutorial Step 3.  Now that the application can detect vehicles in images, we want it to tell us what type of vehicles were found and what color the vehicle are.  The precompiled "vehicle-attributes-recognition-barrier-0010" model included with the OpenVINO toolkit is what we will be using to accomplish this.  The sample output below shows the results where the ROI box now appears with the vehicle type (e.g. “car”) and its color (e.g. “black”).  The metrics reported now also include the time to run the vehicle attribute detection model.
+Welcome to Car Detection Tutorial Step 3.  Now that the application can detect vehicles in images, we want it to tell us what type of vehicles were found and what color the vehicle are.  The precompiled "vehicle-attributes-recognition-barrier-0010" model included with the OpenVINO™ toolkit is what we will be using to accomplish this.  The sample output below shows the results where the ROI box now appears with the vehicle type (e.g. “car”) and its color (e.g. “black”).  The metrics reported now also include the time to run the vehicle attribute detection model.
 
 ![image alt text](../doc_support/step3_image_1.png)
 
 # Vehicle Attributes Detection Model
 
-The OpenVINO toolkit provides a pre-compiled model for inferring vehicle type and color from an image of a car.  You can find it at:
+The OpenVINO™ toolkit provides a pre-compiled model for inferring vehicle type and color from an image of a car.  You can find it at:
 
 * /opt/intel/computer_vision_sdk/deployment_tools/intel_models/vehicle-attributes-recognition-barrier-0010
 
@@ -51,7 +51,7 @@ Type accuracy: 87.85%</td>
 
 Thanks to the setup work done in Tutorial Step 2, adding the vehicle attributes detection model in this step will just be a matter of deriving a new class from the BaseDetection class, adding an additional command line argument to specify the new model, and updating the application to run and track the statistics for the new model.  This means there will not be as much code to walk through this time.
 
-1. Open up an Xterm window or use an existing window to get to a command shell prompt.
+1. Open up a terminal (such as xterm) or use an existing terminal to get to a command shell prompt.
 
 2. Change to the directory containing Tutorial Step 3:
 
@@ -79,7 +79,7 @@ struct VehicleAttribsDetection : BaseDetection {
 
 ### VehicleAttribsDetection()
 
-On construction of a VehicleAttribsDetection object, the base class constructor is called passing in the model to load specified in the command line argument FLAGS_m_va, the name to be used when we printing out informational messages, and set the batch size to the command line argument FLAFS_n_va.  This initializes the BaseDetection subclass specifically for VehicleAttribsDetection class.
+On construction of a VehicleAttribsDetection object, the base class constructor is called, passing in the model to load specified in the command line argument FLAGS_m_va, the name to be used when we printing out informational messages, and set the batch size to the command line argument FLAFS_n_va.  This initializes the BaseDetection subclass specifically for VehicleAttribsDetection class.
 
 ```cpp
     VehicleAttribsDetection() : BaseDetection(FLAGS_m_va, "Vehicle Attribs", FLAGS_n_va) {}
@@ -163,7 +163,7 @@ fetchResults() will parse the inference results saving them in the "Results" var
 ```
 
 
-3. A loop is used to iterate through all the results that were returned from the model.  From each result the vehicle type and color values are retrieved.
+3. A loop is used to iterate through all the results that were returned from the model.  From each result, the vehicle type and color values are retrieved.
 
 ```cpp
       for (int bi = 0; bi < maxBatch; bi++) {
@@ -270,7 +270,7 @@ The next function we will walkthrough is the VehicleDetection::read() function w
 ```
 
 
-7. Where the model will be loaded is logged, the model is marked as being enabled, and the InferenceEngine::CNNNetwork object containing the model is returned.
+7. Where the model will be loaded is logged.  The model is marked as being enabled, and the InferenceEngine::CNNNetwork object containing the model is returned.
 
 ```cpp
         slog::info << "Loading Vehicle Attribs model to the "<< FLAGS_d_va << " plugin" << slog::endl;
@@ -497,7 +497,7 @@ Now that we have walked through the added code and learned what it does, it is t
 
 ## Build
 
-1. Open up an Xterm window or use an existing window to get to a command shell prompt.
+1. Open up a terminal or use an existing terminal to get to a command shell prompt.
 
 2. Change to the directory containing Tutorial Step 3:
 
@@ -513,7 +513,7 @@ source  /opt/intel/computer_vision_sdk/bin/setupvars.sh
 ```
 
 
-4. Now we need to create a directory to build the tutorial in and change to it.
+4. Now, create a directory to build the tutorial in and change to it.
 
 ```bash
 mkdir build
@@ -531,7 +531,7 @@ make
 
 ## Run
 
-1. Before running, be sure to source the helper script that will make it easier to use environment variables instead of long names to the models:
+1. Before running, be sure to source the helper script.  That will make it easier to use environment variables instead of long names to the models:
 
 ```bash
 source ../../scripts/setupenv.sh 
@@ -574,11 +574,11 @@ Or we can still specify the camera using "cam":
 
 Now that we’ve seen how we have the application running two models to process images and make inferences, let us explore optimizing the performance of the application.  In general, performance increases by spreading the inference work across several devices, assigning the more complex tasks to the fastest devices, and using FP16 precision instead of FP32 whenever possible.  Let us see how the models we are using perform when we start moving them to different devices using the combinations in the following sections that depend upon which devices are available.
 
-Note: It can take a lot of time to run all the commands so the exercise of running and verifying is left to the user.  
+**Note**: It can take a lot of time to run all the commands so the exercise of running and verifying is left to the user.  
 
 ## CPU
 
-Note: In order to run this section only the CPU is required.
+**Note**: In order to run this section only the CPU is required.
 
 Command combinations run:
 
@@ -588,33 +588,11 @@ Command combinations run:
 ```
 
 
-The results seen from the commands should be similar to the table below:
-
-<table>
-  <tr>
-    <td>Command Line #</td>
-    <td>Vehicle</td>
-    <td>Vehicle Attributes</td>
-    <td>Average Main Loop Time (ms)</td>
-    <td>Average Main Loop Time (FPS)</td>
-  </tr>
-  <tr>
-    <td>1</td>
-    <td>CPU,FP32</td>
-    <td>CPU,FP32</td>
-    <td>37.12</td>
-    <td>26.94</td>
-  </tr>
-</table>
-
-
-The above table shows the performance results for test cases run on an Intel i7-7700 CPU with GPU.  
-
 When running just the CPU, all models must be assigned to the CPU which gives only one combination to run.  
 
 ## CPU and GPU
 
-Note: In order to run this section, the GPU is required to be present and correctly configured.
+**Note**: In order to run this section, the GPU is required to be present and correctly configured.
 
 Command combinations run:
 
@@ -634,68 +612,11 @@ Command combinations run:
 ```
 
 
-The results seen from the commands should be similar to the table below:
-
-<table>
-  <tr>
-    <td>Command Line #</td>
-    <td>Vehicle</td>
-    <td>Vehicle Attributes</td>
-    <td>Average Main Loop Time (ms)</td>
-    <td>Average Main Loop Time (FPS)</td>
-  </tr>
-  <tr>
-    <td>1</td>
-    <td>GPU,FP32</td>
-    <td>GPU,FP32</td>
-    <td>22.56</td>
-    <td>44.32</td>
-  </tr>
-  <tr>
-    <td>2</td>
-    <td>GPU,FP32</td>
-    <td>CPU,FP32</td>
-    <td>20.69</td>
-    <td>48.34</td>
-  </tr>
-  <tr>
-    <td>3</td>
-    <td>CPU,FP32</td>
-    <td>GPU,FP32</td>
-    <td>17.90</td>
-    <td>55.87</td>
-  </tr>
-  <tr>
-    <td>4</td>
-    <td>GPU,FP16</td>
-    <td>GPU,FP16</td>
-    <td>17.41</td>
-    <td>57.43</td>
-  </tr>
-  <tr>
-    <td>5</td>
-    <td>CPU,FP32</td>
-    <td>GPU,FP16</td>
-    <td>16.65</td>
-    <td>60.07</td>
-  </tr>
-  <tr>
-    <td>6</td>
-    <td>GPU,FP16</td>
-    <td>CPU,FP32</td>
-    <td>16.62</td>
-    <td>60.17</td>
-  </tr>
-</table>
-
-
-The above table shows the performance results for test cases run on an Intel i7-7700 CPU with GPU.  
-
-From measuring total time of the application, we see that the fastest results are for the combinations when offloading one model from the CPU and running on the GPU using FP16.
+Performance is measured as the average time for the main loop to process all the input frames.  The average time, and inverse as frames-per-second (fps), with number of frames processed are reported on exit.  The results seen for the configurations listed above should improve starting from the first all the way to the last.  From the end of the list, we see that the fastest results are for the combinations when offloading one model from the CPU and running on the GPU using FP16.
 
 ## CPU and Myriad
 
-Note: In order to run this section, the Myriad (Movidius Neural Compute Stick) is required to be present and correctly configured.
+**Note**: In order to run this section, the Myriad (Movidius™ Neural Compute Stick) is required to be present and correctly configured.
 
 Command combinations run:
 
@@ -709,49 +630,11 @@ Command combinations run:
 ```
 
 
-The results seen from the commands should be similar to the table below:
-
-<table>
-  <tr>
-    <td>Command Line #</td>
-    <td>Vehicle</td>
-    <td>Vehicle Attributes</td>
-    <td>Average Main Loop Time (ms)</td>
-    <td>Average Main Loop Time (FPS)</td>
-  </tr>
-  <tr>
-    <td>1</td>
-    <td>MYRIAD,FP16</td>
-    <td>MYRIAD,FP16</td>
-    <td>150.49</td>
-    <td>6.64</td>
-  </tr>
-  <tr>
-    <td>2</td>
-    <td>MYRIAD,FP16</td>
-    <td>CPU,FP32</td>
-    <td>105.26</td>
-    <td>9.50</td>
-  </tr>
-  <tr>
-    <td>3</td>
-    <td>CPU,FP32</td>
-    <td>MYRIAD,FP16</td>
-    <td>50.11</td>
-    <td>19.95</td>
-  </tr>
-</table>
-
-
-The above table shows the performance results for test cases run on an Intel i7-7700 CPU with GPU with Myriad connected in USB 2.0 mode.
-
-  
-
-From measuring total time of the application, we see the fastest results are for the combination  when offloading from the CPU the vehicle attributes model running on the MYRIAD.
+Performance is measured as the average time for the main loop to process all the input frames.  The average time, and inverse as frames-per-second (fps), with number of frames processed are reported on exit.  The results seen for the configurations listed above should improve starting from the first all the way to the last.  From the end of the list, we see the fastest results are for the combination when offloading from the CPU the vehicle attributes model running on the MYRIAD.
 
 ## GPU and Myriad
 
-Note: In order to run this section, the GPU and Myriad (Movidius Neural Compute Stick) are required to be present and correctly configured.
+**Note**: In order to run this section, the GPU and Myriad (Movidius™ Neural Compute Stick) are required to be present and correctly configured.
 
 Command combinations run:
 
@@ -767,50 +650,7 @@ Command combinations run:
 ```
 
 
-The results seen from the commands should be similar to the table below:
-
-<table>
-  <tr>
-    <td>Command Line #</td>
-    <td>Vehicle</td>
-    <td>Vehicle Attributes</td>
-    <td>Average Main Loop Time (ms)</td>
-    <td>Average Main Loop Time (FPS)</td>
-  </tr>
-  <tr>
-    <td>1</td>
-    <td>MYRIAD,FP16</td>
-    <td>GPU,FP32</td>
-    <td>117.76</td>
-    <td>8.49</td>
-  </tr>
-  <tr>
-    <td>2</td>
-    <td>MYRIAD,FP16</td>
-    <td>GPU,FP16</td>
-    <td>117.73</td>
-    <td>8.49</td>
-  </tr>
-  <tr>
-    <td>3</td>
-    <td>GPU,FP32</td>
-    <td>MYRIAD,FP16</td>
-    <td>66.20</td>
-    <td>15.11</td>
-  </tr>
-  <tr>
-    <td>4</td>
-    <td>GPU,FP16</td>
-    <td>MYRIAD,FP16</td>
-    <td>63.35</td>
-    <td>15.79</td>
-  </tr>
-</table>
-
-
-The above table shows the performance results for test cases run on an Intel i7-7700 CPU with GPU with Myriad connected in USB 2.0 mode.  
-
-From measuring total time of the application, we see the fastest results are for the combination  when offloading from the CPU the vehicle model running on GPU using FP16 and the vehicle attributes model running on the MYRIAD.
+Performance is measured as the average time for the main loop to process all the input frames.  The average time, and inverse as frames-per-second (fps), with number of frames processed are reported on exit.  The results seen for the configurations listed above should improve starting from the first all the way to the last.  From the end of the list, we see the fastest results are for the combination  when offloading from the CPU the vehicle model running on GPU using FP16 and the vehicle attributes model running on the MYRIAD.
 
 # Conclusion
 

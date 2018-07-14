@@ -16,7 +16,7 @@ In the image above, the three axes intersect in the center of the head.  The blu
 
 # Head Pose Estimation Model
 
-The OpenVINO toolkit includes a pre-compiled model for estimating head pose from an image of a face.  You can find it at:
+The OpenVINO™ toolkit includes a pre-compiled model for estimating head pose from an image of a face.  You can find it at:
 
 * /opt/intel/computer_vision_sdk/deployment_tools/intel_models/head-pose-estimation-adas-0001
 
@@ -55,7 +55,7 @@ Roll: 4.6 ± 5.6</td>
 
 As we saw in Tutorial Step 3, adding a new model is a relatively straight forward process.  To add another model is just a matter of deriving a new class for head pose estimation, add a new command line parameter, updating the application to run and track statistics for the new model, and then finally take those results and overlay them on the face.  Let us walkthrough the source code used to accomplish that.
 
-1. Open up an Xterm window or use an existing window to get to a command shell prompt.
+1. Open up a terminal (such as xterm) or use an existing terminal to get to a command shell prompt.
 
 2. Change to the directory containing Tutorial Step 4:
 
@@ -66,7 +66,7 @@ cd tutorials/face_detection_tutorial/step_4
 
 3. Open the files "main.cpp" and “face_detection.hpp” in the editor of your choice such as ‘gedit’, ‘gvim’, or ‘vim’.
 
-## HeadPoseDetection 
+## HeadPoseDetection
 
 1. The HeadPoseDetection class is derived from BaseDetection, and the member variables it uses are declared.
 
@@ -92,7 +92,7 @@ struct HeadPoseDetection : BaseDetection {
 ```
 
 
-3. The operator[] function is defiend to give a convenient way to retrieve the head pose results from the data contained in the inference request’s output blob.  The index to the appropriate locations in the blob is calculated for the batch item.  Then a result object containing the data read for the batch index is returned.
+3. The operator[] function is defined to give a convenient way to retrieve the head pose results from the data contained in the inference request’s output blob.  The index to the appropriate locations in the blob is calculated for the batch item.  Then, a result object containing the data read for the batch index is returned.
 
 ```cpp
     Results operator[] (int idx) const {
@@ -467,7 +467,7 @@ Now let us build and run the complete application and see how it runs all three 
 
 ## Build
 
-1. Open up an Xterm window or use an existing window to get to a command shell prompt.
+1. Open up a terminal (such as xterm) or use an existing terminal to get to a command shell prompt.
 
 2. Change to the directory containing Tutorial Step 4:
 
@@ -476,7 +476,7 @@ cd tutorials/face_detection_tutorial/step_4
 ```
 
 
-3. The first step is to configure the build environment for the OpenVINO toolkit by running the "setupvars.sh" script.
+3. The first step is to configure the build environment for the OpenVINO™ toolkit by running the "setupvars.sh" script.
 
 ```bash
 source  /opt/intel/computer_vision_sdk/bin/setupvars.sh
@@ -491,7 +491,7 @@ cd build
 ```
 
 
-5. The last thing we need to do before compiling is to configure the build settings and build the executable.  We do this by running CMake to set the build target and file locations.  Then we run Make to build the executable.
+5. The last thing we need to do before compiling is to configure the build settings and build the executable.  We do this by running CMake to set the build target and file locations.  Then, we run Make to build the executable.
 
 ```bash
 cmake -DCMAKE_BUILD_TYPE=Release ../
@@ -508,7 +508,7 @@ source ../../scripts/setupenv.sh
 ```
 
 
-2. You now have the executable file to run ./intel64/Release/face_detection_tutorial.  In order to load the head pose detection model, the "-m_hp" flag needs to be added  followed by the full path to the model.  First let us see how it works on a single image file:
+2. You now have the executable file to run ./intel64/Release/face_detection_tutorial.  In order to load the head pose detection model, the "-m_hp" flag needs to be added  followed by the full path to the model.  First, let us see how it works on a single image file:
 
 ```bash
 ./intel64/Release/face_detection_tutorial -m $mFDA32 -m_ag $mAG32 -m_hp $mHP32 -i ../../data/face.jpg
@@ -568,7 +568,7 @@ The easy answer is "yes."  The more complex answer is that it can be more comple
 
 ## Are Some Devices Better for Certain Types of Models Than Other Devices?
 
-Again, the easy answer is "yes."  The truth is that it can be difficult to know what model will run best on what device without actually loading the model on a device and seeing how it performs.  This is one of the most powerful features of the Inference Engine and the OpenVINO toolkit.  It is very easy to write applications that allow you to get up and running quickly to test many combinations of models and devices, without requiring significant code changes or even recompiling.  Our face detection application can do exactly that.  So let us see what we can learn about how these models work on different devices by running through the options.
+Again, the easy answer is "yes."  The truth is that it can be difficult to know what model will run best on what device without actually loading the model on a device and seeing how it performs.  This is one of the most powerful features of the Inference Engine and the OpenVINO™ toolkit.  It is very easy to write applications that allow you to get up and running quickly to test many combinations of models and devices, without requiring significant code changes or even recompiling.  Our face detection application can do exactly that.  So let us see what we can learn about how these models work on different devices by running through the options.
 
 ### Command Line and All the Arguments
 
@@ -611,23 +611,23 @@ Let us look at a sample command line that uses all the parameters so that we can
 ```
 
 
-From this command line, we see that the application will load the FP32 face detection model onto the GPU, the FP16 age and gender model on the Myriad, using a batch size of 1, and the FP16 head pose model onto the GPU, with a batch size of 16.  We also specify "-i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4" so that we have a “known” data set to do our performance tests with.  This MP4 video file used from the OpenVINO toolkit samples is a hand-drawn face with a moving camera.  
+From this command line, we see that the application will load the FP32 face detection model onto the GPU, the FP16 age and gender model on the Myriad, using a batch size of 1, and the FP16 head pose model onto the GPU, with a batch size of 16.  We also specify "-i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4" so that we have a “known” data set to do our performance tests with.  This MP4 video file used from the OpenVINO™ toolkit samples is a hand-drawn face with a moving camera.  
 
 You can see that it is easy to change the model precision to match the device you want to run it on by changing the model to use the FP16 or FP32 using "16" and “32” built into the names of the variables..  It is easy to make up several test cases to see how the application and each of the inference model, perform.  Just remember that all models run on the CPU must be FP32, and all models run on the Myriad must be FP16.  Models run on the Myriad must also have their batch size set to 1.  Models run on the GPU can be either FP16 or FP32.
 
 ### What Kind of Performance Should I See?
 
-That depends on many things, from the specific devices themselves, to the combination of models and devices that you specify, to the other applications running on the target while you collect and process images.  For this tutorial, an Intel i7-7700 CPU with GPU and USB Movidius Neural Compute Stick limited to USB 2.0 were used.  The exact data will vary from what appears in the chart below, however the general trends should be the same.  That said, let us take a look at some of the performance counts we observed.  
+That depends on many things, from the specific devices themselves, to the combination of models and devices that you specify, to the other applications running on the target while you collect and process images.  For this tutorial, an Intel® i7-7700 CPU with GPU and USB Intel® Movidius™ Neural Compute Stick limited to USB 2.0 were used.  Results will vary when using other devices, however the general trends should be the same.  That said, let us take a look at some of the performance counts we observed.  
 
 The performance reported in milliseconds and using the "wallclock*" and “totalFramse” variables in the code that time the main loop.  When the application exits, it reports the wallclock time and average time and FPS of main loop for the input image source used.
 
 The following sections go through the command combinations for different devices depending upon which devices are available.
 
-Note: It can take a lot of time to run all the commands so the exercise of running and verifying is left to the user.  
+**Note**: It can take a lot of time to run all the commands so the exercise of running and verifying is left to the user.  
 
 #### CPU
 
-Note: In order to run this section only the CPU is required.
+**Note**: In order to run this section only the CPU is required.
 
 Command combinations run:
 
@@ -637,35 +637,11 @@ Command combinations run:
 ```
 
 
-The results seen from the commands should be similar to the table below:
-
-<table>
-  <tr>
-    <td>Command Line # </td>
-    <td>Face Detection</td>
-    <td>Age Gender</td>
-    <td>Head Pose</td>
-    <td>Average Main Loop Time (ms)</td>
-    <td>Average Main Loop Time (FPS)</td>
-  </tr>
-  <tr>
-    <td>1</td>
-    <td>CPU,FP32</td>
-    <td>CPU,FP32</td>
-    <td>CPU,FP32</td>
-    <td>68.01</td>
-    <td>14.70</td>
-  </tr>
-</table>
-
-
-The above table shows the performance results for test cases run on an Intel i7-7700 CPU with GPU.  
-
 When running just the CPU, all models must be assigned to the CPU which gives only one combination to run.  
 
 #### CPU and GPU
 
-Note: In order to run this section, the GPU is required to be present and correctly configured.
+**Note**: In order to run this section, the GPU is required to be present and correctly configured.
 
 Command combinations run:
 
@@ -701,139 +677,11 @@ Command combinations run:
 ```
 
 
-The results seen from the commands should be similar to the table below:
-
-<table>
-  <tr>
-    <td>Command Line # </td>
-    <td>Face Detection</td>
-    <td>Age Gender</td>
-    <td>Head Pose</td>
-    <td>Average Main Loop Time (ms)</td>
-    <td>Average Main Loop Time (FPS)</td>
-  </tr>
-  <tr>
-    <td>1</td>
-    <td>GPU,FP32</td>
-    <td>CPU,FP32</td>
-    <td>CPU,FP32</td>
-    <td>55.18</td>
-    <td>18.12</td>
-  </tr>
-  <tr>
-    <td>2</td>
-    <td>CPU,FP32</td>
-    <td>CPU,FP32</td>
-    <td>GPU,FP32</td>
-    <td>47.72</td>
-    <td>20.96</td>
-  </tr>
-  <tr>
-    <td>3</td>
-    <td>CPU,FP32</td>
-    <td>CPU,FP32</td>
-    <td>GPU,FP16</td>
-    <td>47.05</td>
-    <td>21.25</td>
-  </tr>
-  <tr>
-    <td>4</td>
-    <td>CPU,FP32</td>
-    <td>GPU,FP32</td>
-    <td>CPU,FP32</td>
-    <td>46.58</td>
-    <td>21.47</td>
-  </tr>
-  <tr>
-    <td>5</td>
-    <td>GPU,FP16</td>
-    <td>CPU,FP32</td>
-    <td>CPU,FP32</td>
-    <td>46.54</td>
-    <td>21.49</td>
-  </tr>
-  <tr>
-    <td>6</td>
-    <td>CPU,FP32</td>
-    <td>GPU,FP16</td>
-    <td>CPU,FP32</td>
-    <td>46.21</td>
-    <td>21.64</td>
-  </tr>
-  <tr>
-    <td>7</td>
-    <td>GPU,FP32</td>
-    <td>GPU,FP32</td>
-    <td>GPU,FP32</td>
-    <td>38.63</td>
-    <td>25.89</td>
-  </tr>
-  <tr>
-    <td>8</td>
-    <td>GPU,FP32</td>
-    <td>CPU,FP32</td>
-    <td>GPU,FP32</td>
-    <td>38.60</td>
-    <td>25.90</td>
-  </tr>
-  <tr>
-    <td>9</td>
-    <td>GPU,FP32</td>
-    <td>GPU,FP32</td>
-    <td>CPU,FP32</td>
-    <td>38.29</td>
-    <td>26.12</td>
-  </tr>
-  <tr>
-    <td>10</td>
-    <td>GPU,FP16</td>
-    <td>CPU,FP32</td>
-    <td>GPU,FP16</td>
-    <td>33.52</td>
-    <td>29.83</td>
-  </tr>
-  <tr>
-    <td>11</td>
-    <td>GPU,FP16</td>
-    <td>GPU,FP16</td>
-    <td>CPU,FP32</td>
-    <td>33.28</td>
-    <td>30.05</td>
-  </tr>
-  <tr>
-    <td>12</td>
-    <td>GPU,FP16</td>
-    <td>GPU,FP16</td>
-    <td>GPU,FP16</td>
-    <td>33.20</td>
-    <td>30.12</td>
-  </tr>
-  <tr>
-    <td>13</td>
-    <td>CPU,FP32</td>
-    <td>GPU,FP32</td>
-    <td>GPU,FP32</td>
-    <td>25.32</td>
-    <td>39.49</td>
-  </tr>
-  <tr>
-    <td>14</td>
-    <td>CPU,FP32</td>
-    <td>GPU,FP16</td>
-    <td>GPU,FP16</td>
-    <td>25.02</td>
-    <td>39.97</td>
-  </tr>
-</table>
-
-
-The above table shows the performance results for test cases run on an Intel i7-7700 CPU with GPU.  
-
-From measuring total time of the application, we see that the fastest results are for the combinations when offloading two models from the CPU and running the age and gender along with head pose models on the GPU using FP16.
+Performance is measured as the average time for the main loop to process all the input frames.  The average time, and inverse as frames-per-second (fps), with number of frames processed are reported on exit.  The results seen for the configurations listed above should improve starting from the first all the way to the last.  From the end of the list, we see that the fastest results are for the combinations when offloading two models from the CPU and running the age and gender along with head pose models on the GPU using FP16.
 
 #### CPU and Myriad
 
-Note: In order to run this section, the Myriad (Movidius Neural Compute Stick) is required to be present and correctly configured.
+**Note**: In order to run this section, the Myriad (Intel® Movidius™ Neural Compute Stick) is required to be present and correctly configured.
 
 Command combinations run:
 
@@ -853,75 +701,11 @@ Command combinations run:
 ```
 
 
-The results seen from the commands should be similar to the table below:
-
-<table>
-  <tr>
-    <td>Command Line # </td>
-    <td>Face Detection</td>
-    <td>Age Gender</td>
-    <td>Head Pose</td>
-    <td>Average Main Loop Time (ms)</td>
-    <td>Average Main Loop Time (FPS)</td>
-  </tr>
-  <tr>
-    <td>1</td>
-    <td>MYRIAD,FP16</td>
-    <td>CPU,FP32</td>
-    <td>CPU,FP32</td>
-    <td>424.90</td>
-    <td>2.35</td>
-  </tr>
-  <tr>
-    <td>2</td>
-    <td>MYRIAD,FP16</td>
-    <td>MYRIAD,FP16</td>
-    <td>CPU,FP32</td>
-    <td>392.84</td>
-    <td>2.55</td>
-  </tr>
-  <tr>
-    <td>3</td>
-    <td>MYRIAD,FP16</td>
-    <td>CPU,FP32</td>
-    <td>MYRIAD,FP16</td>
-    <td>388.00</td>
-    <td>2.58</td>
-  </tr>
-  <tr>
-    <td>4</td>
-    <td>CPU,FP32</td>
-    <td>CPU,FP32</td>
-    <td>MYRIAD,FP16</td>
-    <td>52.80</td>
-    <td>18.94</td>
-  </tr>
-  <tr>
-    <td>5</td>
-    <td>CPU,FP32</td>
-    <td>MYRIAD,FP16</td>
-    <td>CPU,FP32</td>
-    <td>50.07</td>
-    <td>19.97</td>
-  </tr>
-  <tr>
-    <td>6</td>
-    <td>CPU,FP32</td>
-    <td>MYRIAD,FP16</td>
-    <td>MYRIAD,FP16</td>
-    <td>42.22</td>
-    <td>23.68</td>
-  </tr>
-</table>
-
-
-The above table shows the performance results for test cases run on an Intel i7-7700 CPU with GPU with Myriad connected in USB 2.0 mode.  
-
-From measuring total time of the application, we see that the fastest results are for the combinations when offloading two models from the CPU and running the age and gender along with head pose models on the Myriad.
+Performance is measured as the average time for the main loop to process all the input frames.  The average time, and inverse as frames-per-second (fps), with number of frames processed are reported on exit.  The results seen for the configurations listed above should improve starting from the first all the way to the last.  From the end of the list, we see that the fastest results are for the combinations when offloading two models from the CPU and running the age and gender along with head pose models on the Myriad.
 
 #### CPU, GPU, and Myriad
 
-Note: In order to run this section, the GPU and Myriad (Movidius Neural Compute Stick) are required to be present and correctly configured.
+**Note**: In order to run this section, the GPU and Myriad (Movidius™ Neural Compute Stick) are required to be present and correctly configured.
 
 Command combinations run:
 
@@ -961,151 +745,7 @@ Command combinations run:
 ```
 
 
-The results seen from the commands should be similar to the table below:
-
-<table>
-  <tr>
-    <td>Command Line # </td>
-    <td>Face Detection</td>
-    <td>Age Gender</td>
-    <td>Head Pose</td>
-    <td>Average Main Loop Time (ms)</td>
-    <td>Average Main Loop Time (FPS)</td>
-  </tr>
-  <tr>
-    <td>1</td>
-    <td>MYRIAD,FP16</td>
-    <td>GPU,FP32</td>
-    <td>CPU,FP32</td>
-    <td>378.49</td>
-    <td>2.64</td>
-  </tr>
-  <tr>
-    <td>2</td>
-    <td>MYRIAD,FP16</td>
-    <td>CPU,FP32</td>
-    <td>GPU,FP32</td>
-    <td>377.73</td>
-    <td>2.65</td>
-  </tr>
-  <tr>
-    <td>3</td>
-    <td>MYRIAD,FP16</td>
-    <td>CPU,FP32</td>
-    <td>GPU,FP16</td>
-    <td>377.69</td>
-    <td>2.65</td>
-  </tr>
-  <tr>
-    <td>4</td>
-    <td>MYRIAD,FP16</td>
-    <td>GPU,FP16</td>
-    <td>CPU,FP32</td>
-    <td>377.86</td>
-    <td>2.65</td>
-  </tr>
-  <tr>
-    <td>5</td>
-    <td>MYRIAD,FP16</td>
-    <td>GPU,FP32</td>
-    <td>GPU,FP32</td>
-    <td>374.70</td>
-    <td>2.67</td>
-  </tr>
-  <tr>
-    <td>6</td>
-    <td>MYRIAD,FP16</td>
-    <td>GPU,FP16</td>
-    <td>GPU,FP16</td>
-    <td>374.76</td>
-    <td>2.67</td>
-  </tr>
-  <tr>
-    <td>7</td>
-    <td>GPU,FP32</td>
-    <td>MYRIAD,FP16</td>
-    <td>MYRIAD,FP16</td>
-    <td>76.68</td>
-    <td>13.04</td>
-  </tr>
-  <tr>
-    <td>8</td>
-    <td>GPU,FP16</td>
-    <td>MYRIAD,FP16</td>
-    <td>MYRIAD,FP16</td>
-    <td>73.78</td>
-    <td>13.55</td>
-  </tr>
-  <tr>
-    <td>9</td>
-    <td>GPU,FP32</td>
-    <td>MYRIAD,FP16</td>
-    <td>CPU,FP32</td>
-    <td>47.63</td>
-    <td>20.99</td>
-  </tr>
-  <tr>
-    <td>10</td>
-    <td>GPU,FP32</td>
-    <td>CPU,FP32</td>
-    <td>MYRIAD,FP16</td>
-    <td>45.77</td>
-    <td>21.85</td>
-  </tr>
-  <tr>
-    <td>11</td>
-    <td>GPU,FP16</td>
-    <td>MYRIAD,FP16</td>
-    <td>CPU,FP32</td>
-    <td>42.96</td>
-    <td>23.28</td>
-  </tr>
-  <tr>
-    <td>12</td>
-    <td>GPU,FP16</td>
-    <td>CPU,FP32</td>
-    <td>MYRIAD,FP16</td>
-    <td>41.36</td>
-    <td>24.18</td>
-  </tr>
-  <tr>
-    <td>13</td>
-    <td>CPU,FP32</td>
-    <td>MYRIAD,FP16</td>
-    <td>GPU,FP16</td>
-    <td>33.33</td>
-    <td>30.00</td>
-  </tr>
-  <tr>
-    <td>14</td>
-    <td>CPU,FP32</td>
-    <td>MYRIAD,FP16</td>
-    <td>GPU,FP32</td>
-    <td>33.22</td>
-    <td>30.10</td>
-  </tr>
-  <tr>
-    <td>15</td>
-    <td>CPU,FP32</td>
-    <td>GPU,FP16</td>
-    <td>MYRIAD,FP16</td>
-    <td>31.28</td>
-    <td>31.97</td>
-  </tr>
-  <tr>
-    <td>16</td>
-    <td>CPU,FP32</td>
-    <td>GPU,FP32</td>
-    <td>MYRIAD,FP16</td>
-    <td>31.03</td>
-    <td>32.23</td>
-  </tr>
-</table>
-
-
-The above table shows the performance results for test cases run on an Intel i7-7700 CPU with GPU with Myriad connected in USB 2.0 mode.  
-
-From measuring total time of the application, we see the fastest results are for the combination  when offloading from the CPU the age and gender model running on GPU and the head pose model running on the MYRIAD.
+Performance is measured as the average time for the main loop to process all the input frames.  The average time, and inverse as frames-per-second (fps), with number of frames processed are reported on exit.  The results seen for the configurations listed above should improve starting from the first all the way to the last.  From the end of the list, we see the fastest results are for the combination  when offloading from the CPU the age and gender model running on GPU and the head pose model running on the MYRIAD.
 
 #### Summary
 
@@ -1121,7 +761,7 @@ Something to note too is that the Myriad is only capable of running two analysis
 
 # Conclusion
 
-By adding the head pose estimation model to the application from Tutorial Step 3, you have now seen the final step in assembling the full application.  This again shows the power the OpenVINO toolkit brings to applications by quickly being able to add another inference model.  We also discussed how to load the inference models onto different devices to distribute the workload and find the optimal device to get the best performance from the models.
+By adding the head pose estimation model to the application from Tutorial Step 3, you have now seen the final step in assembling the full application.  This again shows the power the OpenVINO™ toolkit brings to applications by quickly being able to add another inference model.  We also discussed how to load the inference models onto different devices to distribute the workload and find the optimal device to get the best performance from the models.
 
 # Navigation
 

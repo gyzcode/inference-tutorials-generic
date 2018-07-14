@@ -36,7 +36,7 @@ In Car Detection Tutorial Step 4, we will see how the code from Tutorial Step 3 
 
 In the Key Concepts section we learned the difference between the synchronous and asynchronous API.  Here we will see the changes necessary for asynchronous applied.  Below are code walkthroughs of the changes made to code from Tutorial Step 3 focusing primarily on the changes made rather than the entire code when possible.
 
-1. Open up an Xterm window or use an existing window to get to a command shell prompt.
+1. Open up a terminal window or use an existing terminal to get to a command shell prompt.
 
 2. Change to the directory containing Tutorial Step 4:
 
@@ -283,7 +283,7 @@ enqueue() has the changes:
 
 fetchResults() has the changes:
 
-1. "resultsFetched" has been replaced with check that “outputRequest” is valid
+1. "resultsFetched" has been replaced with check that “outputRequest” is valid:
 
 ```cpp
         if (nullptr == outputRequest) {
@@ -441,7 +441,7 @@ The main loop sees changes to add new pipeline stages and to make each stage to 
 
 #### Pipeline Stage #0: Prepare and Start Inferring a Batch of Frames
 
-Stage #0 from Tutorial Step 3 does both submit and wait for a inference request.  For asynchronous operation, it is broken up into Stage #0 to do the submit and Stage #1 to do the wait.  The new Stage #0 looks very much like the first half up through submitting the inference request with a couple changes:
+Stage #0 from Tutorial Step 3 does both submit and wait for a inference request.  For asynchronous operation, it is broken up into Stage #0 to do the submit and Stage #1 to do the wait.  The new Stage #0 looks very much like the first half, up through submitting the inference request with a couple changes:
 
 1. In addition to if there are input frames still available ("haveMoreFrames"), Stage #0 now also checks to see if an input frame buffer is available via !inputFramePtrs.empty()  and that there is a request available to use via VehicleDetection.canSubmitRequest():
 
@@ -512,7 +512,8 @@ Stage #1 is responsible for checking for and then processing vehicle inference r
 
 5. Each input frame in the batch that was input to the vehicle detection model now becomes its own input frame going forward down the pipeline:
 
-```				// prepare a FramePipelineFifoItem for each batched frame to get its detection results
+```Cpp
+				// prepare a FramePipelineFifoItem for each batched frame to get its detection results
 				std::vector<FramePipelineFifoItem> batchedFifoItems;
 				for (auto && bFrame : ps0s1i.batchOfInputFrames) {
 					FramePipelineFifoItem fpfi;
@@ -685,7 +686,7 @@ Stage #3 is responsible for checking for and then processing vehicle attributes 
 ```
 
 
-5. First a check is made to see if there is work to be done.  When running synchronously (!runningAsync) and if there is a request in progress, then enter the stage to wait for results.  When running asynchronously, a check is made to see if a result is ready, then the stage is entered to wait for the result (which will be a short wait).
+5. First, a check is made to see if there is work to be done.  When running synchronously (!runningAsync) and if there is a request in progress, then enter the stage to wait for results.  When running asynchronously, a check is made to see if a result is ready, then the stage is entered to wait for the result (which will be a short wait).
 
 ```Cpp
 						if ((!runningAsync && VehicleAttribs.requestsInProcess()) || VehicleAttribs.resultIsReady()) {
@@ -790,11 +791,11 @@ Finally, the end of the main loop now checks to see that all stages are done bef
 
 # Building and Running
 
-Now let us build and run the complete application and see how it runs all three analysis models.
+Now,  let us build and run the complete application and see how it runs all three analysis models.
 
 ## Build
 
-1. Open up an Xterm window or use an existing window to get to a command shell prompt.
+1. Open up a terminal or use an existing terminal to get to a command shell prompt.
 
 2. Change to the directory containing Tutorial Step 4:
 
@@ -810,7 +811,7 @@ source  /opt/intel/computer_vision_sdk/bin/setupvars.sh
 ```
 
 
-4. Now we need to create a directory to build the tutorial in and change to it.
+4. Now, create a directory to build the tutorial in and change to it.
 
 ```bash
 mkdir build
@@ -818,7 +819,7 @@ cd build
 ```
 
 
-5. The last thing we need to do before compiling is to configure the build settings and build the executable.  We do this by running CMake to set the build target and file locations.  Then we run Make to build the executable.
+5. The last thing we need to do before compiling is to configure the build settings and build the executable.  We do this by running CMake to set the build target and file locations.  Then run Make to build the executable.
 
 ```bash
 cmake -DCMAKE_BUILD_TYPE=Release ../
@@ -828,7 +829,7 @@ make
 
 ## Run
 
-1. Before running each of the following sections, be sure to source the helper script that will make it easier to use environment variables instead of long names to the models:
+1. Before running each of the following sections, be sure to source the helper script.  That will make it easier to use environment variables instead of long names to the models:
 
 ```bash
 source ../../scripts/setupenv.sh 
@@ -837,7 +838,7 @@ source ../../scripts/setupenv.sh
 
 ### CPU
 
-Note: In order to run this section only the CPU is required.
+**Note**: In order to run this section only the CPU is required.
 
 1. First, let us see how it works on a single image file using default synchronous mode.
 
@@ -846,7 +847,7 @@ Note: In order to run this section only the CPU is required.
 ```
 
 
-2. The output window will show the image overlaid with colored rectangles over the cars and license plate along with and the timing statistics for computing the results.  Now run the command again in asynchronous mode using the option "-n_async 2":
+2. The output window will show the image overlaid with colored rectangles over the cars and license plate along with and the timing statistics for computing the results.  Run the command again in asynchronous mode using the option "-n_async 2":
 
 ```bash
 ./intel64/Release/car_detection_tutorial -m $mVLP32 -m_va $mVA32 -i ../../data/car_1.bmp -n_async 2
@@ -873,9 +874,9 @@ Note: In order to run this section only the CPU is required.
 
 ### CPU and GPU
 
-Note: In order to run this section, the GPU is required to be present and correctly configured.
+**Note**: In order to run this section, the GPU is required to be present and correctly configured.
 
-1. Now let us shift running the models to another device, the GPU.  First we run in synchronous mode then asynchronous with increasing -n_async values using the commands:
+1. Now we shift running the models to another device, the GPU.  First we run in synchronous mode then asynchronous with increasing -n_async values using the commands:
 
 ```Bash
 ./intel64/Release/car_detection_tutorial -m $mVLP16 -d GPU -m_va $mVA16 -d_va GPU -i ../../data/car-detection.mp4 -n_async 1

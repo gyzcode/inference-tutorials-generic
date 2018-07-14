@@ -8,7 +8,7 @@
 
 # Introduction
 
-Welcome to the Face Detection Tutorial Step 2.  This is the step of the tutorial where it gets its name by processing image data and detecting faces.  We get this ability by having the application use the Inference Engine to load and run the Intermediate Representation (IR) of a CNN model on the selected hardware device CPU, GPU, or Myriad to perform face detection.  You may recall from the OpenVINO toolkit overview, an IR model is a compiled version of a CNN (e.g. from Caffe) that has been optimized using the Model Optimizer for use with the Inference Engine.  This is where we start to see the power of the OpenVINO toolkit to load and run models on devices.  In this tutorial step, we will use the Inference Engine to run a pre-compiled model to do face detection on the input image and then output the results.  
+Welcome to the Face Detection Tutorial Step 2.  This is the step of the tutorial where it gets its name by processing image data and detecting faces.  We get this ability by having the application use the Inference Engine to load and run the Intermediate Representation (IR) of a CNN model on the selected hardware device CPU, GPU, or Myriad to perform face detection.  You may recall from the OpenVINO™ toolkit overview, an IR model is a compiled version of a CNN (e.g. from Caffe) that has been optimized using the Model Optimizer for use with the Inference Engine.  This is where we start to see the power of the OpenVINO™ toolkit to load and run models on devices.  In this tutorial step, we will use the Inference Engine to run a pre-compiled model to do face detection on the input image and then output the results.  
 
 A sample output showing the results where a Region of Interest (ROI) box appears around the detected face below.  The metrics reported include the time for OpenCV capture and display along with the time to run the face detection model.  The detected face gets a box around it along with a label as shown below.
 
@@ -16,7 +16,7 @@ A sample output showing the results where a Region of Interest (ROI) box appears
 
 # Face Detection Models
 
-The OpenVINO toolkit includes two pre-compiled face detection models located at:
+The OpenVINO™ toolkit includes two pre-compiled face detection models located at:
 
 * /opt/intel/computer_vision_sdk/deployment_tools/intel_models/face-detection-adas-0001
 
@@ -26,7 +26,7 @@ The OpenVINO toolkit includes two pre-compiled face detection models located at:
 
       * FP32: /opt/intel/computer_vision_sdk/deployment_tools/intel_models/face-detection-adas-0001/FP32/face-detection-adas-0001.xml
 
-   * More detail may be found the OpenVINO toolkit at:       file:///opt/intel/computer_vision_sdk/deployment_tools/intel_models/face-detection-adas-0001/description/face-detection-adas-0001.html
+   * More detail may be found the OpenVINO™ toolkit at:       file:///opt/intel/computer_vision_sdk/deployment_tools/intel_models/face-detection-adas-0001/description/face-detection-adas-0001.html
 
 * /opt/intel/computer_vision_sdk/deployment_tools/intel_models/face-detection-retail-0004
 
@@ -36,7 +36,7 @@ The OpenVINO toolkit includes two pre-compiled face detection models located at:
 
       * FP32: /opt/intel/computer_vision_sdk/deployment_tools/intel_models/face-detection-retail-0004/FP32/face-detection-retail-0004.xml
 
-   * More detail may be found in the OpenVINO toolkit at: file:///opt/intel/computer_vision_sdk/deployment_tools/intel_models/face-detection-retail-0004/description/face-detection-retail-0004.html
+   * More detail may be found in the OpenVINO™ toolkit at: file:///opt/intel/computer_vision_sdk/deployment_tools/intel_models/face-detection-retail-0004/description/face-detection-retail-0004.html
 
 Each model may be used to perform face detection, the difference is how complex each underlying model is for the results it is capable of producing as shown in the summary below (for more details, see the descriptions HTML pages for each model): 
 
@@ -139,23 +139,30 @@ for (auto && option : cmdOptions) {
          slog::info << "Loading plugin " << deviceName << slog::endl;
             InferencePlugin plugin = PluginDispatcher({"../../../lib/intel64", ""}).getPluginByDevice(deviceName);
 ```
+
+
 6. The plugin details are printed out:
 
 ```cpp 
            /** Printing plugin version **/
             printPluginVersion(plugin, std::cout);
 ```
+
+
 7. The created plugin is stored to be found by device name later:
 
 ```cpp
             pluginsForDevices[deviceName] = plugin;
 ```
+
+
 8. Finally the model is loaded passing in the plugin created for the specified device, again using the name given same as it appears on the command line ("Load" class will be described later):
 
 ```cpp
        // --------------------Load networks (Generated xml/bin files)-------------------------------------------
         Load(FaceDetection).into(pluginsForDevices[FLAGS_d]);
 ```
+
 
 ### Verifying Which Device is Running the Model
 
@@ -172,11 +179,17 @@ InferenceEngine:
 [ INFO ] Parsing input parameters
 [ INFO ] Reading input
 ```
+
+
 The application reporting that it is loading the CPU plugin:
+
 ```bash
 [ INFO ] Loading plugin CPU
 ```
+
+
 Inference Engine reports that it has loaded the CPU plugin (MKLDNNPlugin) and its version:
+
 ```bash
 	API version ............ 1.0
 	Build .................. lnx_20180314
@@ -186,11 +199,15 @@ Inference Engine reports that it has loaded the CPU plugin (MKLDNNPlugin) and it
 [ INFO ] Checking Face Detection inputs
 [ INFO ] Checking Face Detection outputs
 ```
+
+
 The application reporting that it is loading the CPU plugin for the face detection model:
+
 ```bash
 [ INFO ] Loading Face Detection model to the CPU plugin
 [ INFO ] Start inference
 ```
+
 
 Later in Tutorial Step 4, we cover loading multiple models onto different devices.  We will also look at how the models perform on different devices.  Until then, we will let all the models load and run on the default CPU device.
 
@@ -707,7 +724,7 @@ See the Inference Engine Development Guide [https://software.intel.com/inference
 
 We have now seen what happens behind the scenes in the FaceDetectionClass, we will move into the application code and see how it is used.
 
-1. Open up an Xterm window or use an existing window to get to a command shell prompt.
+1. Open up a terminal (such as xterm) or use an existing terminal to get to a command shell prompt.
 
 2. Change to the directory containing Tutorial Step 2:
 
@@ -900,7 +917,7 @@ Now that we have walked through the code and learned what it will do, it is time
 
 ## Build
 
-1. Open up an Xterm window or use an existing window to get to a command shell prompt.
+1. Open up a terminal (such as xterm) or use an existing terminal to get to a command shell prompt.
 
 2. Change to the directory containing Tutorial Step 2:
 
@@ -909,7 +926,7 @@ cd tutorials/face_detection_tutorial/step_2
 ```
 
 
-3. The first step is to configure the build environment for the OpenVINO toolkit by sourcing the "setupvars.sh" script.
+3. The first step is to configure the build environment for the OpenVINO™ toolkit by sourcing the "setupvars.sh" script.
 
 ```bash
 source  /opt/intel/computer_vision_sdk/bin/setupvars.sh
@@ -979,7 +996,7 @@ make
     
    5. And now we can start referencing the variables for each model as: $mFDA16, $mFDA32, $mFDR16, $mFDR32, $mAG16, $mAG32, $mHP16, $mHP32
 
-2. Again, we will be using images and video files that are included with this tutorial or part of the OpenVINO toolkit installation in our sample instructions.  Once you have seen the application working, feel free to try it on your own images and videos.
+2. Again, we will be using images and video files that are included with this tutorial or part of the OpenVINO™ toolkit installation in our sample instructions.  Once you have seen the application working, feel free to try it on your own images and videos.
 
 3. Let us first run it on a single image, to see how it works.
 
@@ -1015,7 +1032,7 @@ Or we can still specify the camera using "cam":
 
 8. [Optional]Now you will see a window displaying the input from the USB camera.  The performance statistics appear over the image, as the application processes each frame.  If there is a face in the image, you will see a rectangle surrounding the face with label and confidence value.  The rectangle will follow the face around the image as it moves and will change sizes to fit the face.
 
-9. When you want to exit the program, make sure the output window is active and press a key.  The output window will close and control will return to the XTerm window.
+9. When you want to exit the program, make sure the output window is active and press a key.  The output window will close and control will return to the terminal.
 
 10. You may remember the final step of the code walk-through, where we showed a step that printed out Performance Counts for the application.  This only happens if you specify the "-pc" command line option.  Let us run the application one more time to see what kind of output we get from printing those counts.
 
@@ -1024,7 +1041,7 @@ Or we can still specify the camera using "cam":
 ```
 
 
-11. When you exit the application this time, you will notice that the Xterm window is updated with the final statistics from the face detection model.  The extra output shows a detailed list of the various analysis steps the model performed during the last request (Note only one, not all of them for video) and how long the model spent on each step.  At the bottom of the list, it displays the total time spent performing the face inference.
+11. When you exit the application this time, you will notice that the terminal is updated with the final statistics from the face detection model.  The extra output shows a detailed list of the various analysis steps the model performed during the last request (Note only one, not all of them for video) and how long the model spent on each step.  At the bottom of the list, it displays the total time spent performing the face inference.
 
 ```bash
 InferenceEngine: 
@@ -1065,8 +1082,10 @@ Total time: 91233    microseconds
 Congratulations on using a CNN model to detect faces!  You have now seen that the process can be done quite quickly.  The classes and helper functions that we added here are aimed at making it easy to add more models to the application by following the same pattern.  We will see it again in action in Step 3, when we add an age and gender inferring model, and then again in Step 4, when we add head pose estimation.
 
 # Navigation
+
 [Face Detection Tutorial](../Readme.md)
 
 [Face Detection Tutorial Step 1](../step_1/Readme.md)
 
 [Face Detection Tutorial Step 3](../step_3/Readme.md)
+

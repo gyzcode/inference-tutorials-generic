@@ -16,7 +16,7 @@ Every application needs some way of getting data in and data out.  Let us now ta
 
 ## Parsing Command Line Arguments
 
-To make it easier to set everything from the input video file to which model and device is to be used, command line arguments to the application will be used.  To parse the command line arguments, the application will use the "gflags" helper library that comes with the OpenVINO toolkit samples.  Here we will briefly go over the primary functions that are used, for reference the full source code for the gflags library may be found in the OpenVINO toolkit samples directory: 
+To make it easier to set everything from the input video file to which model and device is to be used, command line arguments to the application will be used.  To parse the command line arguments, the application will use the "gflags" helper library that comes with the OpenVINO™ toolkit samples.  Here we will briefly go over the primary functions that are used, for reference the full source code for the gflags library may be found in the OpenVINO™ toolkit samples directory: 
 
 ```bash
 /opt/intel/computer_vision_sdk/deployment_tools/inference_engine/samples/thirdparty/gflags
@@ -85,7 +85,7 @@ This is how the "-i" argument is done, all other arguments are handled similarly
 
 ## OpenCV Input to Output
 
-1. Open up an Xterm window or use an existing window to get to a command shell prompt.
+1. Open up a terminal (such as xterm) or use an existing terminal to get to a command shell prompt.
 
 2. Change to the directory containing Tutorial Step 1:
 
@@ -107,7 +107,7 @@ cd step_1
 ```
 
 
-2. The opencv.hpp file is included for the Intel optimized OpenCV libraries included in the OpenVINO toolkit. 
+2. The opencv.hpp file is included for the Intel® optimized OpenCV libraries included in the OpenVINO™ toolkit. 
 
 ```cpp
 #include <opencv2/opencv.hpp>
@@ -116,7 +116,7 @@ cd step_1
 
 ### main()
 
-1. First the OpenCV video capture object "cap" is created that will be used to source the image data.  Then the image source is opened.  FLAGS_i is the command line parameter that tells the application the source of where the image.  The source can be the path to an image file, the path to a video file, or "cam" for the USB camera.
+1. First, the OpenCV video capture object "cap" is created that will be used to source the image data.  Then, the image source is opened.  FLAGS_i is the command line parameter that tells the application the source of where the image.  The source can be the path to an image file, the path to a video file, or "cam" for the USB camera.
 
 ```cpp
 cv::VideoCapture cap;
@@ -146,7 +146,7 @@ if (!cap.read(frame)) {
 
 ### Main Loop
 
-The main loop will read in and then write out the image frames until there are not more to available. 
+The main loop will read in and then write out the image frames until there are no more available. 
 
 1. The main loop runs forever until a break elsewhere inside the loop when there are no more images:
 
@@ -236,7 +236,7 @@ Now that we have looked at the code and understand how the program works, let us
 
 ## Build
 
-1. First, we need to configure the build environment when using the OpenVINO toolkit by running the "setupvars.sh" script.
+1. First, we need to configure the build environment when using the OpenVINO™ toolkit by running the "setupvars.sh" script.
 
 ```bash
 source  /opt/intel/computer_vision_sdk/bin/setupvars.sh
@@ -251,7 +251,7 @@ cd build
 ```
 
 
-3. The last thing we need to do before compiling is to configure the build settings and build the executable.  We do this by running CMake to setup the build target and file locations.  Then we run Make to build the executable:
+3. The last thing we need to do before compiling is to configure the build settings and build the executable.  We do this by running CMake to setup the build target and file locations.  Then, we run Make to build the executable:
 
 ```bash
 cmake -DCMAKE_BUILD_TYPE=Release ../
@@ -263,7 +263,7 @@ make
 
 ## Run
 
-1. Now, it is time to run the application.  We will run it using each type of input (image file, video file, camera) so you will know what to expect.  We have included commands that will have the application load images or videos that come with the OpenVINO toolkit and this tutorial, but you can also use your own images.  If the application cannot find the specified input image file or if a USB camera cannot be found, it will print an error message and return to the command prompt.  If that happens, check the path to the image or video file, to make sure it is correct and try again.
+1. Now, it is time to run the application.  We will run it using each type of input (image file, video file, camera) so you will know what to expect.  We have included commands that will have the application load images or videos that come with the OpenVINO™ toolkit and this tutorial, but you can also use your own images.  If the application cannot find the specified input image file or if a USB camera cannot be found, it will print an error message and return to the command prompt.  If that happens, check the path to the image or video file, to make sure it is correct and try again.
 
 2. First, let us use the application to view a single image file.  We do this by using a "-i" parameter followed by the name of an image file.
 
@@ -274,7 +274,7 @@ make
 
 3. You should now see a new window with an image.  You should also see a "Press 's' key to save a snapshot, press any other key to exit" prompt in the console window.  The application will now wait for you to press a key with the image window active.
 
-   1. Note: Pressing a key in the console window will not do anything because the image window is detecting key presses.  Use Ctrl+C to exit.
+**Note**: Pressing a key in the console window will not do anything because the image window is detecting key presses.  Use Ctrl+C to exit.
 
 4. Next, let us see how the application handles a video file:
 
@@ -303,7 +303,7 @@ Or we can still specify the camera using "cam":
 
 # Conclusion
 
-Now we have seen what it takes to create a basic application that uses OpenCV to read and display image data.  We have also seen how the application works with each type of image input it accepts including still images, video files, and live video from an optional USB camera.  We will be using the basic framework from this step of the tutorial as we move forward building up the application step-by-step.  Next, in Tutorial Step 2 we will be adding the ability to process images and actually detect faces.
+Now we have seen what it takes to create a basic application that uses OpenCV to read and display image data.  We have also seen how the application works with each type of image input it accepts including still images, video files, and live video from an optional USB camera.  We will be using the basic framework from this step of the tutorial as we move forward building up the application step-by-step.  Next, in Tutorial Step 2, we will be adding the ability to process images and actually detect faces.
 
 # Navigation
 
