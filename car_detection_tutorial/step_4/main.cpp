@@ -194,8 +194,8 @@ struct BaseDetection {
 struct VehicleDetection : BaseDetection{
     std::string input;
     std::string output;
-    int maxProposalCount;
-    int objectSize;
+    int maxProposalCount = 0;
+    int objectSize = 0;
     int enquedFrames = 0;
     float width = 0;
     float height = 0;
@@ -239,18 +239,15 @@ struct VehicleDetection : BaseDetection{
     }
 
 
-    VehicleDetection() : BaseDetection(FLAGS_m, "Vehicle Detection", 1),
-    		maxProposalCount(0), objectSize(0)  {}
-
+    VehicleDetection() : BaseDetection(FLAGS_m, "Vehicle Detection", FLAGS_n) {}
     InferenceEngine::CNNNetwork read() override {
         slog::info << "Loading network files for VehicleDetection" << slog::endl;
         InferenceEngine::CNNNetReader netReader;
         /** Read network model **/
         netReader.ReadNetwork(FLAGS_m);
-        /** Use batch size from model **/
-        maxBatch = netReader.getNetwork().getBatchSize();
-        slog::info << "Batch size in IR is set to " << netReader.getNetwork().getBatchSize()
-        		<< " for Vehicle Detection" << slog::endl;
+        netReader.getNetwork().setBatchSize(maxBatch);
+        slog::info << "Batch size is set to " << netReader.getNetwork().getBatchSize() << " for Vehicle Detection" << slog::endl;
+
         /** Extract model name and load it's weights **/
         std::string binFileName = fileNameNoExt(FLAGS_m) + ".bin";
         netReader.ReadWeights(binFileName);

@@ -4,7 +4,7 @@
 
 # Table of Contents
 
-<p></p><div class="table-of-contents"><ul><li><a href="#tutorial-step-2-add-the-first-model-vehicle-detection">Tutorial Step 2: Add the first model, Vehicle Detection</a></li><li><a href="#table-of-contents">Table of Contents</a></li><li><a href="#introduction">Introduction</a></li><li><a href="#vehicle-detection-models">Vehicle Detection Models</a><ul><li><a href="#how-do-i-specify-which-device-the-model-will-run-on">How Do I Specify Which Device the Model Will Run On?</a><ul><li><a href="#verifying-which-device-is-running-the-model">Verifying Which Device is Running the Model</a></li></ul></li></ul></li><li><a href="#adding-the-vehicle-detection-model">Adding the Vehicle Detection Model</a><ul><li><a href="#helper-functions-and-classes">Helper Functions and Classes</a><ul><li><a href="#matu8toblob">matU8ToBlob</a></li><li><a href="#load">Load</a></li><li><a href="#basedetection-class">BaseDetection Class</a><ul><li><a href="#read">read()</a></li><li><a href="#submitrequest">submitRequest()</a></li><li><a href="#wait">wait()</a></li><li><a href="#enabled">enabled()</a></li><li><a href="#printperformanccount">printPerformancCount()</a></li></ul></li></ul></li><li><a href="#vehicledetection">VehicleDetection</a><ul><li><a href="#submitrequest">submitRequest()</a></li><li><a href="#enqueue">enqueue()</a></li><li><a href="#vehicledetection">VehicleDetection()</a></li><li><a href="#read">read()</a></li><li><a href="#fetchresults">fetchResults()</a></li></ul></li></ul></li><li><a href="#using-the-vehicledetection-class">Using the VehicleDetection Class</a><ul><li><a href="#header-files">Header Files</a></li><li><a href="#main">main()</a></li><li><a href="#main-loop">Main Loop</a><ul><li><a href="#pipeline-stage-0-prepare-and-infer-a-batch-of-frames">Pipeline Stage 0: Prepare and Infer a Batch of Frames</a></li><li><a href="#pipeline-stage-1-render-results">Pipeline Stage 1: Render Results</a></li></ul></li><li><a href="#post-main-loop">Post-Main Loop</a></li></ul></li><li><a href="#building-and-running">Building and Running</a><ul><li><a href="#build">Build</a></li><li><a href="#run">Run</a></li></ul></li><li><a href="#conclusion">Conclusion</a></li><li><a href="#navigation">Navigation</a></li></ul></div><p></p>
+<p></p><div class="table-of-contents"><ul><li><a href="#tutorial-step-2-add-the-first-model-vehicle-detection">Tutorial Step 2: Add the first model, Vehicle Detection</a></li><li><a href="#table-of-contents">Table of Contents</a></li><li><a href="#introduction">Introduction</a></li><li><a href="#vehicle-detection-models">Vehicle Detection Models</a><ul><li><a href="#how-do-i-specify-which-device-the-model-will-run-on">How Do I Specify Which Device the Model Will Run On?</a><ul><li><a href="#verifying-which-device-is-running-the-model">Verifying Which Device is Running the Model</a></li></ul></li></ul></li><li><a href="#adding-the-vehicle-detection-model">Adding the Vehicle Detection Model</a><ul><li><a href="#helper-functions-and-classes">Helper Functions and Classes</a><ul><li><a href="#matu8toblob">matU8ToBlob</a></li><li><a href="#load">Load</a></li><li><a href="#basedetection-class">BaseDetection Class</a><ul><li><a href="#read">read()</a></li><li><a href="#submitrequest">submitRequest()</a></li><li><a href="#wait">wait()</a></li><li><a href="#enabled">enabled()</a></li><li><a href="#printperformanccount">printPerformancCount()</a></li></ul></li></ul></li><li><a href="#vehicledetection">VehicleDetection</a><ul><li><a href="#submitrequest">submitRequest()</a></li><li><a href="#enqueue">enqueue()</a></li><li><a href="#vehicledetection">VehicleDetection()</a></li><li><a href="#read">read()</a></li><li><a href="#fetchresults">fetchResults()</a></li></ul></li></ul></li><li><a href="#using-the-vehicledetection-class">Using the VehicleDetection Class</a><ul><li><a href="#header-files">Header Files</a></li><li><a href="#main">main()</a></li><li><a href="#main-loop">Main Loop</a><ul><li><a href="#pipeline-stage-0-prepare-and-infer-a-batch-of-frames">Pipeline Stage 0: Prepare and Infer a Batch of Frames</a></li><li><a href="#pipeline-stage-1-render-results">Pipeline Stage 1: Render Results</a></li></ul></li><li><a href="#post-main-loop">Post-Main Loop</a></li></ul></li><li><a href="#building-and-running">Building and Running</a><ul><li><a href="#build">Build</a></li><li><a href="#run">Run</a></li></ul></li><li><a href="#batch-size">Batch Size</a><ul><li><a href="#single-image">Single Image</a></li><li><a href="#video">Video</a><ul><li><a href="#cpu">CPU</a></li><li><a href="#gpu">GPU</a></li></ul></li></ul></li><li><a href="#conclusion">Conclusion</a></li><li><a href="#navigation">Navigation</a></li></ul></div><p></p>
 
 # Introduction
 
@@ -73,7 +73,7 @@ To create the command line argument: -m \<model-IR-xml-file\>, where \<model-IR-
 
 ```cpp
 /// @brief message for assigning vehicle detection inference to device
-static const char target_device_message[] = "Specify the target device for Vehicle Detection (CPU, GPU, FPGA, MYRYAD, or HETERO). ";
+static const char target_device_message[] = "Specify the target device for Vehicle Detection (CPU, GPU, FPGA, MYRIAD, or HETERO). ";
 
 /// \brief device the target device for vehicle detection infer on <br>
 DEFINE_string(d, "CPU", target_device_message);
@@ -160,8 +160,8 @@ Inference Engine reporting its version:
 
 ```bash
 InferenceEngine:
-    	API version ............ 1.0
-    	Build .................. 10478
+    	API version ............ 1.1
+    	Build .................. 11653
 [ INFO ] Parsing input parameters
 [ INFO ] Reading input
 ```
@@ -177,8 +177,8 @@ The application reporting that it is loading the CPU plugin:
 Inference Engine reports that it has loaded the CPU plugin (MKLDNNPlugin) and its version:
 
 ```bash
-	API version ............ 1.0
-	Build .................. lnx_20180314
+	API version ............ 1.1
+	Build .................. lnx_20180510
 	Description ....... MKLDNNPlugin
 [ INFO ] Loading network files for VehicleDetection
 [ INFO ] Batch size in IR is set to  1
@@ -289,7 +289,7 @@ The line is read as "Load VehicleDetection into the plugin pluginsForDevices[FLA
 
 2. "into()" is called on the returned object passing in the mapped plugin from “pluginsForDevices”.  The map returns the plugin mapped to “FLAGS_d”, which is the command line argument “CPU”, “GPU”, or “MYRIAD”.  The function into() then first checks if the model object is enabled and if it is:
 
-   1. Calls "plg.LoadNetwork(detector.read(),{})"  to load the model returned by “detector.read()” (which we will see later is reading in the model’s IR file) into the plugin.  The resulting object is stored in the model object (detetor.net) 
+   1. Calls "plg.LoadNetwork(detector.read(),{})" to load the model returned by “detector.read()” (which we will see later is reading in the model’s IR file) into the plugin.  The resulting object is stored in the model object (detector.net) 
 
    2. Sets the model object’s plugin (detector.plugin) to the one used
 
@@ -403,8 +403,8 @@ VehicleDetection is derived from the BaseDetection class and adding some new mem
 struct VehicleDetection : BaseDetection {
     std::string input;
     std::string output;
-    int maxProposalCount;
-    int objectSize;
+    int maxProposalCount = 0;
+    int objectSize = 0;
     int enquedFrames = 0;
     float width = 0;
     float height = 0;
@@ -479,10 +479,10 @@ The input blob from the request is retrieved and then matU8ToBlob() is used to c
 
 ### VehicleDetection()
 
-On construction of a VehicleDetection object, the base class constructor is called passing in the model to load specified in the command line argument FLAGS_m, the name to be used when printing out informational messages, and set the batch size to 1.  This initializes the BaseDetection subclass specifically for VehicleDetection class.
+On construction of a VehicleDetection object, the base class constructor is called passing in the model to load specified in the command line argument FLAGS_m, the name to be used when printing out informational messages, and set the batch size to FLAGS_n.  This initializes the BaseDetection subclass specifically for VehicleDetection class.
 
 ```cpp
-    VehicleDetection() : BaseDetection(FLAGS_m, "Vehicle Detection", 1) {}
+    VehicleDetection() : BaseDetection(FLAGS_m, "Vehicle Detection", FLAGS_n) {}
 ```
 
 
@@ -501,12 +501,11 @@ The next function we will walkthrough is the VehicleDetection::read() function w
 ```
 
 
-2. The maximum batch size is set to the value read directly from the model IR file.
+2. The maximum batch size is set to the value set using the "-n" parameter.
 
 ```cpp
-        /** Use batch size from model **/
-        maxBatch = netReader.getNetwork().getBatchSize();
-        slog::info << "Batch size in IR is set to " << netReader.getNetwork().getBatchSize() << slog::endl;
+        netReader.getNetwork().setBatchSize(maxBatch);
+        slog::info << "Batch size is set to " << netReader.getNetwork().getBatchSize() << " for Vehicle Detection" << slog::endl;
 ```
 
 
@@ -1146,8 +1145,13 @@ modName=vehicle-license-plate-detection-barrier-0007
 export mVLP16=$modelDir/$modName/FP16/$modName.xml
 export mVLP32=$modelDir/$modName/FP32/$modName.xml
 
+# Vehicle-only Detection Model used with the batch size exercise
+modName=vehicle-detection-adas-0002
+export mVDR16=$modelDir/$modName/FP16/$modName.xml
+export mVDR32=$modelDir/$modName/FP32/$modName.xml
+
 # Vehicle Attributes Detection Model
-modName=vehicle-attributes-recognition-barrier-0010
+modName=vehicle-attributes-recognition-barrier-0039
 export mVA16=$modelDir/$modName/FP16/$modName.xml
 export mVA32=$modelDir/$modName/FP32/$modName.xml
 ```
@@ -1199,6 +1203,71 @@ Or we can still specify the camera using "cam":
 8. [Optional]Now you will see a window displaying the input from the USB camera.  If the vehicle detection model sees anything it detects as any type of vehicle (car, van, etc.), it will draw a green rectangle around it.  Red rectangles will be drawn around anything that is detected as a license plate.  Unless you have a car in your office, or a parking lot outside a nearby window, the display may not be very exciting.
 
 9. When you want to exit the program, make sure the output window is active and press a key.  The output window will close and control will return to the terminal window.
+
+# Batch Size
+
+In the previous commands the batch size was 1 by default.  This means inference was performed on each image or frame of the video, one at a time.  To work with different sized batches, we will now use the command line argument "-n \<batch size\>" running on a single image and the video to see what happens.  
+
+**Note **: Because the Inference Engine does not fully support dynamically setting batch size for the vehicle and license plates model used, for this exercise we use the vehicle-only (no license plates) detection model pointed to by the mVDR16 and mVDR32 variables.  
+
+## Single Image
+
+First let us run the single image through each of the batch sizes 1, 2, 4, 8, and 16 using the commands below.
+
+```Bash
+./intel64/Release/car_detection_tutorial -m $mVDR32 -i ../../data/car_1.bmp -n 1
+./intel64/Release/car_detection_tutorial -m $mVDR32 -i ../../data/car_1.bmp -n 2
+./intel64/Release/car_detection_tutorial -m $mVDR32 -i ../../data/car_1.bmp -n 4
+./intel64/Release/car_detection_tutorial -m $mVDR32 -i ../../data/car_1.bmp -n 8
+./intel64/Release/car_detection_tutorial -m $mVDR32 -i ../../data/car_1.bmp -n 16
+```
+
+
+As you run each command, you should notice it takes longer each time the batch size increases and is also reflected in the performance metrics reporting slower performance.  This is because inference is run on the entire batch, even if only one input frame is present all inputs are inferred.  The increasingly longer time also shows the increasing latency from the time the image is input to the time the output is displayed.
+
+## Video
+
+### CPU
+
+Now let us run on the CPU using the video to see what happens.
+
+1. First, run the video with a batch size of 1 on the CPU using the command:  
+
+```Bash
+./intel64/Release/car_detection_tutorial -m $mVDR32 -i ../../data/car-detection.mp4 -n 1
+```
+
+
+2. Now, jump to the largest batch size of 16 running the command:
+
+```Bash
+./intel64/Release/car_detection_tutorial -m $mVDR32 -i ../../data/car-detection.mp4 -n 16
+```
+
+
+3. You should notice that the application appears to pause, fast forward frames, then pause, then fast forward, and repeat until done.  This is due to running batches rather than one frame at a time.  The pause is when inference is running the batch, then the fast forward is when the batch of results are displayed.  Feel free to try this with all the batch sizes. 
+
+4. When looking at the performance of batch size of 1 and 16, you may notice much of a difference.  This is primarily because the inference model is being run on the CPU.  
+
+### GPU
+
+Now we will repeat the same exercise on the GPU using the two commands:
+
+1. First, run the video with a batch size of 1 on the GPU using the command:  
+
+```Bash
+./intel64/Release/car_detection_tutorial -m $mVDR16 -d GPU -i ../../data/car-detection.mp4 -n 1
+```
+
+
+2. Now, jump to the largest batch size of 16 running the command:
+
+```Bash
+./intel64/Release/car_detection_tutorial -m $mVDR16 -d GPU -i ../../data/car-detection.mp4 -n 16
+```
+
+
+3. You should see some improvement in frame per second (~10-20%) using the larger batch size.  This comes primarily from saving some overhead of inferring images one at a time and instead issuing one request from the CPU to run multiple inferences on the GPU.  
 
 # Conclusion
 

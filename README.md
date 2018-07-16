@@ -5,6 +5,7 @@
 - Key Concepts
   + Floating Point Precision
   + Batch Size (brief)
+  + Hetero Plugin
 - Tutorial Steps
   + Tutorial Step 1: Create the Base OpenCV Application
     + gflags library to parse command line arguments
@@ -13,6 +14,7 @@
     + Helper functions matU9ToBlob() and Load()
     + BaseDetection class
     + FaceDetectionClass class
+    + Using the Hetero Plugin
   + Tutorial Step 3: Add the Second Model, Age and Gender
     + AgeGenderDetection class
   + Tutorial Step 4: Add the Third Model, Head Pose 

@@ -1,10 +1,10 @@
 # Face Detection Tutorial
 
-**Note**: This tutorial has been written using OpenVINO™ toolkit version 1.2 and is for use with this version only.   Using this tutorial with any other version may not be correct.
+**Note**: This tutorial has been written using OpenVINO™ toolkit version 2018 R2.0 and is for use with this version only.   Using this tutorial with any other version may not be correct.
 
 # Table of Contents
 
-<p></p><div class="table-of-contents"><ul><li><a href="#face-detection-tutorial">Face Detection Tutorial</a></li><li><a href="#table-of-contents">Table of Contents</a></li><li><a href="#introduction">Introduction</a></li><li><a href="#getting-started">Getting Started</a><ul><li><a href="#prerequisites">Prerequisites</a></li><li><a href="#downloading-the-tutorial-from-the-git-repository">Downloading the Tutorial from the Git Repository</a><ul><li><a href="#using-git-clone-to-clone-the-entire-repository">Using Git Clone to Clone the Entire Repository</a></li><li><a href="#using-svn-export-to-download-only-this-tutorial">Using SVN Export to Download Only This Tutorial</a></li><li><a href="#tutorial-files">Tutorial FIles</a></li></ul></li><li><a href="#openvino-toolkit-overview-and-terminology">OpenVINO™ Toolkit Overview and Terminology</a><ul><li><a href="#using-the-inference-engine">Using the Inference Engine</a><ul><li><a href="#inference-engine-api-integration-flow">Inference Engine API Integration Flow</a></li><li><a href="#setting-up-command-line-to-use-the-openvino-toolkit-executables-and-libraries">Setting Up Command Line to Use the OpenVINO™ Toolkit Executables and Libraries</a></li></ul></li><li><a href="#where-do-the-inference-models-come-from">Where Do the Inference Models Come from?</a></li></ul></li></ul></li><li><a href="#key-concepts">Key Concepts</a><ul><li><a href="#intel-opencv">Intel® OpenCV</a></li><li><a href="#floating-point-precision">Floating Point Precision</a><ul><li><a href="#why-would-we-choose-one-precision-over-the-other">Why Would We Choose One Precision Over the Other?</a></li><li><a href="#what-if-we-specify-the-wrong-precision-for-a-device">What If We Specify the Wrong Precision for a Device?</a></li></ul></li><li><a href="#batch-size">Batch Size</a></li><li><a href="#tutorial-step-1-create-the-base-opencv-application">Tutorial Step 1: Create the Base OpenCV Application</a></li><li><a href="#tutorial-step-2-add-the-first-model-face-detection">Tutorial Step 2: Add the first Model, Face Detection</a></li><li><a href="#tutorial-step-3-add-the-second-model-age-and-gender">Tutorial Step 3: Add the Second Model, Age and Gender</a></li><li><a href="#tutorial-step-4-add-the-third-model-head-pose">Tutorial Step 4: Add the Third Model, Head Pose</a></li></ul></li><li><a href="#conclusion">Conclusion</a></li><li><a href="#references-and-more-information">References and More Information</a></li></ul></div><p></p>
+<p></p><div class="table-of-contents"><ul><li><a href="#face-detection-tutorial">Face Detection Tutorial</a></li><li><a href="#table-of-contents">Table of Contents</a></li><li><a href="#introduction">Introduction</a></li><li><a href="#getting-started">Getting Started</a><ul><li><a href="#prerequisites">Prerequisites</a></li><li><a href="#downloading-the-tutorial-from-the-git-repository">Downloading the Tutorial from the Git Repository</a><ul><li><a href="#using-git-clone-to-clone-the-entire-repository">Using Git Clone to Clone the Entire Repository</a></li><li><a href="#using-svn-export-to-download-only-this-tutorial">Using SVN Export to Download Only This Tutorial</a></li><li><a href="#tutorial-files">Tutorial FIles</a></li></ul></li><li><a href="#openvino-toolkit-overview-and-terminology">OpenVINO™ Toolkit Overview and Terminology</a><ul><li><a href="#using-the-inference-engine">Using the Inference Engine</a><ul><li><a href="#inference-engine-api-integration-flow">Inference Engine API Integration Flow</a></li><li><a href="#setting-up-command-line-to-use-the-openvino-toolkit-executables-and-libraries">Setting Up Command Line to Use the OpenVINO™ Toolkit Executables and Libraries</a></li></ul></li><li><a href="#where-do-the-inference-models-come-from">Where Do the Inference Models Come from?</a></li></ul></li></ul></li><li><a href="#key-concepts">Key Concepts</a><ul><li><a href="#intel-opencv">Intel® OpenCV</a></li><li><a href="#floating-point-precision">Floating Point Precision</a><ul><li><a href="#why-would-we-choose-one-precision-over-the-other">Why Would We Choose One Precision Over the Other?</a></li><li><a href="#what-if-we-specify-the-wrong-precision-for-a-device">What If We Specify the Wrong Precision for a Device?</a></li></ul></li><li><a href="#batch-size">Batch Size</a></li><li><a href="#heterogenous-plugin">Heterogenous Plugin</a><ul><li><a href="#how-are-layers-assigned-to-devices">How are Layers Assigned to Devices?</a></li><li><a href="#how-do-we-know-which-device-executed-which-layers">How Do We Know Which Device Executed Which Layers?</a></li></ul></li><li><a href="#tutorial-step-1-create-the-base-opencv-application">Tutorial Step 1: Create the Base OpenCV Application</a></li><li><a href="#tutorial-step-2-add-the-first-model-face-detection">Tutorial Step 2: Add the first Model, Face Detection</a></li><li><a href="#tutorial-step-3-add-the-second-model-age-and-gender">Tutorial Step 3: Add the Second Model, Age and Gender</a></li><li><a href="#tutorial-step-4-add-the-third-model-head-pose">Tutorial Step 4: Add the Third Model, Head Pose</a></li></ul></li><li><a href="#conclusion">Conclusion</a></li><li><a href="#references-and-more-information">References and More Information</a></li></ul></div><p></p>
 
 # Introduction
 
@@ -346,7 +346,70 @@ Batch size refers to the number of input data to be inferred during a single inf
 
 * Batch size is a fixed number of inputs that will be inferred for each submitted request to the Inference Engine API regardless of how many inputs contain valid data.  Depending upon the model, invalid inputs may also result in false detections and additional unnecessary processing.
 
-In this tutorial, face detection is done frame-by-frame expecting few results so batch size >1 will generally not give any improvements.  This makes batch size primarily about device support, such as the Myriad which requires batch size set to 1.  In a later tutorial (be sure to look forward to the [Car Detection Tutorial](../car_detection_tutorial/Readme.md)), batch size will be explored further to show how it affects latency and performance. 
+In this tutorial, face detection is done frame-by-frame expecting few results so batch size >1 will generally not give any improvements.  This makes batch size primarily about device support, such as the Myriad which requires batch size set to 1.  In a later tutorial (be sure to look forward to the [Car Detection Tutorial](../car_detection_tutorial/Readme.md)), batch size will be explored further to show how it affects latency and performance.
+
+## Heterogenous Plugin
+
+As described in the OpenVINO™ Toolkit overview, the Inference Engine includes a plugin library for each supported physical (e.g CPU, GPU, VPU, etc.) device.  In addition to physical devices, the Inference Engine includes the "Heterogenous Plugin" (also referred to as “Hetero Plugin”) which may be used to run an inference model on multiple physical devices.  The plugin does this by assigning the layers within the inference model to be executed on the different plugins for the devices.  The Heteo Plugin is intended for:
+
+1. Using a device(s) to accelerate the layers it supports best and execute less supported layers on a fallback devices like CPU.
+
+2. Utilizing all available devices more efficiently while running an inference.
+
+### How are Layers Assigned to Devices?
+
+The Hetero Plugin uses affinity settings for each layer within the inference model to determine on which device the layer is executed.  Each layer’s device affinity is set in one of two ways:
+
+1. Automatically when assigning the device an inference model is to run on.  The device name format uses: "HETERO:\<1st device\>[,\<2nd device\>][,\<3rd device\>]...".
+
+   1. Starting with the first device, all layers directly supported by the device will be assigned.  This is repeated with any remaining layers assigned (falling back to) to the next device, and so on, until the last device which will be used to do the remainder.
+
+2. Manually from within the application code using the layer’s CNNLayer::affinity field.  Basic outline of code is to start with the automatic affinity assignments and then manually make changes which looks like:
+
+   1. Load the plugin normally using the "HETERO:\<device>..." string for the devices that will be used to automatically assign affinities.
+
+```Cpp
+InferenceEngine::InferenceEnginePluginPtr enginePtr;
+enginePtr = dispatcher.getPluginByDevice("HETERO:FPGA,CPU");
+```
+
+
+   2. Create an InferenceEngine::HeteroPluginPtr pointer to the plugin:
+
+```Cpp
+HeteroPluginPtr hetero(enginePtr);  
+```
+
+
+   3. Use InferenceEngine::HeteroInferencePlugin::SetAffinity to automatically assign affinities to layers:
+
+```Cpp	
+hetero->SetAffinity(network, { }, &resp);
+```
+
+
+   4. Get a layer by name (e.g. "qqq") and manually assign its device affinity field CNNLayer::affinity to the desired device (e.g. “CPU”):
+
+```Cpp	
+network.getLayerByName("qqq")->affinity = "CPU";
+```
+
+
+   5. Load the network and continue normally as described in the Inference Engine API steps described earlier.
+
+What If the Devices Use Different Precisions?
+
+The Hetero Plugin will automatically convert between different precisions when transferring data between devices.  For example, when running an FP16 model on Myriad (which requires FP16) with CPU (which requires FP32) fallback, the Myriad will run FP16 normally and conversions to FP32 will be made automatically for any layers that run on the CPU.
+
+### How Do We Know Which Device Executed Which Layers?
+
+Performance counts (times) are kept per layer executed during an inference.  Included with the counts, is the device on which the layer was executed.  To get performance counts:
+
+1. Enable performance counts using InferenceEngine::InferencePlugin::SetConfig() and the configuration setting {PluginConfigParams::KEY_PERF_COUNT, PluginConfigParams::YES}
+
+2. After running inference, retrieve performance counts using InferenceEngine::InferRequest::GetPerformanceCounts()
+
+**Note**: All code in this tutorial that runs inference includes the necessary code to optionally enable and display performance counts.  Performance counts are enabled using the "pc" option which is covered in Tutorial Step 2. 
 
 ## Tutorial Step 1: Create the Base OpenCV Application
 

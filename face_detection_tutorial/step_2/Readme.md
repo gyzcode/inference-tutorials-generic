@@ -4,7 +4,7 @@
 
 # Table of Contents
 
-<p></p><div class="table-of-contents"><ul><li><a href="#tutorial-step-2-add-the-first-model-face-detection">Tutorial Step 2: Add the first model, Face Detection</a></li><li><a href="#table-of-contents">Table of Contents</a></li><li><a href="#introduction">Introduction</a></li><li><a href="#face-detection-models">Face Detection Models</a><ul><li><a href="#how-do-i-specify-which-device-the-model-will-run-on">How Do I Specify Which Device the Model Will Run On?</a><ul><li><a href="#verifying-which-device-is-running-the-model">Verifying Which Device is Running the Model</a></li></ul></li></ul></li><li><a href="#adding-the-face-detection-model">Adding the Face Detection Model</a><ul><li><a href="#helper-functions-and-classes">Helper Functions and Classes</a><ul><li><a href="#matu8toblob">matU8ToBlob</a></li><li><a href="#load">Load</a></li><li><a href="#basedetection-class">BaseDetection Class</a><ul><li><a href="#read">read()</a></li><li><a href="#submitrequest">submitRequest()</a></li><li><a href="#wait">wait()</a></li><li><a href="#enabled">enabled()</a></li><li><a href="#printperformanccount">printPerformancCount()</a></li></ul></li></ul></li><li><a href="#facedetectionclass">FaceDetectionClass</a><ul><li><a href="#submitrequest">submitRequest()</a></li><li><a href="#enqueue">enqueue()</a></li><li><a href="#facedetectionclass">FaceDetectionClass()</a></li><li><a href="#read">read()</a></li><li><a href="#fetchresults">fetchResults()</a></li></ul></li></ul></li><li><a href="#using-facedetectionclass">Using FaceDetectionClass</a><ul><li><a href="#header-files">Header Files</a></li><li><a href="#main">main()</a></li><li><a href="#main-loop">Main Loop</a></li><li><a href="#post-main-loop">Post-Main Loop</a></li></ul></li><li><a href="#building-and-running">Building and Running</a><ul><li><a href="#build">Build</a></li><li><a href="#run">Run</a></li></ul></li><li><a href="#conclusion">Conclusion</a></li><li><a href="#navigation">Navigation</a></li></ul></div><p></p>
+<p></p><div class="table-of-contents"><ul><li><a href="#tutorial-step-2-add-the-first-model-face-detection">Tutorial Step 2: Add the first model, Face Detection</a></li><li><a href="#table-of-contents">Table of Contents</a></li><li><a href="#introduction">Introduction</a></li><li><a href="#face-detection-models">Face Detection Models</a><ul><li><a href="#how-do-i-specify-which-device-the-model-will-run-on">How Do I Specify Which Device the Model Will Run On?</a><ul><li><a href="#verifying-which-device-is-running-the-model">Verifying Which Device is Running the Model</a></li></ul></li></ul></li><li><a href="#adding-the-face-detection-model">Adding the Face Detection Model</a><ul><li><a href="#helper-functions-and-classes">Helper Functions and Classes</a><ul><li><a href="#matu8toblob">matU8ToBlob</a></li><li><a href="#load">Load</a></li><li><a href="#basedetection-class">BaseDetection Class</a><ul><li><a href="#read">read()</a></li><li><a href="#submitrequest">submitRequest()</a></li><li><a href="#wait">wait()</a></li><li><a href="#enabled">enabled()</a></li><li><a href="#printperformanccount">printPerformancCount()</a></li></ul></li></ul></li><li><a href="#facedetectionclass">FaceDetectionClass</a><ul><li><a href="#submitrequest">submitRequest()</a></li><li><a href="#enqueue">enqueue()</a></li><li><a href="#facedetectionclass">FaceDetectionClass()</a></li><li><a href="#read">read()</a></li><li><a href="#fetchresults">fetchResults()</a></li></ul></li></ul></li><li><a href="#using-facedetectionclass">Using FaceDetectionClass</a><ul><li><a href="#header-files">Header Files</a></li><li><a href="#main">main()</a></li><li><a href="#main-loop">Main Loop</a></li><li><a href="#post-main-loop">Post-Main Loop</a></li></ul></li><li><a href="#building-and-running">Building and Running</a><ul><li><a href="#build">Build</a></li><li><a href="#run">Run</a></li></ul></li><li><a href="#using-the-hetero-plugin">Using the Hetero Plugin</a><ul><li><a href="#heterogpucpu">HETERO:GPU,CPU</a></li><li><a href="#heterocpugpu">HETERO:CPU,GPU</a></li><li><a href="#heteromyriadcpu">HETERO:MYRIAD,CPU</a></li></ul></li><li><a href="#conclusion">Conclusion</a></li><li><a href="#navigation">Navigation</a></li></ul></div><p></p>
 
 # Introduction
 
@@ -86,7 +86,7 @@ To create the command line argument: -m \<model-IR-xml-file\>, where \<model-IR-
 
 ```bash
 /// @brief message for assigning face detection calculation to device
-static const char target_device_message[] = "Specify the target device for Face Detection (CPU, GPU, FPGA, or MYRYAD. " \
+static const char target_device_message[] = "Specify the target device for Face Detection (CPU, GPU, FPGA, or MYRIAD. " \
 "Sample will look for a suitable plugin for device specified.";
 
 /// \brief device the target device for face detection infer on <br>
@@ -1045,14 +1045,14 @@ Or we can still specify the camera using "cam":
 
 ```bash
 InferenceEngine: 
-	API version ............ 1.0
-	Build .................. 10073
+	API version ............ 1.1
+	Build .................. 11653
 [ INFO ] Parsing input parameters
 [ INFO ] Reading input
 [ INFO ] Loading plugin CPU
 
-	API version ............ 1.0
-	Build .................. lnx_20180314
+	API version ............ 1.1
+	Build .................. lnx_20180510
 	Description ....... MKLDNNPlugin
 
 [ INFO ] Loading network files for Face Detection
@@ -1076,6 +1076,89 @@ Total time: 91233    microseconds
 
 
 12. Above, is part of the output you will see in your console window.  It shows information on what the Inference Engine loaded, followed by the performance statistics gathered from running each layer within the model.  This includes the calculation run, the model layer type, the real time spent performing the calculation, the CPU time spent performing the calculation, and the type of calculation that was performed.  In this instance, since we loaded the model onto the CPU, the "realTime" and “cpu” time values are the same.  The last bit of information we see is the total time spent spent performing the face analysis.
+
+# Using the Hetero Plugin
+
+As described earlier in the tutorial, the Hetero Plugin is used to run the layers of an inference model on multiple devices.  The Hetero Plugin and device list to use are specified using the device name "HETERO:\<1st device\>[,\<2nd device\>][,\<3rd device\>]..." which will assign layers to the first device with direct support and any remaining less supported layers fall back to the last device.  Let us now run a few examples to see working.
+
+## HETERO:GPU,CPU
+
+Here we run the combination with the GPU as the primary device and falling back to the CPU. 
+
+```bash
+./intel64/Release/face_detection_tutorial -m $mFDA32 -i ../../data/face.jpg -pc -d HETERO:GPU,CPU
+```
+
+
+Once the image appears, press any key in the output window to exit.  As the application exits, the "-pc" argument will cause it to output eht performance counts for the face detection model.  At the top of the performance output you should see something similar to below.  Note the “execType” field where it is specifies “N5cldnn3gpu*” which indicates clDNN library functions and that the GPU plugin executed the layer.
+
+```
+subgraph1: Mul1_/Fused_Mul... EXECUTED       layerType: ScaleShift         realTime: 2643       cpu: 14             execType: N5cldnn3gpu9scale_gpuE
+subgraph1: conv1              EXECUTED       layerType: Convolution        realTime: 6943       cpu: 14             execType: N5cldnn3gpu15convolution_gpuE
+subgraph1: conv2_1/dw         EXECUTED       layerType: Convolution        realTime: 16628      cpu: 13             execType: N5cldnn3gpu15convolution_gpuE
+subgraph1: conv2_1/sep        EXECUTED       layerType: Convolution        realTime: 13850      cpu: 17             execType: N5cldnn3gpu15convolution_gpuE
+subgraph1: conv2_2/dw         EXECUTED       layerType: Convolution        realTime: 6050       cpu: 14             execType: N5cldnn3gpu15convolution_gpuE
+subgraph1: conv2_2/sep        EXECUTED       layerType: Convolution        realTime: 7769       cpu: 14             execType: N5cldnn3gpu15convolution_gpuE
+subgraph1: conv3_1/dw         EXECUTED       layerType: Convolution        realTime: 9984       cpu: 13             execType: N5cldnn3gpu15convolution_gpuE
+subgraph1: conv3_1/sep        EXECUTED       layerType: Convolution        realTime: 7724       cpu: 18             execType: N5cldnn3gpu15convolution_gpuE
+subgraph1: conv3_2/dw         EXECUTED       layerType: Convolution        realTime: 2845       cpu: 14             execType: N5cldnn3gpu15convolution_gpuE
+```
+
+
+## HETERO:CPU,GPU
+
+Here we run the combination with the CPU as the primary device and falling back to the GPU. 
+
+```bash
+./intel64/Release/face_detection_tutorial -m $mFDA32 -i ../../data/face.jpg -pc -d HETERO:CPU,GPU
+```
+
+
+Once the image appears, press any key in the output window to exit.  As the application exits, the "-pc" argument will cause it to output eht performance counts for the face detection model.  At the top of the performance output you should see something similar to below.  Note the “execType” field where it is specifies “jit_sse*” which indicates that the CPU plugin executed the layer.  You may also notice that there are no “N5cldnn3gpu*” which would indicate execution on the GPU.  This is because the CPU plugin was able to support all the layers present. 
+
+```
+subgraph1: Mul1_/Fused_Mul... EXECUTED       layerType: ScaleShift         realTime: 328        cpu: 328            execType: jit_sse42
+subgraph1: conv1              EXECUTED       layerType: Convolution        realTime: 2307       cpu: 2307           execType: jit_sse42
+subgraph1: conv2_1/dw         EXECUTED       layerType: Convolution        realTime: 1600       cpu: 1600           execType: jit_sse42_dw
+subgraph1: conv2_1/sep        EXECUTED       layerType: Convolution        realTime: 5075       cpu: 5075           execType: jit_sse42_1x1
+subgraph1: conv2_2/dw         EXECUTED       layerType: Convolution        realTime: 2772       cpu: 2772           execType: jit_sse42_dw
+subgraph1: conv2_2/sep        EXECUTED       layerType: Convolution        realTime: 5287       cpu: 5287           execType: jit_sse42_1x1
+subgraph1: conv3_1/dw         EXECUTED       layerType: Convolution        realTime: 1413       cpu: 1413           execType: jit_sse42_dw
+subgraph1: conv3_1/sep        EXECUTED       layerType: Convolution        realTime: 11378      cpu: 11378          execType: jit_sse42_1x1
+subgraph1: conv3_2/dw         EXECUTED       layerType: Convolution        realTime: 990        cpu: 990            execType: jit_sse42_dw
+```
+
+
+## HETERO:MYRIAD,CPU
+
+Here we run the combination with the Myriad as the primary device and falling back to the CPU. 
+
+```bash
+./intel64/Release/face_detection_tutorial -m $mFDA16 -i ../../data/face.jpg -pc -d HETERO:MYRIAD,CPU
+```
+
+
+Once the image appears, press any key in the output window to exit.  As the application exits, the "-pc" argument will cause it to output eht performance counts for the face detection model.  At the top of the performance output you should see something similar to below.  Note the “execType” field where it is specifies the same name as the “layerType” field (e.g. “ScaleShift”) which indicates the MYRIAD plugin executed the layer.  
+
+```
+subgraph1: Mul1_/Fused_Mul... EXECUTED       layerType: ScaleShift         realTime: 4319       cpu: 4319           execType: ScaleShift
+subgraph1: conv1              EXECUTED       layerType: Convolution        realTime: 3141       cpu: 3141           execType: Convolution
+subgraph1: conv1@biases       OPTIMIZED_OUT  layerType: Bias               realTime: 0          cpu: 0              execType: Bias
+subgraph1: conv2_1/dw         EXECUTED       layerType: DepthConvolution   realTime: 3357       cpu: 3357           execType: DepthConvolution
+subgraph1: conv2_1/dw@biases  OPTIMIZED_OUT  layerType: Bias               realTime: 0          cpu: 0              execType: Bias
+subgraph1: conv2_1/sep        EXECUTED       layerType: Convolution        realTime: 4213       cpu: 4213           execType: Convolution
+subgraph1: conv2_1/sep@biases OPTIMIZED_OUT  layerType: Bias               realTime: 0          cpu: 0              execType: Bias
+subgraph1: conv2_2/dw         EXECUTED       layerType: DepthConvolution   realTime: 3499       cpu: 3499           execType: DepthConvolution
+subgraph1: conv2_2/dw@biases  OPTIMIZED_OUT  layerType: Bias               realTime: 0          cpu: 0              execType: Bias
+subgraph1: conv2_2/sep        EXECUTED       layerType: Convolution        realTime: 3399       cpu: 3399           execType: Convolution
+subgraph1: conv2_2/sep@biases OPTIMIZED_OUT  layerType: Bias               realTime: 0          cpu: 0              execType: Bias
+subgraph1: conv3_1/dw         EXECUTED       layerType: DepthConvolution   realTime: 3650       cpu: 3650           execType: DepthConvolution
+subgraph1: conv3_1/dw@biases  OPTIMIZED_OUT  layerType: Bias               realTime: 0          cpu: 0              execType: Bias
+subgraph1: conv3_1/sep        EXECUTED       layerType: Convolution        realTime: 6747       cpu: 6747           execType: Convolution
+subgraph1: conv3_1/sep@biases OPTIMIZED_OUT  layerType: Bias               realTime: 0          cpu: 0              execType: Bias
+subgraph1: conv3_2/dw         EXECUTED       layerType: DepthConvolution   realTime: 1888       cpu: 1888           execType: DepthConvolution
+```
+
 
 # Conclusion
 

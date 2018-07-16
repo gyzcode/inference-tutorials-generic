@@ -39,13 +39,13 @@ static const char vehicle_detection_model_message[] = "Required. Path to the Veh
 static const char vehicle_attribs_model_message[] = "Optional. Path to the Vehicle Attributes model (.xml) file.";
 
 /// @brief message for assigning vehicle detection inference to device
-static const char target_device_message[] = "Specify the target device for Vehicle Detection (CPU, GPU, FPGA, MYRYAD, or HETERO). ";
+static const char target_device_message[] = "Specify the target device for Vehicle Detection (CPU, GPU, FPGA, MYRIAD, or HETERO). ";
 
 /// @brief message for number of simultaneously vehicle detections using dynamic batch
 static const char num_batch_message[] = "Specify number of maximum simultaneously processed frames for Vehicle Detection ( default is 1).";
 
 /// @brief message for assigning vehicle attributes to device
-static const char target_device_message_vehicle_attribs[] = "Specify the target device for Vehicle Attributes (CPU, GPU, FPGA, MYRYAD, or HETERO). ";
+static const char target_device_message_vehicle_attribs[] = "Specify the target device for Vehicle Attributes (CPU, GPU, FPGA, MYRIAD, or HETERO). ";
 
 /// @brief message for number of simultaneously vehicle attributes detections using dynamic batch
 static const char num_batch_va_message[] = "Specify number of maximum simultaneously processed vehicles for Vehicle Attributes Detection ( default is 1).";
@@ -91,12 +91,14 @@ DEFINE_string(m_va, "", vehicle_attribs_model_message);
 /// \brief device the target device for vehicle detection infer on <br>
 DEFINE_string(d, "CPU", target_device_message);
 
+/// \brief batch size for running vehicle detection <br>
+DEFINE_uint32(n, 1, num_batch_message);
+
 /// \brief device the target device for vehicle attributes detection on <br>
 DEFINE_string(d_va, "CPU", target_device_message_vehicle_attribs);
 
-/// \brief device the target device for vehicle attributes detection on <br>
+/// \brief batch size for running vehicle attributes detection <br>
 DEFINE_uint32(n_va, 1, num_batch_va_message);
-
 
 /// \brief Enable per-layer performance report
 DEFINE_bool(pc, false, performance_counter_message);
@@ -134,15 +136,16 @@ static void showUsage() {
     std::cout << "Options:" << std::endl;
     std::cout << std::endl;
     std::cout << "    -h                         " << help_message << std::endl;
-    std::cout << "    -i \"<path>\"                " << video_message << std::endl;
-    std::cout << "    -m \"<path>\"                " << vehicle_detection_model_message<< std::endl;
-    std::cout << "    -m_va \"<path>\"             " << vehicle_attribs_model_message << std::endl;
-    std::cout << "      -l \"<absolute_path>\"     " << custom_cpu_library_message << std::endl;
+    std::cout << "    -i \"<path>\"              " << video_message << std::endl;
+    std::cout << "    -m \"<path>\"              " << vehicle_detection_model_message<< std::endl;
+    std::cout << "    -m_va \"<path>\"           " << vehicle_attribs_model_message << std::endl;
+    std::cout << "      -l \"<absolute_path>\"   " << custom_cpu_library_message << std::endl;
     std::cout << "          Or" << std::endl;
-    std::cout << "      -c \"<absolute_path>\"     " << custom_cldnn_message << std::endl;
-    std::cout << "    -d \"<device>\"              " << target_device_message << std::endl;
-    std::cout << "    -d_va \"<device>\"           " << target_device_message_vehicle_attribs << std::endl;
-    std::cout << "    -n_va \"<num>\"              " << num_batch_va_message << std::endl;
+    std::cout << "      -c \"<absolute_path>\"   " << custom_cldnn_message << std::endl;
+    std::cout << "    -d \"<device>\"            " << target_device_message << std::endl;
+    std::cout << "    -n \"<num>\"               " << num_batch_message << std::endl;
+    std::cout << "    -d_va \"<device>\"         " << target_device_message_vehicle_attribs << std::endl;
+    std::cout << "    -n_va \"<num>\"            " << num_batch_va_message << std::endl;
     std::cout << "    -no_wait                   " << no_wait_for_keypress_message << std::endl;
     std::cout << "    -no_show                   " << no_show_processed_video << std::endl;
     std::cout << "    -pc                        " << performance_counter_message << std::endl;

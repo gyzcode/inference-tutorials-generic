@@ -38,7 +38,10 @@ static const char video_message[] = "Optional. Path to an video file. Default va
 static const char vehicle_detection_model_message[] = "Required. Path to the Vehicle/License-Plate Detection model (.xml) file.";
 
 /// @brief message for assigning vehicle detection inference to device
-static const char target_device_message[] = "Specify the target device for Vehicle Detection (CPU, GPU, FPGA, MYRYAD, or HETERO). ";
+static const char target_device_message[] = "Specify the target device for Vehicle Detection (CPU, GPU, FPGA, MYRIAD, or HETERO). ";
+
+/// @brief message for number of simultaneously vehicle detections using dynamic batch
+static const char num_batch_message[] = "Specify number of maximum simultaneously processed frames for Vehicle Detection ( default is 1).";
 
 /// @brief message for performance counters
 static const char performance_counter_message[] = "Enables per-layer performance statistics.";
@@ -77,6 +80,9 @@ DEFINE_string(m, "", vehicle_detection_model_message);
 /// \brief device the target device for vehicle detection infer on <br>
 DEFINE_string(d, "CPU", target_device_message);
 
+/// \brief batch size for running vehicle detection <br>
+DEFINE_uint32(n, 1, num_batch_message);
+
 /// \brief Enable per-layer performance report
 DEFINE_bool(pc, false, performance_counter_message);
 
@@ -113,12 +119,13 @@ static void showUsage() {
     std::cout << "Options:" << std::endl;
     std::cout << std::endl;
     std::cout << "    -h                         " << help_message << std::endl;
-    std::cout << "    -i \"<path>\"                " << video_message << std::endl;
-    std::cout << "    -m \"<path>\"                " << vehicle_detection_model_message<< std::endl;
-    std::cout << "      -l \"<absolute_path>\"     " << custom_cpu_library_message << std::endl;
+    std::cout << "    -i \"<path>\"              " << video_message << std::endl;
+    std::cout << "    -m \"<path>\"              " << vehicle_detection_model_message<< std::endl;
+    std::cout << "      -l \"<absolute_path>\"   " << custom_cpu_library_message << std::endl;
     std::cout << "          Or" << std::endl;
-    std::cout << "      -c \"<absolute_path>\"     " << custom_cldnn_message << std::endl;
-    std::cout << "    -d \"<device>\"              " << target_device_message << std::endl;
+    std::cout << "      -c \"<absolute_path>\"   " << custom_cldnn_message << std::endl;
+    std::cout << "    -d \"<device>\"            " << target_device_message << std::endl;
+    std::cout << "    -n \"<num>\"               " << num_batch_message << std::endl;
     std::cout << "    -no_wait                   " << no_wait_for_keypress_message << std::endl;
     std::cout << "    -no_show                   " << no_show_processed_video << std::endl;
     std::cout << "    -pc                        " << performance_counter_message << std::endl;

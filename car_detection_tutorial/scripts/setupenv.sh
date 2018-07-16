@@ -11,8 +11,13 @@ modName=vehicle-license-plate-detection-barrier-0007
 export mVLP16=$modelDir/$modName/FP16/$modName.xml
 export mVLP32=$modelDir/$modName/FP32/$modName.xml
 
+# Vehicle-only Detection Model used with the batch size exercise
+modName=vehicle-detection-adas-0002
+export mVDR16=$modelDir/$modName/FP16/$modName.xml
+export mVDR32=$modelDir/$modName/FP32/$modName.xml
+
 # Vehicle Attributes Detection Model
-modName=vehicle-attributes-recognition-barrier-0010
+modName=vehicle-attributes-recognition-barrier-0039
 export mVA16=$modelDir/$modName/FP16/$modName.xml
 export mVA32=$modelDir/$modName/FP32/$modName.xml
 

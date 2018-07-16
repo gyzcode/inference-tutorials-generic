@@ -8,7 +8,7 @@
 
 # Introduction
 
-Welcome to Car Detection Tutorial Step 3.  Now that the application can detect vehicles in images, we want it to tell us what type of vehicles were found and what color the vehicle are.  The precompiled "vehicle-attributes-recognition-barrier-0010" model included with the OpenVINO™ toolkit is what we will be using to accomplish this.  The sample output below shows the results where the ROI box now appears with the vehicle type (e.g. “car”) and its color (e.g. “black”).  The metrics reported now also include the time to run the vehicle attribute detection model.
+Welcome to Car Detection Tutorial Step 3.  Now that the application can detect vehicles in images, we want it to tell us what type of vehicles were found and what color the vehicle are.  The precompiled "vehicle-attributes-recognition-barrier-0039" model included with the OpenVINO™ toolkit is what we will be using to accomplish this.  The sample output below shows the results where the ROI box now appears with the vehicle type (e.g. “car”) and its color (e.g. “black”).  The metrics reported now also include the time to run the vehicle attribute detection model.
 
 ![image alt text](../doc_support/step3_image_1.png)
 
@@ -16,17 +16,17 @@ Welcome to Car Detection Tutorial Step 3.  Now that the application can detect v
 
 The OpenVINO™ toolkit provides a pre-compiled model for inferring vehicle type and color from an image of a car.  You can find it at:
 
-* /opt/intel/computer_vision_sdk/deployment_tools/intel_models/vehicle-attributes-recognition-barrier-0010
+* /opt/intel/computer_vision_sdk/deployment_tools/intel_models/vehicle-attributes-recognition-barrier-0039
 
    * Available model locations:
 
-      * FP16: /opt/intel/computer_vision_sdk/deployment_tools/intel_models/vehicle-attributes-recognition-barrier-0010/FP16/vehicle-attributes-recognition-barrier-0010.xml
+      * FP16: /opt/intel/computer_vision_sdk/deployment_tools/intel_models/vehicle-attributes-recognition-barrier-0039/FP16/vehicle-attributes-recognition-barrier-0039.xml
 
-      * FP32: /opt/intel/computer_vision_sdk/deployment_tools/intel_models/vehicle-attributes-recognition-barrier-0010/FP32/vehicle-attributes-recognition-barrier-0010.xml
+      * FP32: /opt/intel/computer_vision_sdk/deployment_tools/intel_models/vehicle-attributes-recognition-barrier-0039/FP32/vehicle-attributes-recognition-barrier-0039.xml
 
    * More details can be found at:
 
-      * file:///opt/intel/computer_vision_sdk/deployment_tools/intel_models/vehicle-attributes-recognition-barrier-0010/description//vehicle-attributes-recognition-barrier-0010.html
+      * file:///opt/intel/computer_vision_sdk/deployment_tools/intel_models/vehicle-attributes-recognition-barrier-0039/description/vehicle-attributes-recognition-barrier-0039.html
 
 The results it is capable of producing are shown in the summary below (for more details, see the descriptions HTML pages for each model): 
 
@@ -38,11 +38,11 @@ The results it is capable of producing are shown in the summary below (for more 
     <td>Average Accuracy</td>
   </tr>
   <tr>
-    <td>vehicle-attributes-recognition-barrier-0010</td>
-    <td>0.873</td>
+    <td>vehicle-attributes-recognition-barrier-0039</td>
+    <td>0.125</td>
     <td>0.626</td>
-    <td>Color accuracy: 82.61%
-Type accuracy: 87.85%</td>
+    <td>Color accuracy: 82.04%
+Type accuracy: 87.70%</td>
   </tr>
 </table>
 
