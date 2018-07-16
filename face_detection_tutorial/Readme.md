@@ -87,7 +87,7 @@ git clone https://github.com/intel-iot-devkit/inference-tutorials-generic.git
 
 ```Bash
 cd inference-tutorials-generic
-git checkout openvino_toolkit_r1_2
+git checkout openvino_toolkit_r2_0
 ```
 
 
@@ -113,7 +113,7 @@ cd tutorials
 1. Download the subdirectory for just this tutorial for the specific version from the repository:
 
 ```Bash
-svn export https://github.com/intel-iot-devkit/inference-tutorials-generic.git/branches/openvino_toolkit_r1_2/face_detection_tutorial
+svn export https://github.com/intel-iot-devkit/inference-tutorials-generic.git/branches/openvino_toolkit_r2_0/face_detection_tutorial
 ```
 
 
