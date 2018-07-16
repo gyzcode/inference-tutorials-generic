@@ -33,7 +33,6 @@
     + Helper functions matU9ToBlob() and Load()
     + BaseDetection class
     + VehicleDetection class
-    + Batch size (exercise)
   + Tutorial Step 3: Add the Second Model, Vehicle Attributes Detection
     + VehicleAttribsDetection class 
     + Running combinations of models on devices (exercise)
