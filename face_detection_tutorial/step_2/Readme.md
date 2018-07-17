@@ -1083,6 +1083,8 @@ As described earlier in the tutorial, the Hetero Plugin is used to run the layer
 
 ## HETERO:GPU,CPU
 
+**Note**: In order to run this section, the GPU is required to be present and correctly configured.
+
 Here we run the combination with the GPU as the primary device and falling back to the CPU. 
 
 ```bash
@@ -1090,7 +1092,7 @@ Here we run the combination with the GPU as the primary device and falling back 
 ```
 
 
-Once the image appears, press any key in the output window to exit.  As the application exits, the "-pc" argument will cause it to output eht performance counts for the face detection model.  At the top of the performance output you should see something similar to below.  Note the “execType” field where it is specifies “N5cldnn3gpu*” which indicates clDNN library functions and that the GPU plugin executed the layer.
+Once the image appears, press any key in the output window to exit.  As the application exits, the "-pc" argument will cause it to output the performance counts for the face detection model.  At the top of the performance output you should see something similar to below.  Note the “execType” field where it is specifies “N5cldnn3gpu*” which indicates clDNN library functions and that the GPU plugin executed the layer.
 
 ```
 subgraph1: Mul1_/Fused_Mul... EXECUTED       layerType: ScaleShift         realTime: 2643       cpu: 14             execType: N5cldnn3gpu9scale_gpuE
@@ -1107,6 +1109,8 @@ subgraph1: conv3_2/dw         EXECUTED       layerType: Convolution        realT
 
 ## HETERO:CPU,GPU
 
+**Note**: In order to run this section, the GPU is required to be present and correctly configured.
+
 Here we run the combination with the CPU as the primary device and falling back to the GPU. 
 
 ```bash
@@ -1114,7 +1118,7 @@ Here we run the combination with the CPU as the primary device and falling back 
 ```
 
 
-Once the image appears, press any key in the output window to exit.  As the application exits, the "-pc" argument will cause it to output eht performance counts for the face detection model.  At the top of the performance output you should see something similar to below.  Note the “execType” field where it is specifies “jit_sse*” which indicates that the CPU plugin executed the layer.  You may also notice that there are no “N5cldnn3gpu*” which would indicate execution on the GPU.  This is because the CPU plugin was able to support all the layers present. 
+Once the image appears, press any key in the output window to exit.  As the application exits, the "-pc" argument will cause it to output the performance counts for the face detection model.  At the top of the performance output you should see something similar to below.  Note the “execType” field where it is specifies “jit_sse*” which indicates that the CPU plugin executed the layer.  You may also notice that there are no “N5cldnn3gpu*” which would indicate execution on the GPU.  This is because the CPU plugin was able to support all the layers present. 
 
 ```
 subgraph1: Mul1_/Fused_Mul... EXECUTED       layerType: ScaleShift         realTime: 328        cpu: 328            execType: jit_sse42
@@ -1131,6 +1135,8 @@ subgraph1: conv3_2/dw         EXECUTED       layerType: Convolution        realT
 
 ## HETERO:MYRIAD,CPU
 
+**Note**: In order to run this section, the Myriad (Movidius™ Neural Compute Stick) is required to be present and correctly configured.
+
 Here we run the combination with the Myriad as the primary device and falling back to the CPU. 
 
 ```bash
@@ -1138,7 +1144,7 @@ Here we run the combination with the Myriad as the primary device and falling ba
 ```
 
 
-Once the image appears, press any key in the output window to exit.  As the application exits, the "-pc" argument will cause it to output eht performance counts for the face detection model.  At the top of the performance output you should see something similar to below.  Note the “execType” field where it is specifies the same name as the “layerType” field (e.g. “ScaleShift”) which indicates the MYRIAD plugin executed the layer.  
+Once the image appears, press any key in the output window to exit.  As the application exits, the "-pc" argument will cause it to output the performance counts for the face detection model.  At the top of the performance output you should see something similar to below.  Note the “execType” field where it is specifies the same name as the “layerType” field (e.g. “ScaleShift”) which indicates the MYRIAD plugin executed the layer.  
 
 ```
 subgraph1: Mul1_/Fused_Mul... EXECUTED       layerType: ScaleShift         realTime: 4319       cpu: 4319           execType: ScaleShift
