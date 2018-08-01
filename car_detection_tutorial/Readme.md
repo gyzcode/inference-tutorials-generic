@@ -46,7 +46,7 @@ A summary of what is needed:
 
    * OpenVINO™ toolkit supported Linux operating system.  This tutorial was run on 64-bit Ubuntu 16.04.3 LTS updated to kernel 14.4.20 following the OpenVINO™ toolkit installation instructions.
 
-   * The latest OpenVINO™ toolkit installed and verified.  This tutorial was written using version 2018 R1.2.
+   * The latest OpenVINO™ toolkit installed and verified.  This tutorial was written using version 2018 R2.0.
 
 By now you should have completed the Linux installation guide for the OpenVINO™ toolkit, however before continuing, please ensure:
 
