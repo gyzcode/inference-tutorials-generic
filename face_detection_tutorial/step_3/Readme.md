@@ -409,7 +409,7 @@ if (AgeGender.enabled()) {
 ```
 
 
-11. Label the fae with age and gender results if the model is enabled otherwise use a simple label.
+11. Label the face with age and gender results if the model is enabled otherwise use a simple label.
 
 ```cpp
                 out.str("");
