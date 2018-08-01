@@ -598,17 +598,17 @@ Command combinations run:
 
 ```Bash
 # Command line #1
-./intel64/Release/car_detection_tutorial -m $mVLP32 -d GPU -m_va $mVA32 -d_va GPU -i /home/impulse/tutorials/cv-sdk-tutorials/car_detection_tutorial/scripts/../data/car-detection.mp4
+./intel64/Release/car_detection_tutorial -m $mVLP32 -d GPU -m_va $mVA32 -d_va GPU -i ../../data/car-detection.mp4
 # Command line #2
-./intel64/Release/car_detection_tutorial -m $mVLP32 -d GPU -m_va $mVA32 -d_va CPU -i /home/impulse/tutorials/cv-sdk-tutorials/car_detection_tutorial/scripts/../data/car-detection.mp4
+./intel64/Release/car_detection_tutorial -m $mVLP32 -d GPU -m_va $mVA32 -d_va CPU -i ../../data/car-detection.mp4
 # Command line #3
-./intel64/Release/car_detection_tutorial -m $mVLP32 -d CPU -m_va $mVA32 -d_va GPU -i /home/impulse/tutorials/cv-sdk-tutorials/car_detection_tutorial/scripts/../data/car-detection.mp4
+./intel64/Release/car_detection_tutorial -m $mVLP32 -d CPU -m_va $mVA32 -d_va GPU -i ../../data/car-detection.mp4
 # Command line #4
-./intel64/Release/car_detection_tutorial -m $mVLP16 -d GPU -m_va $mVA16 -d_va GPU -i /home/impulse/tutorials/cv-sdk-tutorials/car_detection_tutorial/scripts/../data/car-detection.mp4
+./intel64/Release/car_detection_tutorial -m $mVLP16 -d GPU -m_va $mVA16 -d_va GPU -i ../../data/car-detection.mp4
 # Command line #5
-./intel64/Release/car_detection_tutorial -m $mVLP32 -d CPU -m_va $mVA16 -d_va GPU -i /home/impulse/tutorials/cv-sdk-tutorials/car_detection_tutorial/scripts/../data/car-detection.mp4
+./intel64/Release/car_detection_tutorial -m $mVLP32 -d CPU -m_va $mVA16 -d_va GPU -i ../../data/car-detection.mp4
 # Command line #6
-./intel64/Release/car_detection_tutorial -m $mVLP16 -d GPU -m_va $mVA32 -d_va CPU -i /home/impulse/tutorials/cv-sdk-tutorials/car_detection_tutorial/scripts/../data/car-detection.mp4
+./intel64/Release/car_detection_tutorial -m $mVLP16 -d GPU -m_va $mVA32 -d_va CPU -i ../../data/car-detection.mp4
 ```
 
 
@@ -622,11 +622,11 @@ Command combinations run:
 
 ```Bash
 # Command line #1
-./intel64/Release/car_detection_tutorial -m $mVLP16 -d MYRIAD -m_va $mVA16 -d_va MYRIAD -i /home/impulse/tutorials/cv-sdk-tutorials/car_detection_tutorial/scripts/../data/car-detection.mp4
+./intel64/Release/car_detection_tutorial -m $mVLP16 -d MYRIAD -m_va $mVA16 -d_va MYRIAD -i ../../data/car-detection.mp4
 # Command line #2
-./intel64/Release/car_detection_tutorial -m $mVLP16 -d MYRIAD -m_va $mVA32 -d_va CPU -i /home/impulse/tutorials/cv-sdk-tutorials/car_detection_tutorial/scripts/../data/car-detection.mp4
+./intel64/Release/car_detection_tutorial -m $mVLP16 -d MYRIAD -m_va $mVA32 -d_va CPU -i ../../data/car-detection.mp4
 # Command line #3
-./intel64/Release/car_detection_tutorial -m $mVLP32 -d CPU -m_va $mVA16 -d_va MYRIAD -i /home/impulse/tutorials/cv-sdk-tutorials/car_detection_tutorial/scripts/../data/car-detection.mp4
+./intel64/Release/car_detection_tutorial -m $mVLP32 -d CPU -m_va $mVA16 -d_va MYRIAD -i ../../data/car-detection.mp4
 ```
 
 
@@ -640,13 +640,13 @@ Command combinations run:
 
 ```Bash
 # Command line #1
-./intel64/Release/car_detection_tutorial -m $mVLP16 -d MYRIAD -m_va $mVA32 -d_va GPU -i /home/impulse/tutorials/cv-sdk-tutorials/car_detection_tutorial/scripts/../data/car-detection.mp4
+./intel64/Release/car_detection_tutorial -m $mVLP16 -d MYRIAD -m_va $mVA32 -d_va GPU -i ../../data/car-detection.mp4
 # Command line #2
-./intel64/Release/car_detection_tutorial -m $mVLP16 -d MYRIAD -m_va $mVA16 -d_va GPU -i /home/impulse/tutorials/cv-sdk-tutorials/car_detection_tutorial/scripts/../data/car-detection.mp4
+./intel64/Release/car_detection_tutorial -m $mVLP16 -d MYRIAD -m_va $mVA16 -d_va GPU -i ../../data/car-detection.mp4
 # Command line #3
-./intel64/Release/car_detection_tutorial -m $mVLP32 -d GPU -m_va $mVA16 -d_va MYRIAD -i /home/impulse/tutorials/cv-sdk-tutorials/car_detection_tutorial/scripts/../data/car-detection.mp4
+./intel64/Release/car_detection_tutorial -m $mVLP32 -d GPU -m_va $mVA16 -d_va MYRIAD -i ../../data/car-detection.mp4
 # Command line #4
-./intel64/Release/car_detection_tutorial -m $mVLP16 -d GPU -m_va $mVA16 -d_va MYRIAD -i /home/impulse/tutorials/cv-sdk-tutorials/car_detection_tutorial/scripts/../data/car-detection.mp4
+./intel64/Release/car_detection_tutorial -m $mVLP16 -d GPU -m_va $mVA16 -d_va MYRIAD -i ../../data/car-detection.mp4
 ```
 
 
