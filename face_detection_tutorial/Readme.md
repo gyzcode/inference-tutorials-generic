@@ -94,7 +94,7 @@ git checkout openvino_toolkit_r2_0
 5. Change to the face detection tutorial folder:
 
 ```Bash
-Cd face_detection_tutorial
+cd face_detection_tutorial
 ```
 
 
