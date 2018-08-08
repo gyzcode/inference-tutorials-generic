@@ -39,13 +39,13 @@ static const char vehicle_detection_model_message[] = "Required. Path to the Veh
 static const char vehicle_attribs_model_message[] = "Optional. Path to the Vehicle Attributes model (.xml) file.";
 
 /// @brief message for assigning vehicle detection inference to device
-static const char target_device_message[] = "Specify the target device for Vehicle Detection (CPU, GPU, FPGA, MYRYAD, or HETERO). ";
+static const char target_device_message[] = "Specify the target device for Vehicle Detection (CPU, GPU, FPGA, MYRIAD, or HETERO). ";
 
 /// @brief message for number of simultaneously vehicle detections using dynamic batch
 static const char num_batch_message[] = "Specify number of maximum simultaneously processed frames for Vehicle Detection ( default is 1).";
 
 /// @brief message for assigning vehicle attributes to device
-static const char target_device_message_vehicle_attribs[] = "Specify the target device for Vehicle Attributes (CPU, GPU, FPGA, MYRYAD, or HETERO). ";
+static const char target_device_message_vehicle_attribs[] = "Specify the target device for Vehicle Attributes (CPU, GPU, FPGA, MYRIAD, or HETERO). ";
 
 /// @brief message for number of simultaneously vehicle attributes detections using dynamic batch
 static const char num_batch_va_message[] = "Specify number of maximum simultaneously processed vehicles for Vehicle Attributes Detection ( default is 1).";

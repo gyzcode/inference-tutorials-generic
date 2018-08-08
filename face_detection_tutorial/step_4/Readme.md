@@ -60,7 +60,7 @@ As we saw in Tutorial Step 3, adding a new model is a relatively straight forwar
 2. Change to the directory containing Tutorial Step 4:
 
 ```bash
-cd tutorials/face_detection_tutorial/step_4
+cd tutorials/inference-tutorials-generic/face_detection_tutorial/step_4
 ```
 
 
@@ -472,7 +472,7 @@ Now let us build and run the complete application and see how it runs all three 
 2. Change to the directory containing Tutorial Step 4:
 
 ```bash
-cd tutorials/face_detection_tutorial/step_4
+cd tutorials/inference-tutorials-generic/face_detection_tutorial/step_4
 ```
 
 

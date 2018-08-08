@@ -38,7 +38,7 @@ static const char video_message[] = "Optional. Path to an video file. Default va
 static const char vehicle_detection_model_message[] = "Required. Path to the Vehicle/License-Plate Detection model (.xml) file.";
 
 /// @brief message for assigning vehicle detection inference to device
-static const char target_device_message[] = "Specify the target device for Vehicle Detection (CPU, GPU, FPGA, MYRYAD, or HETERO). ";
+static const char target_device_message[] = "Specify the target device for Vehicle Detection (CPU, GPU, FPGA, MYRIAD, or HETERO). ";
 
 /// @brief message for performance counters
 static const char performance_counter_message[] = "Enables per-layer performance statistics.";

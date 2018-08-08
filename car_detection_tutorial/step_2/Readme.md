@@ -73,7 +73,7 @@ To create the command line argument: -m \<model-IR-xml-file\>, where \<model-IR-
 
 ```cpp
 /// @brief message for assigning vehicle detection inference to device
-static const char target_device_message[] = "Specify the target device for Vehicle Detection (CPU, GPU, FPGA, MYRYAD, or HETERO). ";
+static const char target_device_message[] = "Specify the target device for Vehicle Detection (CPU, GPU, FPGA, MYRIAD, or HETERO). ";
 
 /// \brief device the target device for vehicle detection infer on <br>
 DEFINE_string(d, "CPU", target_device_message);
@@ -289,7 +289,7 @@ The line is read as "Load VehicleDetection into the plugin pluginsForDevices[FLA
 
 2. "into()" is called on the returned object passing in the mapped plugin from “pluginsForDevices”.  The map returns the plugin mapped to “FLAGS_d”, which is the command line argument “CPU”, “GPU”, or “MYRIAD”.  The function into() then first checks if the model object is enabled and if it is:
 
-   1. Calls "plg.LoadNetwork(detector.read(),{})"  to load the model returned by “detector.read()” (which we will see later is reading in the model’s IR file) into the plugin.  The resulting object is stored in the model object (detetor.net) 
+   1. Calls "plg.LoadNetwork(detector.read(),{})" to load the model returned by “detector.read()” (which we will see later is reading in the model’s IR file) into the plugin.  The resulting object is stored in the model object (detector.net) 
 
    2. Sets the model object’s plugin (detector.plugin) to the one used
 
@@ -691,7 +691,7 @@ We have now seen what happens behind the scenes in the VehicleDetection class, w
 2. Change to the directory containing Tutorial Step 2:
 
 ```bash
-cd tutorials/car_detection_tutorial/step_2
+cd tutorials/inference-tutorials-generic/car_detection_tutorial/step_2
 ```
 
 
@@ -1095,7 +1095,7 @@ Now that we have walked through the code and learned what it does, it is time to
 2. Change to the directory containing Tutorial Step 2:
 
 ```bash
-cd tutorials/car_detection_tutorial/step_2
+cd tutorials/inference-tutorials-generic/car_detection_tutorial/step_2
 ```
 
 

@@ -42,7 +42,7 @@ static const char plugin_message[] = "Plugin name. For example MKLDNNPlugin. If 
 "the sample will look for this plugin only.";
 
 /// @brief message for assigning face detection calculation to device
-static const char target_device_message[] = "Specify the target device for Face Detection (CPU, GPU, FPGA, or MYRYAD. " \
+static const char target_device_message[] = "Specify the target device for Face Detection (CPU, GPU, FPGA, or MYRIAD. " \
 "Sample will look for a suitable plugin for device specified.";
 
 /// @brief message for performance counters

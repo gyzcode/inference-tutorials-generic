@@ -86,7 +86,7 @@ To create the command line argument: -m \<model-IR-xml-file\>, where \<model-IR-
 
 ```bash
 /// @brief message for assigning face detection calculation to device
-static const char target_device_message[] = "Specify the target device for Face Detection (CPU, GPU, FPGA, or MYRYAD. " \
+static const char target_device_message[] = "Specify the target device for Face Detection (CPU, GPU, FPGA, or MYRIAD. " \
 "Sample will look for a suitable plugin for device specified.";
 
 /// \brief device the target device for face detection infer on <br>
@@ -729,7 +729,7 @@ We have now seen what happens behind the scenes in the FaceDetectionClass, we wi
 2. Change to the directory containing Tutorial Step 2:
 
 ```bash
-cd tutorials/face_detection_tutorial/step_2
+cd tutorials/inference-tutorials-generic/face_detection_tutorial/step_2
 ```
 
 
@@ -922,7 +922,7 @@ Now that we have walked through the code and learned what it will do, it is time
 2. Change to the directory containing Tutorial Step 2:
 
 ```bash
-cd tutorials/face_detection_tutorial/step_2
+cd tutorials/inference-tutorials-generic/face_detection_tutorial/step_2
 ```
 
 

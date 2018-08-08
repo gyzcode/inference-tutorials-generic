@@ -44,18 +44,18 @@ static const char plugin_message[] = "Plugin name. For example MKLDNNPlugin. If 
 "the sample will look for this plugin only.";
 
 /// @brief message for assigning face detection calculation to device
-static const char target_device_message[] = "Specify the target device for Face Detection (CPU, GPU, FPGA, or MYRYAD. " \
+static const char target_device_message[] = "Specify the target device for Face Detection (CPU, GPU, FPGA, or MYRIAD. " \
 "Sample will look for a suitable plugin for device specified.";
 
 /// @brief message for assigning age gender calculation to device
-static const char target_device_message_ag[] = "Specify the target device for Age Gender Detection (CPU, GPU, FPGA, or MYRYAD. " \
+static const char target_device_message_ag[] = "Specify the target device for Age Gender Detection (CPU, GPU, FPGA, or MYRIAD. " \
 "Sample will look for a suitable plugin for device specified.";
 
 /// @brief message for number of simultaneously age gender detections using dynamic batch
 static const char num_batch_ag_message[] = "Specify number of maximum simultaneously processed faces for Age Gender Detection ( default is 1).";
 
 /// @brief message for assigning age gender calculation to device
-static const char target_device_message_hp[] = "Specify the target device for Head Pose Detection (CPU, GPU, FPGA, or MYRYAD. " \
+static const char target_device_message_hp[] = "Specify the target device for Head Pose Detection (CPU, GPU, FPGA, or MYRIAD. " \
 "Sample will look for a suitable plugin for device specified.";
 
 /// @brief message for number of simultaneously age gender detections using dynamic batch
