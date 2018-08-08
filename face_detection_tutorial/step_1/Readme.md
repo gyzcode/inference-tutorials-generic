@@ -90,8 +90,7 @@ This is how the "-i" argument is done, all other arguments are handled similarly
 2. Change to the directory containing Tutorial Step 1:
 
 ```bash
-cd tutorials/face_detection_tutorial/
-cd step_1
+cd tutorials/inference-tutorials-generic/face_detection_tutorial/step_1
 ```
 
 

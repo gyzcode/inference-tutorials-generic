@@ -56,7 +56,7 @@ Thanks to the setup work done in Tutorial Step 2, adding the age and gender dete
 2. Change to the directory containing Tutorial Step 3:
 
 ```bash
-cd tutorials/face_detection_tutorial/step_3
+cd tutorials/inference-tutorials-generic/face_detection_tutorial/step_3
 ```
 
 
@@ -486,7 +486,7 @@ Now that we have walked through the added code and learned what it does, it is t
 2. Change to the directory containing Tutorial Step 3:
 
 ```bash
-cd tutorials/face_detection_tutorial/step_3
+cd tutorials/inference-tutorials-generic/face_detection_tutorial/step_3
 ```
 
 

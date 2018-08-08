@@ -41,7 +41,7 @@ In the Key Concepts section we learned the difference between the synchronous an
 2. Change to the directory containing Tutorial Step 4:
 
 ```bash
-cd tutorials/car_detection_tutorial/step_4
+cd tutorials/inference-tutorials-generic/car_detection_tutorial/step_4
 ```
 
 
@@ -800,7 +800,7 @@ Now,  let us build and run the complete application and see how it runs all thre
 2. Change to the directory containing Tutorial Step 4:
 
 ```bash
-cd tutorials/car_detection_tutorial/step_4
+cd tutorials/inference-tutorials-generic/car_detection_tutorial/step_4
 ```
 
 

@@ -729,7 +729,7 @@ We have now seen what happens behind the scenes in the FaceDetectionClass, we wi
 2. Change to the directory containing Tutorial Step 2:
 
 ```bash
-cd tutorials/face_detection_tutorial/step_2
+cd tutorials/inference-tutorials-generic/face_detection_tutorial/step_2
 ```
 
 
@@ -922,7 +922,7 @@ Now that we have walked through the code and learned what it will do, it is time
 2. Change to the directory containing Tutorial Step 2:
 
 ```bash
-cd tutorials/face_detection_tutorial/step_2
+cd tutorials/inference-tutorials-generic/face_detection_tutorial/step_2
 ```
 
 
