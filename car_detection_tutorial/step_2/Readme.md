@@ -1176,7 +1176,7 @@ source ../../scripts/setupenv.sh
 5. Let us see how the application handles a video file.
 
 ```bash
-./intel64/Release/vehicle_detection_tutorial -m $mVA32 -i ../../car-detection.mp4
+./intel64/Release/car_detection_tutorial -m $mVA32 -i ../../car-detection.mp4
 ```
 
 
@@ -1185,14 +1185,14 @@ source ../../scripts/setupenv.sh
 7. [Optional]Finally, if a USB camera has been setup, we can use the application to view live video from the connected USB camera.  The camera is the default source, so we do this by running the application without using any parameters.
 
 ```bash
-./intel64/Release/vehicle_detection_tutorial -m $mVA32
+./intel64/Release/car_detection_tutorial -m $mVA32
 ```
 
 
 Or we can still specify the camera using "cam":
 
 ```bash
-./intel64/Release/vehicle_detection_tutorial -m $mVA32 -i cam
+./intel64/Release/car_detection_tutorial -m $mVA32 -i cam
 ```
 
 

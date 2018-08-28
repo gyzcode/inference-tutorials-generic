@@ -541,14 +541,14 @@ source ../../scripts/setupenv.sh
 2. You now have the executable file to run ./intel64/Release/car_detection_tutorial.  In order to load the vehicle attribute detection model, the "-m_va" flag needs to be added  followed by the full path to the model.  First let us see how it works on a single image file:
 
 ```bash
-./intel64/Release/vehicle_detection_tutorial -m $mVLP32 -m_va $mVA32 -i ../../data/car_1.bmp
+./intel64/Release/car_detection_tutorial -m $mVLP32 -m_va $mVA32 -i ../../data/car_1.bmp
 ```
 
 
 3. The output window will show the image overlaid with colored rectangles over each of the detected vehicles and license plates.  There will also be text within the vehicle box indicating type and color.  The timing statistics for inferring the vehicle attribute results are also shown.  Next, let us try it on a video file.
 
 ```bash
-./intel64/Release/vehicle_detection_tutorial -m $mVLP32 -m_va $mVA32 -i ../../data/car-detection.mp4
+./intel64/Release/car_detection_tutorial -m $mVLP32 -m_va $mVA32 -i ../../data/car-detection.mp4
 ```
 
 
@@ -557,14 +557,14 @@ source ../../scripts/setupenv.sh
 5. [Optional]Finally, if a USB camera has been setup, we can use the application to view live video from the connected USB camera.  The camera is the default source, so we do this by running the application without using any parameters.
 
 ```bash
-./intel64/Release/vehicle_detection_tutorial -m $mVLP32 -m_va $mVA32
+./intel64/Release/car_detection_tutorial -m $mVLP32 -m_va $mVA32
 ```
 
 
 Or we can still specify the camera using "cam":
 
 ```bash
-./intel64/Release/vehicle_detection_tutorial -m $mVLP32 -m_va $mVA32 -i cam
+./intel64/Release/car_detection_tutorial -m $mVLP32 -m_va $mVA32 -i cam
 ```
 
 
