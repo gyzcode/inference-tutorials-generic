@@ -65,37 +65,6 @@ bool ParseAndCheckCommandLine(int argc, char *argv[]) {
     return true;
 }
 
-// Returns 1 on success, 0 on failure
-template <typename T>
-int matU8ToBlob(const cv::Mat& orig_image, Blob::Ptr& blob, int batchIndex = 0) {
-    SizeVector blobSize = blob.get()->dims();
-    const size_t width = blobSize[0];
-    const size_t height = blobSize[1];
-    const size_t channels = blobSize[2];
-    T* blob_data = blob->buffer().as<T*>();
-
-    cv::Mat resized_image(orig_image);
-    if (width != orig_image.size().width || height!= orig_image.size().height) {
-    	// ignore rectangles with either dimension < 1
-    	if (orig_image.size().width < 1 || orig_image.size().height < 1) {
-    		return 0;
-    	}
-        cv::resize(orig_image, resized_image, cv::Size(width, height));
-    }
-
-    int batchOffset = batchIndex * width * height * channels;
-
-    for (size_t c = 0; c < channels; c++) {
-        for (size_t  h = 0; h < height; h++) {
-            for (size_t w = 0; w < width; w++) {
-                blob_data[batchOffset + c * width * height + h * width + w] =
-                        resized_image.at<cv::Vec3b>(h, w)[c];
-            }
-        }
-    }
-    return 1;
-}
-
 // -------------------------Generic routines for detection networks-------------------------------------------------
 
 struct BaseDetection {
@@ -192,9 +161,8 @@ struct VehicleDetection : BaseDetection{
 
         auto  inputBlob = request->GetBlob(input);
 
-        if (matU8ToBlob<uint8_t >(frame, inputBlob, enquedFrames)) {
-        	enquedFrames++;
-        }
+        matU8ToBlob<uint8_t >(frame, inputBlob, enquedFrames);
+        enquedFrames++;
     }
 
 
@@ -314,9 +282,8 @@ struct VehicleAttribsDetection : BaseDetection {
 
         auto  inputBlob = request->GetBlob(inputName);
 
-        if (matU8ToBlob<uint8_t>(Vehicle, inputBlob, enquedVehicles)) {
-        	enquedVehicles++;
-        }
+        matU8ToBlob<uint8_t>(Vehicle, inputBlob, enquedVehicles);
+        enquedVehicles++;
     }
 	
     struct Attributes { std::string type; std::string color;};

@@ -129,9 +129,8 @@ The input blob from the request is retrieved and then matU8ToBlob() is used to c
 ```cpp
         auto  inputBlob = request->GetBlob(input);
 
-        if (matU8ToBlob<uint8_t>(Vehicle, inputBlob, 1.0f, enquedVehicles)) {
-        	enquedVehicles++;
-        }
+        matU8ToBlob<uint8_t>(Vehicle, inputBlob,enquedVehicles);
+        enquedVehicles++;
     }
 ```
 

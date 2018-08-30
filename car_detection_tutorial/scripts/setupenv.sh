@@ -7,7 +7,7 @@
 modelDir=$InferenceEngine_DIR/../../intel_models
 
 # Vehicle and License Plates Detection Model
-modName=vehicle-license-plate-detection-barrier-0007
+modName=vehicle-license-plate-detection-barrier-0106
 export mVLP16=$modelDir/$modName/FP16/$modName.xml
 export mVLP32=$modelDir/$modName/FP32/$modName.xml
 

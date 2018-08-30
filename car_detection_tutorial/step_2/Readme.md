@@ -205,33 +205,34 @@ From Tutorial Step 1, we have the base application that can read and display ima
 
 ## Helper Functions and Classes
 
-There will need to be a function that takes the input image and turns it into a "blob".  Which begs the question “What is a blob?”.  In short, a blob, specifically the class InferenceEngine::Blob, is the data container type used by the Inference Engine for holding input and output data.  To get data into the model, the image data will need to be converted from the OpenCV cv::Mat to an InferenceEngine::Blob.  For doing that is the helper function “matU8ToBlob” in main.cpp: 
+There will need to be a function that takes the input image and turns it into a "blob".  Which begs the question “What is a blob?”.  In short, a blob, specifically the class InferenceEngine::Blob, is the data container type used by the Inference Engine for holding input and output data.  To get data into the model, the image data will need to be converted from the OpenCV cv::Mat to an InferenceEngine::Blob.  For doing that is the helper function “matU8ToBlob” in \opt\intel\computer_vision_sdk\inference_engine\samples\common\samples\common.hpp:
 
 ### matU8ToBlob
 
 1. Variables are defined to store the dimensions for the images that the model is optimized to work with.  "blob_data" is assigned to the blob’s data buffer.
 
 ```cpp
-// Returns 1 on success, 0 on failure
-int matU8ToBlob(const cv::Mat& orig_image, Blob::Ptr& blob, float scaleFactor = 1.0, int batchIndex = 0)
-{
-    SizeVector blobSize = blob.get()->dims();
-    const size_t width = blobSize[0];
-    const size_t height = blobSize[1];
-    const size_t channels = blobSize[2];
+/**
+* @brief Sets image data stored in cv::Mat object to a given Blob object.
+* @param orig_image - given cv::Mat object with an image data.
+* @param blob - Blob object which to be filled by an image data.
+* @param batchIndex - batch index of an image inside of the blob.
+*/
+template <typename T>
+void matU8ToBlob(const cv::Mat& orig_image, InferenceEngine::Blob::Ptr& blob, int batchIndex = 0) {
+    InferenceEngine::SizeVector blobSize = blob->getTensorDesc().getDims();
+    const size_t width = blobSize[3];
+    const size_t height = blobSize[2];
+    const size_t channels = blobSize[1];
     T* blob_data = blob->buffer().as<T*>();
 ```
 
 
-2. A check is made to see if the input image matches the dimensions of images that the model is expecting.  If the dimensions do not match, then use the OpenCV function cv::resize to resize it.  A check is made to make sure that an input with either height or width <1 is not stored, returning 0 to indicate nothing was done.
+2. A check is made to see if the input image matches the dimensions of images that the model is expecting.  If the dimensions do not match, then use the OpenCV function cv::resize to resize it.  
 
 ```cpp
     cv::Mat resized_image(orig_image);
     if (width != orig_image.size().width || height!= orig_image.size().height) {
-    	   // ignore rectangles with either dimension < 1
-    	   if (orig_image.size().width < 1 || orig_image.size().height < 1) {
-    		return 0;
-    	   }
         cv::resize(orig_image, resized_image, cv::Size(width, height));
     }
 ```
@@ -246,11 +247,10 @@ int matU8ToBlob(const cv::Mat& orig_image, Blob::Ptr& blob, float scaleFactor = 
         for (size_t  h = 0; h < height; h++) {
             for (size_t w = 0; w < width; w++) {
                 blob_data[batchOffset + c * width * height + h * width + w] =
-                    resized_image.at<cv::Vec3b>(h, w)[c] * scaleFactor;
+                    resized_image.at<cv::Vec3b>(h, w)[c];
             }
         }
     }
-    return 1;
 }
 ```
 
@@ -470,9 +470,8 @@ The input blob from the request is retrieved and then matU8ToBlob() is used to c
         height = frame.rows;
 
         auto  inputBlob = request->GetBlob(input);
-        if (matU8ToBlob<uint8_t >(frame, inputBlob)) {
-        	enquedFrames++;
-        }
+        matU8ToBlob<uint8_t >(frame, inputBlob);
+        enquedFrames++;
      }
 ```
 
