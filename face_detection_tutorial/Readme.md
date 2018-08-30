@@ -1,6 +1,6 @@
 # Face Detection Tutorial
 
-**Note**: This tutorial has been written using OpenVINO™ toolkit version 2018 R2.0 and is for use with this version only.   Using this tutorial with any other version may not be correct.
+**Note**: This tutorial has been written using OpenVINO™ toolkit version 2018 R3.0 and is for use with this version only.   Using this tutorial with any other version may not be correct.
 
 # Table of Contents
 
@@ -46,7 +46,7 @@ A summary of what is needed:
 
    * OpenVINO™ toolkit supported Linux operating system.  This tutorial was run on 64-bit Ubuntu 16.04.3 LTS updated to kernel 14.4.20 following the OpenVINO™ toolkit installation instructions.
 
-   * The latest OpenVINO™ toolkit installed and verified.  This tutorial was written using version 2018 R2.0.
+   * The latest OpenVINO™ toolkit installed and verified.  This tutorial was written using version 2018 R3.0.
 
    * At least one utility for downloading from the GitHub repository: Subversion (svn), Git (git), or both
 
@@ -89,7 +89,7 @@ git clone https://github.com/intel-iot-devkit/inference-tutorials-generic.git
 
 ```Bash
 cd inference-tutorials-generic
-git checkout openvino_toolkit_r2_0
+git checkout openvino_toolkit_r3_0
 ```
 
 
@@ -115,7 +115,7 @@ cd tutorials/inference-tutorials-generic
 1. Download the subdirectory for just this tutorial for the specific version from the repository:
 
 ```Bash
-svn export https://github.com/intel-iot-devkit/inference-tutorials-generic.git/branches/openvino_toolkit_r2_0/face_detection_tutorial
+svn export https://github.com/intel-iot-devkit/inference-tutorials-generic.git/branches/openvino_toolkit_r3_0/face_detection_tutorial
 ```
 
 
