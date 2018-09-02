@@ -62,6 +62,11 @@ bool ParseAndCheckCommandLine(int argc, char *argv[]) {
         throw std::logic_error("Parameter -m is not set");
     }
 
+    if (FLAGS_auto_resize) {
+    	slog::warn << "auto_resize=1, forcing all batch sizes to 1" << slog::endl;
+    	FLAGS_n = 1;
+    }
+
     return true;
 }
 
@@ -159,9 +164,14 @@ struct VehicleDetection : BaseDetection{
         width = frame.cols;
         height = frame.rows;
 
-        auto  inputBlob = request->GetBlob(input);
-
-        matU8ToBlob<uint8_t >(frame, inputBlob, enquedFrames);
+		InferenceEngine::Blob::Ptr inputBlob;
+        if (FLAGS_auto_resize) {
+            inputBlob = wrapMat2Blob(frame);
+            request->SetBlob(input, inputBlob);
+        } else {
+			inputBlob = request->GetBlob(input);
+			matU8ToBlob<uint8_t >(frame, inputBlob, enquedFrames);
+    	}
         enquedFrames++;
     }
 
@@ -189,7 +199,15 @@ struct VehicleDetection : BaseDetection{
         }
         auto& inputInfoFirst = inputInfo.begin()->second;
         inputInfoFirst->setInputPrecision(Precision::U8);
-        inputInfoFirst->getInputData()->setLayout(Layout::NCHW);
+        
+		if (FLAGS_auto_resize) {
+	        // set resizing algorithm
+	        inputInfoFirst->getPreProcess().setResizeAlgorithm(RESIZE_BILINEAR);
+			inputInfoFirst->getInputData()->setLayout(Layout::NHWC);
+		} else {
+			inputInfoFirst->getInputData()->setLayout(Layout::NCHW);
+		}
+
         // -----------------------------------------------------------------------------------------------------
 
         // ---------------------------Check outputs ------------------------------------------------------
@@ -257,9 +275,14 @@ struct Load {
     BaseDetection& detector;
     explicit Load(BaseDetection& detector) : detector(detector) { }
 
-    void into(InferenceEngine::InferencePlugin & plg) const {
+    void into(InferencePlugin & plg, bool enable_dynamic_batch = false) const {
         if (detector.enabled()) {
-            detector.net = plg.LoadNetwork(detector.read(), {});
+            std::map<std::string, std::string> config;
+            // if specified, enable Dynamic Batching
+            if (enable_dynamic_batch) {
+                config[PluginConfigParams::KEY_DYN_BATCH_ENABLED] = PluginConfigParams::YES;
+            }
+            detector.net = plg.LoadNetwork(detector.read(), config);
             detector.plugin = &plg;
         }
     }
@@ -335,7 +358,7 @@ int main(int argc, char *argv[]) {
         }
 
         // --------------------Load networks (Generated xml/bin files)-------------------------------------------
-        Load(VehicleDetection).into(pluginsForDevices[FLAGS_d]);
+        Load(VehicleDetection).into(pluginsForDevices[FLAGS_d], false);
 
         // read input (video) frames, need to keep multiple frames stored for batching
         const int maxNumInputFrames = VehicleDetection.maxBatch + 1;  // +1 to avoid overwrite

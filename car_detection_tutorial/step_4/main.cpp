@@ -63,6 +63,12 @@ bool ParseAndCheckCommandLine(int argc, char *argv[]) {
         throw std::logic_error("Parameter -m is not set");
     }
 
+    if (FLAGS_auto_resize) {
+    	slog::warn << "auto_resize=1, forcing all batch sizes to 1" << slog::endl;
+    	FLAGS_n = 1;
+    	FLAGS_n_va = 1;
+    }
+	
     if (FLAGS_n_async < 1) {
         throw std::logic_error("Parameter -n_async must be >= 1");
     }
@@ -200,9 +206,14 @@ struct VehicleDetection : BaseDetection{
         width = frame.cols;
         height = frame.rows;
 
-        auto  inputBlob = requests[inputRequestIdx]->GetBlob(input);
-
-        matU8ToBlob<uint8_t >(frame, inputBlob, enquedFrames);
+		InferenceEngine::Blob::Ptr inputBlob;
+        if (FLAGS_auto_resize) {
+            inputBlob = wrapMat2Blob(frame);
+            requests[inputRequestIdx]->SetBlob(input, inputBlob);
+        } else {
+			inputBlob = requests[inputRequestIdx]->GetBlob(input);
+			matU8ToBlob<uint8_t >(frame, inputBlob, enquedFrames);
+    	}
         enquedFrames++;
     }
 
@@ -230,7 +241,15 @@ struct VehicleDetection : BaseDetection{
         }
         auto& inputInfoFirst = inputInfo.begin()->second;
         inputInfoFirst->setInputPrecision(Precision::U8);
-        inputInfoFirst->getInputData()->setLayout(Layout::NCHW);
+        
+		if (FLAGS_auto_resize) {
+	        // set resizing algorithm
+	        inputInfoFirst->getPreProcess().setResizeAlgorithm(RESIZE_BILINEAR);
+			inputInfoFirst->getInputData()->setLayout(Layout::NHWC);
+		} else {
+			inputInfoFirst->getInputData()->setLayout(Layout::NCHW);
+		}
+
         // -----------------------------------------------------------------------------------------------------
 
         // ---------------------------Check outputs ------------------------------------------------------
@@ -311,11 +330,17 @@ struct VehicleAttribsDetection : BaseDetection {
 
     void submitRequest() override {
         if (!enquedVehicles) return;
+		
+        // Use Dynamic Batching to set actual number of inputs in request
+        if (FLAGS_dyn_va) {
+        	requests[inputRequestIdx]->SetBatch(enquedVehicles);
+        }
+
         BaseDetection::submitRequest();
         enquedVehicles = 0;
     }
 
-    void enqueue(const cv::Mat &Vehicle) {
+    void enqueue(const cv::Mat &Vehicle, cv::Rect roiRect = cv::Rect(0,0,0,0)) {
         if (!enabled()) {
             return;
         }
@@ -327,9 +352,35 @@ struct VehicleAttribsDetection : BaseDetection {
         	requests[inputRequestIdx] = net.CreateInferRequestPtr();
         }
 
-        auto  inputBlob = requests[inputRequestIdx]->GetBlob(inputName);
+        // check if ROI has non-zero dimensions, if so it will be used to crop input
+        bool doCrop = (roiRect.width != 0) && (roiRect.height != 0);
 
-        matU8ToBlob<uint8_t>(Vehicle, inputBlob, enquedVehicles);
+        InferenceEngine::Blob::Ptr inputBlob;
+        if (FLAGS_auto_resize) {
+        	inputBlob = wrapMat2Blob(Vehicle);
+        	if (doCrop) {
+        		cv::Rect clippedRect = roiRect & cv::Rect(0, 0, Vehicle.cols, Vehicle.rows);
+				InferenceEngine::ROI ieRoi;
+				ieRoi.posX = clippedRect.x;
+				ieRoi.posY = clippedRect.y;
+				ieRoi.sizeX = clippedRect.width;
+				ieRoi.sizeY = clippedRect.height;
+
+				inputBlob = InferenceEngine::make_shared_blob(inputBlob, ieRoi);
+        	}
+
+            requests[inputRequestIdx]->SetBlob(inputName, inputBlob);
+        } else {
+        	cv::Mat cropped;
+        	if (doCrop) {
+        		cv::Rect clippedRect = roiRect & cv::Rect(0, 0, Vehicle.cols, Vehicle.rows);
+        		cropped = Vehicle(clippedRect);
+        	} else {
+        		cropped = Vehicle;
+        	}
+        	inputBlob = requests[inputRequestIdx]->GetBlob(inputName);
+			matU8ToBlob<uint8_t >(cropped, inputBlob, enquedVehicles);
+    	}
         enquedVehicles++;
     }
 	
@@ -394,7 +445,15 @@ struct VehicleAttribsDetection : BaseDetection {
         }
         auto& inputInfoFirst = inputInfo.begin()->second;
         inputInfoFirst->setInputPrecision(Precision::U8);
-        inputInfoFirst->getInputData()->setLayout(Layout::NCHW);
+
+		if (FLAGS_auto_resize) {
+	        // set resizing algorithm
+	        inputInfoFirst->getPreProcess().setResizeAlgorithm(RESIZE_BILINEAR);
+			inputInfoFirst->getInputData()->setLayout(Layout::NHWC);
+		} else {
+			inputInfoFirst->getInputData()->setLayout(Layout::NCHW);
+		}
+
         inputName = inputInfo.begin()->first;
         // -----------------------------------------------------------------------------------------------------
 
@@ -418,9 +477,14 @@ struct Load {
     BaseDetection& detector;
     explicit Load(BaseDetection& detector) : detector(detector) { }
 
-    void into(InferenceEngine::InferencePlugin & plg) const {
+    void into(InferenceEngine::InferencePlugin & plg, bool enable_dynamic_batch = false) const {
         if (detector.enabled()) {
-            detector.net = plg.LoadNetwork(detector.read(), {});
+            std::map<std::string, std::string> config;
+            // if specified, enable Dynamic Batching
+            if (enable_dynamic_batch) {
+                config[PluginConfigParams::KEY_DYN_BATCH_ENABLED] = PluginConfigParams::YES;
+            }
+            detector.net = plg.LoadNetwork(detector.read(), config);
             detector.plugin = &plg;
         }
     }
@@ -502,8 +566,8 @@ int main(int argc, char *argv[]) {
         }
 
         // --------------------Load networks (Generated xml/bin files)-------------------------------------------
-        Load(VehicleDetection).into(pluginsForDevices[FLAGS_d]);
-        Load(VehicleAttribs).into(pluginsForDevices[FLAGS_d_va]);
+        Load(VehicleDetection).into(pluginsForDevices[FLAGS_d], false);
+        Load(VehicleAttribs).into(pluginsForDevices[FLAGS_d_va], FLAGS_dyn_va);
 
         // read input (video) frames, need to keep multiple frames stored
         //  for batching and for when using asynchronous API.
@@ -664,9 +728,7 @@ int main(int argc, char *argv[]) {
 						if (VehicleAttribs.enquedVehicles >= VehicleAttribs.maxBatch) {
 							break;
 						}
-						auto clippedRect = ps1s2i.vehicleLocations[rib] & cv::Rect(0, 0, width, height);
-						auto Vehicle = (*ps1s2i.outputFrame)(clippedRect);
-						VehicleAttribs.enqueue(Vehicle);
+						VehicleAttribs.enqueue(*ps1s2i.outputFrame, ps1s2i.vehicleLocations[rib]);
 					}
 
 					// ----------------------------Run vehicleResult attribute inference ----------------

@@ -43,6 +43,10 @@ static const char target_device_message[] = "Specify the target device for Vehic
 /// @brief message for number of simultaneously vehicle detections using dynamic batch
 static const char num_batch_message[] = "Specify number of maximum simultaneously processed frames for Vehicle Detection ( default is 1).";
 
+
+/// @brief message auto_resize input flag
+static const char auto_resize_message[] = "Enable auto-resize (ROI crop & data resize) of input during inference.";
+
 /// @brief message for performance counters
 static const char performance_counter_message[] = "Enables per-layer performance statistics.";
 
@@ -82,6 +86,9 @@ DEFINE_string(d, "CPU", target_device_message);
 
 /// \brief batch size for running vehicle detection <br>
 DEFINE_uint32(n, 1, num_batch_message);
+
+/// \brief Define flag for enabling auto-resize of inputs for all models <br>
+DEFINE_bool(auto_resize, false, auto_resize_message);
 
 /// \brief Enable per-layer performance report
 DEFINE_bool(pc, false, performance_counter_message);
@@ -126,6 +133,7 @@ static void showUsage() {
     std::cout << "      -c \"<absolute_path>\"   " << custom_cldnn_message << std::endl;
     std::cout << "    -d \"<device>\"            " << target_device_message << std::endl;
     std::cout << "    -n \"<num>\"               " << num_batch_message << std::endl;
+    std::cout << "    -auto_resize               " << auto_resize_message << std::endl;
     std::cout << "    -no_wait                   " << no_wait_for_keypress_message << std::endl;
     std::cout << "    -no_show                   " << no_show_processed_video << std::endl;
     std::cout << "    -pc                        " << performance_counter_message << std::endl;
