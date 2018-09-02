@@ -1160,14 +1160,14 @@ source ../../scripts/setupenv.sh
 ```
 
 
-   5. You will notice that the script file defines seven variables that can be used to reference vehicle detection models and two for vehicle attributes.  We will be using $mVB1* only for a later step to go over how batch size affects the performance.  
+   1. You will notice that the script file defines four variables that can be used to reference vehicle detection models and two for vehicle attributes.  
 
 2. We will be using images and video files that are included with this tutorial.  Once you have seen the application working, feel free to try it on your own images and videos.
 
 3. Let us first run it on a single image, to see how it works.
 
 ```bash
-./intel64/Release/car_detection_tutorial -m $mVA32 -i ../../data/car_1.bmp
+./intel64/Release/car_detection_tutorial -m $mVLP32 -i ../../data/car_1.bmp
 ```
 
 
@@ -1176,7 +1176,7 @@ source ../../scripts/setupenv.sh
 5. Let us see how the application handles a video file.
 
 ```bash
-./intel64/Release/car_detection_tutorial -m $mVA32 -i ../../car-detection.mp4
+./intel64/Release/car_detection_tutorial -m $mVLP32 -i ../../car-detection.mp4
 ```
 
 
@@ -1185,14 +1185,14 @@ source ../../scripts/setupenv.sh
 7. [Optional]Finally, if a USB camera has been setup, we can use the application to view live video from the connected USB camera.  The camera is the default source, so we do this by running the application without using any parameters.
 
 ```bash
-./intel64/Release/car_detection_tutorial -m $mVA32
+./intel64/Release/car_detection_tutorial -m $mVLP32
 ```
 
 
 Or we can still specify the camera using "cam":
 
 ```bash
-./intel64/Release/car_detection_tutorial -m $mVA32 -i cam
+./intel64/Release/car_detection_tutorial -m $mVLP32 -i cam
 ```
 
 
