@@ -1176,7 +1176,7 @@ source ../../scripts/setupenv.sh
 5. Let us see how the application handles a video file.
 
 ```bash
-./intel64/Release/car_detection_tutorial -m $mVLP32 -i ../../car-detection.mp4
+./intel64/Release/car_detection_tutorial -m $mVLP32 -i ../../data/car-detection.mp4
 ```
 
 
