@@ -531,7 +531,7 @@ source ../../scripts/setupenv.sh
 3. The output window will show the image overlaid with colored rectangles over each of the detected faces with labels showing the age and gender results.  The timing statistics for computing the results of each model along with OpenCV input and output times are also shown.  Next, let us try it on a video file.
 
 ```bash
-./intel64/Release/face_detection_tutorial -m $mFDA32 -m_ag $mAG32 -i /opt/intel/computer_vision_sdk/openvx/samples/samples/face_detection/face.mp4
+./intel64/Release/face_detection_tutorial -m $mFDA32 -m_ag $mAG32 -i ../../data/head-pose-face-detection-female-and-male.mp4
 ```
 
 

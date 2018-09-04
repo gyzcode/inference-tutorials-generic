@@ -4,7 +4,7 @@
 
 # Table of Contents
 
-<p></p><div class="table-of-contents"><ul><li><a href="#tutorial-step-3-add-a-second-model-vehicle-attributes-detection">Tutorial Step 3: Add a second model, Vehicle Attributes Detection</a></li><li><a href="#table-of-contents">Table of Contents</a></li><li><a href="#introduction">Introduction</a></li><li><a href="#vehicle-attributes-detection-model">Vehicle Attributes Detection Model</a></li><li><a href="#adding-the-vehicle-attributes-detection-model">Adding the Vehicle Attributes Detection Model</a><ul><li><a href="#vehicleattribsdetection">VehicleAttribsDetection</a><ul><li><a href="#vehicleattribsdetection">VehicleAttribsDetection()</a></li><li><a href="#submitrequest">submitRequest()</a></li><li><a href="#enqueue">enqueue()</a></li><li><a href="#fetchresults">fetchResults()</a></li><li><a href="#read">read()</a></li></ul></li></ul></li><li><a href="#using-vehicleattribsdetection">Using VehicleAttribsDetection</a><ul><li><a href="#main">main()</a></li><li><a href="#main-loop">Main Loop</a><ul><li><a href="#pipeline-stage-0-prepare-and-infer-a-batch-of-frames">Pipeline Stage 0: Prepare and Infer a Batch of Frames</a></li><li><a href="#pipeline-stage-1-infer-vehicle-attributes">Pipeline Stage 1: Infer Vehicle Attributes</a></li><li><a href="#pipeline-stage-2-render-results">Pipeline Stage 2: Render Results</a></li></ul></li><li><a href="#post-main-loop">Post-Main Loop</a></li></ul></li><li><a href="#building-and-running">Building and Running</a><ul><li><a href="#build">Build</a></li><li><a href="#run">Run</a></li></ul></li><li><a href="#checking-performance">Checking Performance</a><ul><li><a href="#cpu">CPU</a></li><li><a href="#cpu-and-gpu">CPU and GPU</a></li><li><a href="#cpu-and-myriad">CPU and Myriad</a></li><li><a href="#gpu-and-myriad">GPU and Myriad</a></li></ul></li><li><a href="#conclusion">Conclusion</a></li><li><a href="#navigation">Navigation</a></li></ul></div><p></p>
+<p></p><div class="table-of-contents"><ul><li><a href="#tutorial-step-3-add-a-second-model-vehicle-attributes-detection">Tutorial Step 3: Add a second model, Vehicle Attributes Detection</a></li><li><a href="#table-of-contents">Table of Contents</a></li><li><a href="#introduction">Introduction</a></li><li><a href="#vehicle-attributes-detection-model">Vehicle Attributes Detection Model</a></li><li><a href="#adding-the-vehicle-attributes-detection-model">Adding the Vehicle Attributes Detection Model</a><ul><li><a href="#vehicleattribsdetection">VehicleAttribsDetection</a><ul><li><a href="#vehicleattribsdetection">VehicleAttribsDetection()</a></li><li><a href="#submitrequest">submitRequest()</a></li><li><a href="#enqueue">enqueue()</a></li><li><a href="#fetchresults">fetchResults()</a></li><li><a href="#read">read()</a></li></ul></li></ul></li><li><a href="#using-vehicleattribsdetection">Using VehicleAttribsDetection</a><ul><li><a href="#main">main()</a></li><li><a href="#main-loop">Main Loop</a><ul><li><a href="#pipeline-stage-0-prepare-and-infer-a-batch-of-frames">Pipeline Stage 0: Prepare and Infer a Batch of Frames</a></li><li><a href="#pipeline-stage-1-infer-vehicle-attributes">Pipeline Stage 1: Infer Vehicle Attributes</a></li><li><a href="#pipeline-stage-2-render-results">Pipeline Stage 2: Render Results</a></li></ul></li><li><a href="#post-main-loop">Post-Main Loop</a></li></ul></li><li><a href="#building-and-running">Building and Running</a><ul><li><a href="#build">Build</a></li><li><a href="#run">Run</a></li></ul></li><li><a href="#dynamic-batching">Dynamic Batching</a></li><li><a href="#input-preprocessing">Input Preprocessing</a></li><li><a href="#checking-performance">Checking Performance</a><ul><li><a href="#cpu">CPU</a></li><li><a href="#cpu-and-gpu">CPU and GPU</a></li><li><a href="#cpu-and-myriad">CPU and Myriad</a></li><li><a href="#gpu-and-myriad">GPU and Myriad</a></li></ul></li><li><a href="#conclusion">Conclusion</a></li><li><a href="#navigation">Navigation</a></li></ul></div><p></p>
 
 # Introduction
 
@@ -88,11 +88,17 @@ On construction of a VehicleAttribsDetection object, the base class constructor 
 
 ### submitRequest()
 
-The submitRequest() function is overridden to make sure that there are vehicles queued up to be processed before calling BaseDetection::submitRequest() to start inference.
+The submitRequest() function is overridden to make sure that there are vehicles queued up to be processed before calling BaseDetection::submitRequest() to start inference.  If FLAGS_dyn_va is true (Dynamic Batching enabled), then set the actual batch size before submitting the request by calling "request->SetBatch(enquedVehicles)".
 
 ```cpp
     void submitRequest() override {
         if (!enquedVehicles) return;
+
+        // Use Dynamic Batching to set actual number of inputs in request
+        if (FLAGS_dyn_va) {
+            request->SetBatch(enquedVehicles);
+        }
+
         BaseDetection::submitRequest();
         enquedVehicles = 0;
     }
@@ -104,7 +110,7 @@ The submitRequest() function is overridden to make sure that there are vehicles 
 A check is made to see that the vehicle attributes detection model is enabled.  Also check to make sure that the number of inputs does not exceed the batch size.  
 
 ```cpp
-    void enqueue(const cv::Mat &Vehicle) {
+    void enqueue(const cv::Mat &Vehicle, cv::Rect roiRect = cv::Rect(0,0,0,0)) {
         if (!enabled()) {
             return;
         }
@@ -124,13 +130,46 @@ An inference request object is created if one has not been already created.  The
 ```
 
 
-The input blob from the request is retrieved and then matU8ToBlob() is used to copy the image image data into the blob.
+If FLAGS_auto_resize is true, create a new blob using wrapMat2Blob() which reuses the data buffer for the Vehicle (no copy of data is done).  If roiRect contains a valid region (doCrop == true), then create an InferenceEngine::ROI (ieRoi) to hold the crop settings and combine it with the input blob using InferenceEngine::make_shared_blob().  Finally, set the request’s input blob to the newly created blob.
+
+```Cpp
+        // check if ROI has non-zero dimensions, if so it will be used to crop input
+        bool doCrop = (roiRect.width != 0) && (roiRect.height != 0);
+
+        InferenceEngine::Blob::Ptr inputBlob;
+        if (FLAGS_auto_resize) {
+        	inputBlob = wrapMat2Blob(Vehicle);
+        	if (doCrop) {
+        		cv::Rect clippedRect = roiRect & cv::Rect(0, 0, Vehicle.cols, Vehicle.rows);
+				InferenceEngine::ROI ieRoi;
+				ieRoi.posX = clippedRect.x;
+				ieRoi.posY = clippedRect.y;
+				ieRoi.sizeX = clippedRect.width;
+				ieRoi.sizeY = clippedRect.height;
+
+				inputBlob = InferenceEngine::make_shared_blob(inputBlob, ieRoi);
+        	}
+
+            request->SetBlob(inputName, inputBlob);
+```
+
+
+Else, if FLAGS_auto_resize is false, use OpenCV to crop Vehicle (if needed, doCrop == true), then retrieve the input blob from the request and use matU8ToBlob() to copy the image image data into the blob.
 
 ```cpp
-        auto  inputBlob = request->GetBlob(input);
+        } else {
+        	cv::Mat cropped;
+        	if (doCrop) {
+        		cv::Rect clippedRect = roiRect & cv::Rect(0, 0, Vehicle.cols, Vehicle.rows);
+        		cropped = Vehicle(clippedRect);
+        	} else {
+        		cropped = Vehicle;
+        	}
+			inputBlob = request->GetBlob(inputName);
+			matU8ToBlob<uint8_t >(cropped, inputBlob, enquedVehicles);
+    	 }
 
-        matU8ToBlob<uint8_t>(Vehicle, inputBlob,enquedVehicles);
-        enquedVehicles++;
+       enquedVehicles++;
     }
 ```
 
@@ -245,17 +284,32 @@ The next function we will walkthrough is the VehicleDetection::read() function w
 ```
 
 
-5. The input data format is prepared by configuring it for the proper precision (U8 = 8-bit per BGR channel) and memory layout (NCHW) for the model.  
+5. The input data format is prepared by configuring it for the proper precision (U8 = 8-bit per BGR channel) for the model.  
 
 ```cpp
         auto& inputInfoFirst = inputInfo.begin()->second;
         inputInfoFirst->setInputPrecision(Precision::U8);
-        inputInfoFirst->getInputData()->setLayout(Layout::NCHW);
+```
+
+
+6. If FLAGS_auto_resize is true, the input is set to be automatically resized by setting the resizing algorithm to use using setResizeAlgorithm(RESIZE_BILINEAR).  The input data format is configured for the proper memory layout, NHWC when automatically resizing and NCHW when data will be copied using OpenCV.  
+
+```cpp
+        auto& inputInfoFirst = inputInfo.begin()->second;
+        inputInfoFirst->setInputPrecision(Precision::U8);
+	  if (FLAGS_auto_resize) {
+	        // set resizing algorithm
+              inputInfoFirst->getPreProcess().setResizeAlgorithm(RESIZE_BILINEAR);
+			inputInfoFirst->getInputData()->setLayout(Layout::NHWC);
+  	  } else {
+		inputInfoFirst->getInputData()->setLayout(Layout::NCHW);
+	  }
+
         inputName = inputInfo.begin()->first;
 ```
 
 
-6. The model is verified to have the two output layers as expected for the vehicle color and type results.  Variables are created and initialized to hold the output names to retrieve the results from the model.
+7. The model is verified to have the two output layers as expected for the vehicle color and type results.  Variables are created and initialized to hold the output names to retrieve the results from the model.
 
 ```cpp
         slog::info << "Checking VehicleAttribs outputs" << slog::endl;
@@ -269,7 +323,7 @@ The next function we will walkthrough is the VehicleDetection::read() function w
 ```
 
 
-7. Where the model will be loaded is logged.  The model is marked as being enabled, and the InferenceEngine::CNNNetwork object containing the model is returned.
+8. Where the model will be loaded is logged.  The model is marked as being enabled, and the InferenceEngine::CNNNetwork object containing the model is returned.
 
 ```cpp
         slog::info << "Loading Vehicle Attribs model to the "<< FLAGS_d_va << " plugin" << slog::endl;
@@ -302,10 +356,10 @@ That takes care of specializing the BaseDetector class into the  VehicleAttribsD
 ```
 
 
-3. The model is loaded into the Inference Engine and associated with the device using the Load helper class previously covered.
+3. The model is loaded into the Inference Engine and associated with the device using the Load helper class previously covered.  The command line argument FLAGS_dyn_va is used to set whether the loaded model will be configured to automatically resize inputs.
 
 ```cpp
-        Load(VehicleAttribs).into(pluginsForDevices[FLAGS_d_va]);
+        Load(VehicleAttribs).into(pluginsForDevices[FLAGS_d_va], FLAGS_dyn_va);
 ```
 
 
@@ -371,9 +425,7 @@ if (VehicleAttribs.enabled()) {
             if (VehicleAttribs.enquedVehicles >= VehicleAttribs.maxBatch) {
                break;
             }
-            auto clippedRect = ps0s1i.vehicleLocations[rib] & cv::Rect(0, 0, width, height);
-            auto Vehicle = (*ps0s1i.outputFrame)(clippedRect);
-            VehicleAttribs.enqueue(Vehicle);
+            VehicleAttribs.enqueue(*ps0s1i.outputFrame, ps0s1i.vehicleLocations[rib]);
          }
 ```
 
@@ -540,34 +592,70 @@ source ../../scripts/setupenv.sh
 2. You now have the executable file to run ./intel64/Release/car_detection_tutorial.  In order to load the vehicle attribute detection model, the "-m_va" flag needs to be added  followed by the full path to the model.  First let us see how it works on a single image file:
 
 ```bash
-./intel64/Release/car_detection_tutorial -m $mVLP32 -m_va $mVA32 -i ../../data/car_1.bmp
+./intel64/Release/car_detection_tutorial -m $mVDR32 -m_va $mVA32 -i ../../data/car_1.bmp
 ```
 
 
-3. The output window will show the image overlaid with colored rectangles over each of the detected vehicles and license plates.  There will also be text within the vehicle box indicating type and color.  The timing statistics for inferring the vehicle attribute results are also shown.  Next, let us try it on a video file.
+3. The output window will show the image overlaid with colored rectangles over each of the detected vehicles and license plates (if model detects license plates too).  There will also be text within the vehicle box indicating type and color.  The timing statistics for inferring the vehicle attribute results are also shown.  Next, let us try it on a video file.
 
 ```bash
-./intel64/Release/car_detection_tutorial -m $mVLP32 -m_va $mVA32 -i ../../data/car-detection.mp4
+./intel64/Release/car_detection_tutorial -m $mVDR32 -m_va $mVA32 -i ../../data/cars_768x768.h264
 ```
 
 
-4. You should see rectangles that follow the cars and license plates as they move around the image.  The accompanying vehicle attributes text (type and color) will also appear in the rectangles.  
+4. You should see rectangles that follow the cars as they move around the image.  The accompanying vehicle attributes text (type and color) will also appear in the rectangles.  
 
 5. [Optional]Finally, if a USB camera has been setup, we can use the application to view live video from the connected USB camera.  The camera is the default source, so we do this by running the application without using any parameters.
 
 ```bash
-./intel64/Release/car_detection_tutorial -m $mVLP32 -m_va $mVA32
+./intel64/Release/car_detection_tutorial -m $mVDR32 -m_va $mVA32
 ```
 
 
 Or we can still specify the camera using "cam":
 
 ```bash
-./intel64/Release/car_detection_tutorial -m $mVLP32 -m_va $mVA32 -i cam
+./intel64/Release/car_detection_tutorial -m $mVDR32 -m_va $mVA32 -i cam
 ```
 
 
 6. [Optional]Again, you will see output similar to the output from the video, but appropriate to the cars in your office, or maybe outside a nearby window.
+
+# Dynamic Batching
+
+Batch size was explored in the Car Detection Tutorial Step 2, here we repeat a similar exercise to show the effects of using Dynamic Batching with the vehicle attributes model.
+
+**Note**: Due to internal structure, the vehicle detection models used in this tutorial are incompatible with the Dynamic Batching feature.
+
+Now, let us use the Dynamic Batching option ("-dyn") to run a single image through each of the batch sizes 1, 2, 4, 8, and 16 using the commands below.  As you may recall from the key concepts description, with Dynamic Batching the behavior is that setting the input batch size acts like a maximum number of inputs and the actual batch size is set per request. 
+
+Command Lines:
+
+```Bash
+./intel64/Release/car_detection_tutorial -m $mVDR32 -m_va $mVA32 -i ../../data/car_1.bmp -dyn_va -n_va 1
+./intel64/Release/car_detection_tutorial -m $mVDR32 -m_va $mVA32 -i ../../data/car_1.bmp -dyn_va -n_va 2
+./intel64/Release/car_detection_tutorial -m $mVDR32 -m_va $mVA32 -i ../../data/car_1.bmp -dyn_va -n_va 4
+./intel64/Release/car_detection_tutorial -m $mVDR32 -m_va $mVA32 -i ../../data/car_1.bmp -dyn_va -n_va 8
+./intel64/Release/car_detection_tutorial -m $mVDR32 -m_va $mVA32 -i ../../data/car_1.bmp -dyn_va -n_va 16
+```
+
+
+As you run each command, you should notice it takes about the same amount of time for each even though the batch size is being increased.  This is because inference is now run on only the one input frame present instead of the entire batch size.  
+
+# Input Preprocessing
+
+Now, let us use OpenCV and then Inference Engine’s image pre-processing API (option "-auto_resize") to resize input data while running a single image through using the commands below.  
+
+Command Lines:
+
+```Bash
+./intel64/Release/car_detection_tutorial -m $mVDR32 -m_va $mVA32 -i ../../data/car_1.bmp
+
+./intel64/Release/car_detection_tutorial -m $mVDR32 -m_va $mVA32 -i ../../data/car_1.bmp -auto_resize
+```
+
+
+With the "-auto_resize" option, you should notice significantly less time reported on the output image for the time taken to run OpenCV.  This is because the input data resizing and cropping are being done during inference, instead of before running inference.  
 
 # Checking Performance
 
@@ -583,7 +671,7 @@ Command combinations run:
 
 ```Bash
 # Command line #1
-./intel64/Release/car_detection_tutorial -m $mVLP32 -d CPU -m_va $mVA32 -d_va CPU
+./intel64/Release/car_detection_tutorial -m $mVDR32 -d CPU -m_va $mVA32 -d_va CPU
 ```
 
 
@@ -597,17 +685,17 @@ Command combinations run:
 
 ```Bash
 # Command line #1
-./intel64/Release/car_detection_tutorial -m $mVLP32 -d GPU -m_va $mVA32 -d_va GPU -i ../../data/car-detection.mp4
+./intel64/Release/car_detection_tutorial -m $mVDR32 -d GPU -m_va $mVA32 -d_va GPU -i ../../data/cars_768x768.h264
 # Command line #2
-./intel64/Release/car_detection_tutorial -m $mVLP32 -d GPU -m_va $mVA32 -d_va CPU -i ../../data/car-detection.mp4
+./intel64/Release/car_detection_tutorial -m $mVDR32 -d GPU -m_va $mVA32 -d_va CPU -i ../../data/cars_768x768.h264
 # Command line #3
-./intel64/Release/car_detection_tutorial -m $mVLP32 -d CPU -m_va $mVA32 -d_va GPU -i ../../data/car-detection.mp4
+./intel64/Release/car_detection_tutorial -m $mVDR32 -d CPU -m_va $mVA32 -d_va GPU -i ../../data/cars_768x768.h264
 # Command line #4
-./intel64/Release/car_detection_tutorial -m $mVLP16 -d GPU -m_va $mVA16 -d_va GPU -i ../../data/car-detection.mp4
+./intel64/Release/car_detection_tutorial -m $mVDR16 -d GPU -m_va $mVA16 -d_va GPU -i ../../data/cars_768x768.h264
 # Command line #5
-./intel64/Release/car_detection_tutorial -m $mVLP32 -d CPU -m_va $mVA16 -d_va GPU -i ../../data/car-detection.mp4
+./intel64/Release/car_detection_tutorial -m $mVDR32 -d CPU -m_va $mVA16 -d_va GPU -i ../../data/cars_768x768.h264
 # Command line #6
-./intel64/Release/car_detection_tutorial -m $mVLP16 -d GPU -m_va $mVA32 -d_va CPU -i ../../data/car-detection.mp4
+./intel64/Release/car_detection_tutorial -m $mVDR16 -d GPU -m_va $mVA32 -d_va CPU -i ../../data/cars_768x768.h264
 ```
 
 
@@ -621,11 +709,11 @@ Command combinations run:
 
 ```Bash
 # Command line #1
-./intel64/Release/car_detection_tutorial -m $mVLP16 -d MYRIAD -m_va $mVA16 -d_va MYRIAD -i ../../data/car-detection.mp4
+./intel64/Release/car_detection_tutorial -m $mVDR16 -d MYRIAD -m_va $mVA16 -d_va MYRIAD -i ../../data/cars_768x768.h264
 # Command line #2
-./intel64/Release/car_detection_tutorial -m $mVLP16 -d MYRIAD -m_va $mVA32 -d_va CPU -i ../../data/car-detection.mp4
+./intel64/Release/car_detection_tutorial -m $mVDR16 -d MYRIAD -m_va $mVA32 -d_va CPU -i ../../data/cars_768x768.h264
 # Command line #3
-./intel64/Release/car_detection_tutorial -m $mVLP32 -d CPU -m_va $mVA16 -d_va MYRIAD -i ../../data/car-detection.mp4
+./intel64/Release/car_detection_tutorial -m $mVDR32 -d CPU -m_va $mVA16 -d_va MYRIAD -i ../../data/cars_768x768.h264
 ```
 
 
@@ -639,13 +727,13 @@ Command combinations run:
 
 ```Bash
 # Command line #1
-./intel64/Release/car_detection_tutorial -m $mVLP16 -d MYRIAD -m_va $mVA32 -d_va GPU -i ../../data/car-detection.mp4
+./intel64/Release/car_detection_tutorial -m $mVDR16 -d MYRIAD -m_va $mVA32 -d_va GPU -i ../../data/cars_768x768.h264
 # Command line #2
-./intel64/Release/car_detection_tutorial -m $mVLP16 -d MYRIAD -m_va $mVA16 -d_va GPU -i ../../data/car-detection.mp4
+./intel64/Release/car_detection_tutorial -m $mVDR16 -d MYRIAD -m_va $mVA16 -d_va GPU -i ../../data/cars_768x768.h264
 # Command line #3
-./intel64/Release/car_detection_tutorial -m $mVLP32 -d GPU -m_va $mVA16 -d_va MYRIAD -i ../../data/car-detection.mp4
+./intel64/Release/car_detection_tutorial -m $mVDR32 -d GPU -m_va $mVA16 -d_va MYRIAD -i ../../data/cars_768x768.h264
 # Command line #4
-./intel64/Release/car_detection_tutorial -m $mVLP16 -d GPU -m_va $mVA16 -d_va MYRIAD -i ../../data/car-detection.mp4
+./intel64/Release/car_detection_tutorial -m $mVDR16 -d GPU -m_va $mVA16 -d_va MYRIAD -i ../../data/cars_768x768.h264
 ```
 
 
@@ -655,7 +743,7 @@ Performance is measured as the average time for the main loop to process all the
 
 Building on the single model application from Tutorial Step 2, this step has shown that using a second inference model in an application is just as easy as using the first.  We also showed some techniques to pipeline the program flow.  This makes it easier to group input data with its results and pass it through the application pipeline.  We also explored increasing performance by optimizing how the application loads models onto different devices.
 
-Continuing to Tutorial Step 4, we will see another method of increasing performance, when we introduce running the models asynchronously.  This will allow the application to have multiple models analyzing images along with the CPU using OpenCV and managing data all running in parallel.
+Continuing to Tutorial Step 4, we will see another method of increasing performance, when we introduce running the models asynchronously.  This will allow the application to have multiple models analyzing images along with the CPU using OpenCV and managing data, all running in parallel.
 
 # Navigation
 

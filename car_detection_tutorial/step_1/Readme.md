@@ -85,7 +85,7 @@ This is how the "-i" argument is done, all other arguments are handled similarly
 
 ## OpenCV Input to Output
 
-1. Open up an xterm window or use an existing terminal to get to a command shell prompt.
+1. Open up a terminal (such as xterm) or use an existing terminal to get to a command shell prompt.
 
 2. Change to the directory containing Tutorial Step 1:
 
@@ -276,7 +276,7 @@ make
 4. Next, let us see how the application handles a video file:
 
 ```bash
-./intel64/Release/car_detection_tutorial -i ../../data/car-detection.mp4
+./intel64/Release/car_detection_tutorial -i ../../data/cars_768x768.h264
 ```
 
 

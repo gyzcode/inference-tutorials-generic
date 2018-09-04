@@ -4,7 +4,7 @@
 
 # Table of Contents
 
-<p></p><div class="table-of-contents"><ul><li><a href="#car-detection-tutorial">Car Detection Tutorial</a></li><li><a href="#table-of-contents">Table of Contents</a></li><li><a href="#introduction">Introduction</a></li><li><a href="#getting-started">Getting Started</a><ul><li><a href="#prerequisites">Prerequisites</a></li><li><a href="#downloading-the-tutorial-from-the-git-repository">Downloading the Tutorial from the Git Repository</a><ul><li><a href="#option-1-using-git-clone-to-clone-the-entire-repository">Option #1: Using Git Clone to Clone the Entire Repository</a></li><li><a href="#option-2-using-svn-export-to-download-only-this-tutorial">Option #2: Using SVN Export to Download Only This Tutorial</a></li><li><a href="#tutorial-files">Tutorial FIles</a></li></ul></li><li><a href="#openvino-toolkit-overview-and-terminology">OpenVINO™ Toolkit Overview and Terminology</a><ul><li><a href="#using-the-inference-engine">Using the Inference Engine</a><ul><li><a href="#inference-engine-api-integration-flow">Inference Engine API Integration Flow</a></li><li><a href="#setting-up-command-line-to-use-the-openvino-toolkit-executables-and-libraries">Setting Up Command Line to Use the OpenVINO™ Toolkit Executables and Libraries</a></li></ul></li><li><a href="#where-do-the-inference-models-come-from">Where Do the Inference Models Come from?</a></li></ul></li></ul></li><li><a href="#key-concepts">Key Concepts</a><ul><li><a href="#batch-size">Batch Size</a><ul><li><a href="#how-does-batch-size-affect-performance-and-latency">How Does Batch Size Affect Performance and Latency?</a></li></ul></li><li><a href="#image-processing-pipeline">Image Processing Pipeline</a></li><li><a href="#synchronous-vs-asynchronous-api">Synchronous vs. Asynchronous API</a></li></ul></li><li><a href="#tutorial-step-1-create-the-base-opencv-application">Tutorial Step 1: Create the Base OpenCV Application</a></li><li><a href="#tutorial-step-2-add-the-first-model-vehicle-detection">Tutorial Step 2: Add the first Model, Vehicle Detection</a></li><li><a href="#tutorial-step-3-add-the-second-model-vehicle-attributes-detection">Tutorial Step 3: Add the Second Model, Vehicle Attributes Detection</a></li><li><a href="#tutorial-step-4-using-the-asynchronous-api">Tutorial Step 4: Using the Asynchronous API</a></li><li><a href="#conclusion">Conclusion</a></li><li><a href="#references-and-more-information">References and More Information</a></li></ul></div><p></p>
+<p></p><div class="table-of-contents"><ul><li><a href="#car-detection-tutorial">Car Detection Tutorial</a></li><li><a href="#table-of-contents">Table of Contents</a></li><li><a href="#introduction">Introduction</a></li><li><a href="#getting-started">Getting Started</a><ul><li><a href="#prerequisites">Prerequisites</a></li><li><a href="#downloading-the-tutorial-from-the-git-repository">Downloading the Tutorial from the Git Repository</a><ul><li><a href="#option-1-using-git-clone-to-clone-the-entire-repository">Option #1: Using Git Clone to Clone the Entire Repository</a></li><li><a href="#option-2-using-svn-export-to-download-only-this-tutorial">Option #2: Using SVN Export to Download Only This Tutorial</a></li><li><a href="#tutorial-files">Tutorial FIles</a></li></ul></li><li><a href="#openvino-toolkit-overview-and-terminology">OpenVINO™ Toolkit Overview and Terminology</a><ul><li><a href="#using-the-inference-engine">Using the Inference Engine</a><ul><li><a href="#inference-engine-api-integration-flow">Inference Engine API Integration Flow</a></li><li><a href="#setting-up-command-line-to-use-the-openvino-toolkit-executables-and-libraries">Setting Up Command Line to Use the OpenVINO™ Toolkit Executables and Libraries</a></li></ul></li><li><a href="#where-do-the-inference-models-come-from">Where Do the Inference Models Come from?</a></li></ul></li></ul></li><li><a href="#key-concepts">Key Concepts</a><ul><li><a href="#batch-size">Batch Size</a><ul><li><a href="#batch-size-and-its-effects-on-input-and-output-data-is-model-dependent">Batch Size and Its Effects on Input and Output Data is Model Dependent</a></li><li><a href="#how-batch-size-is-set">How Batch Size is Set</a></li><li><a href="#dynamic-batching">Dynamic Batching</a></li><li><a href="#how-does-batch-size-affect-performance-and-latency">How Does Batch Size Affect Performance and Latency?</a></li></ul></li><li><a href="#input-preprocessing">Input Preprocessing</a><ul><li><a href="#opencv">OpenCV</a></li><li><a href="#inference-engines-image-pre-processing-api">Inference Engine’s Image Pre-processing API</a></li><li><a href="#when-to-use-opencv-or-the-inference-engines-image-pre-processing-api">When to use OpenCV or the Inference Engine’s Image Pre-processing API</a></li></ul></li><li><a href="#image-processing-pipeline">Image Processing Pipeline</a></li><li><a href="#synchronous-vs-asynchronous-api">Synchronous vs. Asynchronous API</a></li></ul></li><li><a href="#tutorial-step-1-create-the-base-opencv-application">Tutorial Step 1: Create the Base OpenCV Application</a></li><li><a href="#tutorial-step-2-add-the-first-model-vehicle-detection">Tutorial Step 2: Add the first Model, Vehicle Detection</a></li><li><a href="#tutorial-step-3-add-the-second-model-vehicle-attributes-detection">Tutorial Step 3: Add the Second Model, Vehicle Attributes Detection</a></li><li><a href="#tutorial-step-4-using-the-asynchronous-api">Tutorial Step 4: Using the Asynchronous API</a></li><li><a href="#conclusion">Conclusion</a></li><li><a href="#references-and-more-information">References and More Information</a></li></ul></div><p></p>
 
 # Introduction
 
@@ -102,7 +102,7 @@ cd car_detection_tutorial
 
 ### Option #2: Using SVN Export to Download Only This Tutorial
 
-1. Bring up a command shell prompt by opening an Xterm window or selecting an Xterm window that is already open.
+1. Bring up a command shell prompt by opening a terminal (such as xterm) or selecting a terminal that is already open.
 
 2. Create a "tutorials" directory where we can download the Car Detection tutorial and then change to it:
 
@@ -261,25 +261,35 @@ Before going into the samples in the tutorial steps, first we will go over some 
 
 Batch size refers to the number of input data to be inferred during a single inference run through the Inference Engine.  Things to be aware of the batch size for an inference model:
 
-* Batch size and its effects on input and output data is model dependent:
+### Batch Size and Its Effects on Input and Output Data is Model Dependent
 
-   * The output batch size may scale with input batch size.  For example, the vehicle attributes model used in this tutorial will have one one output for each input.
+* The output batch size may scale with input batch size.  For example, the vehicle attributes model used in this tutorial will have one one output for each input.
 
-   * The output may contain results across all batched inputs.  For example, the vehicle detection model used in this tutorial gives one set of outputs regardless of input batch size with each output indicating the input the results is for using the "image_id" field.
+* The output may contain results across all batched inputs.  For example, the vehicle detection model used in this tutorial gives one set of outputs regardless of input batch size with each output indicating the input the results is for using the "image_id" field.
 
-* How batch size is set:
+### How Batch Size is Set
 
-   * The default setting is located in the model’s IR which is set either by:
+* The default setting is located in the model’s IR which is set either by:
 
-      * The Model Optimizer command line option when creating the IR files
+   * The Model Optimizer command line option when creating the IR files
 
-      * Or from the original source (e.g. Caffe) in which can be read using the Inference Engine API 
+   * Or from the original source (e.g. Caffe) in which can be read using the Inference Engine API 
 
-   * May be set explicitly using the Inference Engine API setBatchSize() function (see InferenceEngine::ICNNNetwork class)
+* Batch size may be set explicitly using the Inference Engine API setBatchSize() function (see InferenceEngine::ICNNNetwork class)
 
-   * **Note**: Depending upon the model and device used, which method can be used to set batch size may vary.  For example, at the time of writing this tutorial, some models (e.g. the vehicle and license plate detection model used in this tutorial) running on GPU will only use the setting form the IR model and cannot have batch size set dynamically using setBatchSize().
+* **Note**: Depending upon the model and device used, which method can be used to set batch size may vary.  For example, at the time of writing this tutorial, some models such as the "vehicle-license-plate-detection-barrier-0106" vehicle and license plate detection model running on GPU, can only use the setting form the IR model and cannot have batch size set dynamically using setBatchSize().  Meanwhile another similar in function model, such as the “vehicle-detection-adas-0002” vehicle detection model, can have its batch size set dynamically using setBatchSize().
 
-* Batch size is a fixed number of inputs that will be inferred for each submitted request to the Inference Engine API regardless of how many inputs contain valid data.  Depending upon the model, invalid inputs may also result in false detections and additional unnecessary processing.  
+### Dynamic Batching 
+
+* By default, batch size is a fixed number of inputs that will be inferred for each submitted request to the Inference Engine API regardless of how many inputs contain valid data.  Depending upon the model, invalid inputs may also result in false detections and additional unnecessary processing.  
+
+* The Dynamic Batching feature, available as of OpenVINO™ toolkit 2018 R3.0, makes batch size a maximum number of inputs that will be inferred for each submitted request to the Inference Engine API with the actual number of inputs set per request.  To enable and use the Dynamic Batching feature in the API:
+
+   * Enable Dynamic Batching while loading the model using InferenceEngine::InferencePlugin::LoadNetwork(), set the configuration option "PluginConfigParams::KEY_DYN_BATCH_ENABLED" to “PluginConfigParams::YES” 
+
+   * Before starting inference using the request object, set the actual batch size of inputs using InferenceEngine::InferRequest::SetBatch() function.
+
+   * Note: Dynamic Batching may not work on all models and devices.   For example, the vehicle detection models referenced by this tutorials cannot use Dynamic Batching.  Presently only CPU and GPU devices are supported when using models with supported layer types.  For more details, please see: /opt/intel/computer_vision_sdk/deployment_tools/documentation/docs/DynamicBatching.html
 
 ### How Does Batch Size Affect Performance and Latency?
 
@@ -288,6 +298,86 @@ Batch size affects both latency and performance of an application.  Latency is m
 Choosing the appropriate batch size for an application’s requirements depends upon the input source, resources (e.g. memory to store more inputs), device(s), and model(s) being used.  The time it takes to build up a batch from the input source before processing it means more latency.  The device selected may also impose a limit on the batch size such as the Myriad which has a limit of 1.  The complexity of the model affects how fast results can be returned for the device used.  Running batch sizes >1 may be faster than running a batch size of 1 because of the efficiency of the device’s pipelined architecture (e.g. pipeline full vs. partly idle), available resources (e.g. multiple cores working in parallel), and/or a reduction of data transfers (e.g. transfer weights only once).  In Tutorial Step 2, running different batch sizes will be explored.  
 
 For more information on an example of batch size effects on performance for clDNN running on GPU, see the whitepaper: [https://software.intel.com/en-us/articles/accelerating-deep-learning-inference-with-intel-processor-graphics](https://software.intel.com/en-us/articles/accelerating-deep-learning-inference-with-intel-processor-graphics)
+
+## Input Preprocessing
+
+Often, the dimensions of the input data does not match the required dimensions of the input data for the inference model.  Common examples are input video frames and ROI results.  Before the image or ROI may be input to the inference model, the input must be preprocessed to match the required dimensions for the inference model.  The basic steps performed for each are:
+
+* Video frame:
+
+1. Resize the frame from the source dimensions to match the required dimensions of the inference model’s input 
+
+* ROI:
+
+1. Crop (isolate) the ROI data from within the containing image
+
+2. Resize the ROI data from its dimensions to match the required dimensions of the inference model’s input 
+
+This tutorial and the many samples in the OpenVINO™ toolkit use OpenCV or the Inference Engine’s image pre-processing API (available as of 2018 R3.0) to perform resizing and cropping of input data.  The next sections outline how both are used.
+
+### OpenCV
+
+When using OpenCV, resizing and cropping are performed using explicit function calls.
+
+* Resizing is done using an explicit call similar to cv::resize(cv:Mat src, cv:Mat dst, cv:Size dst_size).  The input src image is resized as it is copied to the dst output image.  
+
+* Cropping is done using an explicit call similar to:
+
+   * cv::Mat image;
+
+   * cv::Mat roiImage =image(cv::Rect roiRect );
+
+   * The new roiImage is created by copying the area specified by the rectangle roiRect from image.
+
+### Inference Engine’s Image Pre-processing API
+
+When using the Inference Engine’s image pre-processing API, resizing and cropping become automatic preprocessing steps as part of inference.
+
+* Resizing: 
+
+   * Input resizing is enabled while configuring the input format by setting the resize algorithm of the InferenceEngine::PreProcessInfo for each of the inference model’s inputs.  This appears similar to:
+
+      * InferenceEngine::InputInfo input_data;
+
+      * input_data->getPreProcess().setResizeAlgorithm(RESIZE_BILINEAR);
+
+* Cropping:
+
+   * Input cropping is specified as part of creating the input blob.
+
+      * InferenceEngine::Blob::Ptr inputBlob;  // points to existing image blob
+
+      * InferenceEngine::ROI cropRoi;
+
+      * // … set ROI rectangle by setting cropRoi’s posX, posY, sizeX, and sizeY 
+
+      * InferenceEngine::Blob::Ptr roiBlob = InferenceEngine::make_shared_blob(inputBlob, cropRoi);  // create new input blob by specifying ROI rectangle with original image blob
+
+For more information, please see:
+
+* /opt/intel/computer_vision_sdk/deployment_tools/documentation/docs/IntegrateIEInAppNewAPI.html
+
+* /opt/intel/computer_vision_sdk/deployment_tools/documentation/docs/KnownIssuesLimitations.html
+
+### When to use OpenCV or the Inference Engine’s Image Pre-processing API
+
+Which preprocessing method to use will depend upon the application.  Some general guidelines for each are:
+
+* Use OpenCV when:
+
+   * Other OpenCV processing of images or ROI’s is needed
+
+   * The CPU is the desired device to do preprocessing and separate from inference
+
+   * Input batch size is >1
+
+* Use the Inference Engine’s image pre-processing API when:
+
+   * Performance may be improved by reducing the number of memory copies
+
+   * The inference model’s device plugin is the desired device to do preprocessing
+
+   * When input batch sizes == 1
 
 ## Image Processing Pipeline
 
@@ -353,7 +443,7 @@ The first tutorial will show how the Intel® OpenCV libraries are used by an app
 
 ![image alt text](./doc_support/step0_image_6.png)
 
-The second tutorial takes the framework in Tutorial Step 1 and adds vehicle and license plate detection to processing images.  This step shows how an inference model has been added to use the Inference Engine to run the model on hardware.  We will also learn how to specify which device the model is run on: CPU, GPU,  the Myriad.  
+The second tutorial takes the framework in Tutorial Step 1 and adds vehicle detection to processing images.  This step shows how an inference model has been added to use the Inference Engine to run the model on hardware.  We will also learn how to specify which device the model is run on: CPU, GPU,  the Myriad.  
 
 [Car Detection Tutorial Step 2](./step_2/Readme.md)
 

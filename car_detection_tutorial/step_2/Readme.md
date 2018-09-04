@@ -4,31 +4,31 @@
 
 # Table of Contents
 
-<p></p><div class="table-of-contents"><ul><li><a href="#tutorial-step-2-add-the-first-model-vehicle-detection">Tutorial Step 2: Add the first model, Vehicle Detection</a></li><li><a href="#table-of-contents">Table of Contents</a></li><li><a href="#introduction">Introduction</a></li><li><a href="#vehicle-detection-models">Vehicle Detection Models</a><ul><li><a href="#how-do-i-specify-which-device-the-model-will-run-on">How Do I Specify Which Device the Model Will Run On?</a><ul><li><a href="#verifying-which-device-is-running-the-model">Verifying Which Device is Running the Model</a></li></ul></li></ul></li><li><a href="#adding-the-vehicle-detection-model">Adding the Vehicle Detection Model</a><ul><li><a href="#helper-functions-and-classes">Helper Functions and Classes</a><ul><li><a href="#matu8toblob">matU8ToBlob</a></li><li><a href="#load">Load</a></li><li><a href="#basedetection-class">BaseDetection Class</a><ul><li><a href="#read">read()</a></li><li><a href="#submitrequest">submitRequest()</a></li><li><a href="#wait">wait()</a></li><li><a href="#enabled">enabled()</a></li><li><a href="#printperformanccount">printPerformancCount()</a></li></ul></li></ul></li><li><a href="#vehicledetection">VehicleDetection</a><ul><li><a href="#submitrequest">submitRequest()</a></li><li><a href="#enqueue">enqueue()</a></li><li><a href="#vehicledetection">VehicleDetection()</a></li><li><a href="#read">read()</a></li><li><a href="#fetchresults">fetchResults()</a></li></ul></li></ul></li><li><a href="#using-the-vehicledetection-class">Using the VehicleDetection Class</a><ul><li><a href="#header-files">Header Files</a></li><li><a href="#main">main()</a></li><li><a href="#main-loop">Main Loop</a><ul><li><a href="#pipeline-stage-0-prepare-and-infer-a-batch-of-frames">Pipeline Stage 0: Prepare and Infer a Batch of Frames</a></li><li><a href="#pipeline-stage-1-render-results">Pipeline Stage 1: Render Results</a></li></ul></li><li><a href="#post-main-loop">Post-Main Loop</a></li></ul></li><li><a href="#building-and-running">Building and Running</a><ul><li><a href="#build">Build</a></li><li><a href="#run">Run</a></li></ul></li><li><a href="#batch-size">Batch Size</a><ul><li><a href="#single-image">Single Image</a></li><li><a href="#video">Video</a><ul><li><a href="#cpu">CPU</a></li><li><a href="#gpu">GPU</a></li></ul></li></ul></li><li><a href="#conclusion">Conclusion</a></li><li><a href="#navigation">Navigation</a></li></ul></div><p></p>
+<p></p><div class="table-of-contents"><ul><li><a href="#tutorial-step-2-add-the-first-model-vehicle-detection">Tutorial Step 2: Add the first model, Vehicle Detection</a></li><li><a href="#table-of-contents">Table of Contents</a></li><li><a href="#introduction">Introduction</a></li><li><a href="#vehicle-detection-models">Vehicle Detection Models</a><ul><li><a href="#how-do-i-specify-which-device-the-model-will-run-on">How Do I Specify Which Device the Model Will Run On?</a><ul><li><a href="#verifying-which-device-is-running-the-model">Verifying Which Device is Running the Model</a></li></ul></li></ul></li><li><a href="#adding-the-vehicle-detection-model">Adding the Vehicle Detection Model</a><ul><li><a href="#helper-functions-and-classes">Helper Functions and Classes</a><ul><li><a href="#blob-conversion">Blob Conversion</a><ul><li><a href="#matu8toblob">matU8ToBlob</a></li><li><a href="#wrapmat2blob">wrapMat2Blob</a></li></ul></li><li><a href="#load">Load</a></li><li><a href="#basedetection-class">BaseDetection Class</a><ul><li><a href="#read">read()</a></li><li><a href="#submitrequest">submitRequest()</a></li><li><a href="#wait">wait()</a></li><li><a href="#enabled">enabled()</a></li><li><a href="#printperformanccount">printPerformancCount()</a></li></ul></li></ul></li><li><a href="#vehicledetection">VehicleDetection</a><ul><li><a href="#submitrequest">submitRequest()</a></li><li><a href="#enqueue">enqueue()</a></li><li><a href="#vehicledetection">VehicleDetection()</a></li><li><a href="#read">read()</a></li><li><a href="#fetchresults">fetchResults()</a></li></ul></li></ul></li><li><a href="#using-the-vehicledetection-class">Using the VehicleDetection Class</a><ul><li><a href="#header-files">Header Files</a></li><li><a href="#main">main()</a></li><li><a href="#main-loop">Main Loop</a><ul><li><a href="#pipeline-stage-0-prepare-and-infer-a-batch-of-frames">Pipeline Stage 0: Prepare and Infer a Batch of Frames</a></li><li><a href="#pipeline-stage-1-render-results">Pipeline Stage 1: Render Results</a></li></ul></li><li><a href="#post-main-loop">Post-Main Loop</a></li></ul></li><li><a href="#building-and-running">Building and Running</a><ul><li><a href="#build">Build</a></li><li><a href="#run">Run</a></li></ul></li><li><a href="#batch-size">Batch Size</a><ul><li><a href="#single-image">Single Image</a></li><li><a href="#video">Video</a><ul><li><a href="#cpu">CPU</a></li><li><a href="#gpu">GPU</a></li></ul></li></ul></li><li><a href="#conclusion">Conclusion</a></li><li><a href="#navigation">Navigation</a></li></ul></div><p></p>
 
 # Introduction
 
 Welcome to the Car Detection Tutorial Step 2.  This is the step of the tutorial where the application starts making use of the OpenVINO™ toolkit to make inferences on image data and detect vehicles.  We get this ability by having the application use the Inference Engine to load and run the Intermediate Representation (IR) of a CNN model on the selected hardware device CPU, GPU, or Intel® Movidius™ Myriad™.  You may recall from the OpenVINO™ toolkit overview, an IR model is a compiled version of a CNN (e.g. from Caffe) that has been optimized using the Model Optimizer for use with the Inference Engine.  This is where we start to see the power of the OpenVINO™ toolkit to load and run models on several devices.  In this tutorial step, we will use the Inference Engine to run a pre-compiled model to do vehicle detection on the input image and then output the results.  
 
-Below, you can see a sample output showing the results, where a Region of Interest (ROI) box appears around the detected vehicle and license plate.  The metrics reported include the time for OpenCV capture and display along with the time to run the vehicle detection model.
+Below, you can see a sample output showing the results, where a Region of Interest (ROI) box appears around the detected vehicle.  The metrics reported include the time for OpenCV capture and display along with the time to run the vehicle detection model.
 
 ![image alt text](../doc_support/step2_image_1.png)
 
 # Vehicle Detection Models
 
-The OpenVINO™ toolkit provides a pre-compiled model that has been trained to detect vehicles and Chinese license plates.  You can find it at:
+The OpenVINO™ toolkit provides a pre-compiled model that has been trained to detect vehicles.  You can find it at:
 
-* /opt/intel/computer_vision_sdk/deployment_tools/intel_models/vehicle-license-plate-detection-barrier-0007
+* /opt/intel/computer_vision_sdk/deployment_tools/intel_models/vehicle-detection-adas-0002
 
    * Available model locations are:
 
-      * FP16: /opt/intel/computer_vision_sdk/deployment_tools/intel_models/vehicle-license-plate-detection-barrier-0007/FP16/vehicle-license-plate-detection-barrier-0007.xml
+      * FP16: /opt/intel/computer_vision_sdk/deployment_tools/intel_models/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml
 
-      * FP32: /opt/intel/computer_vision_sdk/deployment_tools/intel_models/vehicle-license-plate-detection-barrier-0007/FP32/vehicle-license-plate-detection-barrier-0007.xml
+      * FP32: /opt/intel/computer_vision_sdk/deployment_tools/intel_models/vehicle-detection-adas-0002/FP32/vehicle-detection-adas-0002.xml
 
    * More details on the model can be found at:
 
-      * file:///opt/intel/computer_vision_sdk/deployment_tools/intel_models/vehicle-license-plate-detection-barrier-0007/description/vehicle-license-plate-detection-barrier-0007.html
+      * file:///opt/intel/computer_vision_sdk/deployment_tools/intel_models/vehicle-detection-adas-0002/description/vehicle-detection-adas-0002.html
 
 <table>
   <tr>
@@ -38,11 +38,10 @@ The OpenVINO™ toolkit provides a pre-compiled model that has been trained to d
     <td>Average Precision</td>
   </tr>
   <tr>
-    <td>vehicle-license-plate-detection-barrier-0007</td>
-    <td>2.978</td>
-    <td>1.128</td>
-    <td>Vehicles: 98.36%
-License Plates: 99.10%</td>
+    <td>vehicle-detection-adas-0002</td>
+    <td>2.8</td>
+    <td>1.1</td>
+    <td>Vehicles: 90.6%</td>
   </tr>
 </table>
 
@@ -146,7 +145,7 @@ for (auto && option : cmdOptions) {
 
 ```cpp
        // --------------------Load networks (Generated xml/bin files)-------------------------------------------
-        Load(VehicleDetection).into(pluginsForDevices[FLAGS_d]);
+        Load(VehicleDetection).into(pluginsForDevices[FLAGS_d], false);
 ```
 
 
@@ -160,8 +159,8 @@ Inference Engine reporting its version:
 
 ```bash
 InferenceEngine:
-    	API version ............ 1.1
-    	Build .................. 11653
+    	API version ............ (N.N)
+    	Build .................. (string)
 [ INFO ] Parsing input parameters
 [ INFO ] Reading input
 ```
@@ -177,8 +176,8 @@ The application reporting that it is loading the CPU plugin:
 Inference Engine reports that it has loaded the CPU plugin (MKLDNNPlugin) and its version:
 
 ```bash
-	API version ............ 1.1
-	Build .................. lnx_20180510
+	API version ............ (N.N)
+	Build .................. (string)
 	Description ....... MKLDNNPlugin
 [ INFO ] Loading network files for VehicleDetection
 [ INFO ] Batch size in IR is set to  1
@@ -205,9 +204,13 @@ From Tutorial Step 1, we have the base application that can read and display ima
 
 ## Helper Functions and Classes
 
-There will need to be a function that takes the input image and turns it into a "blob".  Which begs the question “What is a blob?”.  In short, a blob, specifically the class InferenceEngine::Blob, is the data container type used by the Inference Engine for holding input and output data.  To get data into the model, the image data will need to be converted from the OpenCV cv::Mat to an InferenceEngine::Blob.  For doing that is the helper function “matU8ToBlob” in \opt\intel\computer_vision_sdk\inference_engine\samples\common\samples\common.hpp:
+In the samples themselves and the common libraries they use are many useful helper functions and classes.  Below covers those used by the sample in this tutorial.
 
-### matU8ToBlob
+### Blob Conversion
+
+There will need to be a function that takes the input image and turns it into a "blob".  Which begs the question “What is a blob?”.  In short, a blob, specifically the class InferenceEngine::Blob, is the data container type used by the Inference Engine for holding input and output data.  To get data into the model, the image data will need to be converted from the OpenCV cv::Mat to an InferenceEngine::Blob.  For doing that there are the two helper functions, “matU8ToBlob” (copies data) and “wrapMat2Blob” (does not copy data) which are both located in the file   “\opt\intel\computer_vision_sdk\inference_engine\samples\common\samples\common.hpp“.
+
+#### matU8ToBlob
 
 1. Variables are defined to store the dimensions for the images that the model is optimized to work with.  "blob_data" is assigned to the blob’s data buffer.
 
@@ -246,11 +249,59 @@ void matU8ToBlob(const cv::Mat& orig_image, InferenceEngine::Blob::Ptr& blob, in
     for (size_t c = 0; c < channels; c++) {
         for (size_t  h = 0; h < height; h++) {
             for (size_t w = 0; w < width; w++) {
-                blob_data[batchOffset + c * width * height + h * width + w] =
-                    resized_image.at<cv::Vec3b>(h, w)[c];
+                blob_data[batchOffset + c * width * height + h * width + w] = resized_image.at<cv::Vec3b>(h, w)[c];
             }
         }
     }
+}
+```
+
+
+For more details on the InferenceEngine::Blob class, see "Understanding Inference Engine Memory primitives" in the documentation: [https://software.intel.com/en-us/articles/OpenVINO-InferEngine](https://software.intel.com/en-us/articles/OpenVINO-InferEngine)
+
+#### wrapMat2Blob
+
+1. Variables are defined to store the dimensions for the images that the model is optimized to work with.  
+
+```/**
+ * @brief Wraps data stored inside of a passed cv::Mat object by new Blob pointer.
+ * @note: No memory allocation is happened. The blob just points to already existing
+ *        cv::Mat data.
+ * @param mat - given cv::Mat object with an image data.
+ * @return resulting Blob pointer.
+ */
+static InferenceEngine::Blob::Ptr wrapMat2Blob(const cv::Mat &mat) {
+    size_t channels = mat.channels();
+    size_t height = mat.size().height;
+    size_t width = mat.size().width;
+
+    size_t strideH = mat.step.buf[0];
+    size_t strideW = mat.step.buf[1];
+```
+
+
+2. A check is made to ensure the data buffer is compatible (dense/sequential) and an error is thrown if not.
+
+```    bool is_dense =
+            strideW == channels &&
+            strideH == channels * width;
+
+    if (!is_dense) THROW_IE_EXCEPTION
+                << "Doesn't support conversion from not dense cv::Mat";
+```
+
+
+3. A blob descriptor for the data is created to specify the precision, depth, number of channels, height, width, and memory layout.
+
+```    InferenceEngine::TensorDesc tDesc(InferenceEngine::Precision::U8,
+                                      {1, channels, height, width},
+                                      InferenceEngine::Layout::NHWC);
+```
+
+
+4. A shared blob is formed using the descriptor and original data buffer within the cv::Mat and then returned.
+
+```    return InferenceEngine::make_shared_blob<uint8_t>(tDesc, mat.data);
 }
 ```
 
@@ -266,9 +317,14 @@ struct Load {
     BaseDetection& detector;
     explicit Load(BaseDetection& detector) : detector(detector) { }
 
-    void into(InferenceEngine::InferencePlugin & plg) const {
+    void into(InferencePlugin & plg, bool enable_dynamic_batch = false) const {
         if (detector.enabled()) {
-            detector.net = plg.LoadNetwork(detector.read(), {});
+            std::map<std::string, std::string> config;
+            // if specified, enable Dynamic Batching
+            if (enable_dynamic_batch) {
+                config[PluginConfigParams::KEY_DYN_BATCH_ENABLED] = PluginConfigParams::YES;
+            }
+            detector.net = plg.LoadNetwork(detector.read(), config);
             detector.plugin = &plg;
         }
     }
@@ -279,7 +335,7 @@ struct Load {
 To help explain how this works, an example using "Load" will be used which looks like:
 
 ```cpp
-Load(VehicleDetection).into(pluginsForDevices[FLAGS_d]);
+Load(VehicleDetection).into(pluginsForDevices[FLAGS_d], false);
 ```
 
 
@@ -289,9 +345,11 @@ The line is read as "Load VehicleDetection into the plugin pluginsForDevices[FLA
 
 2. "into()" is called on the returned object passing in the mapped plugin from “pluginsForDevices”.  The map returns the plugin mapped to “FLAGS_d”, which is the command line argument “CPU”, “GPU”, or “MYRIAD”.  The function into() then first checks if the model object is enabled and if it is:
 
-   1. Calls "plg.LoadNetwork(detector.read(),{})" to load the model returned by “detector.read()” (which we will see later is reading in the model’s IR file) into the plugin.  The resulting object is stored in the model object (detector.net) 
+   1. If Dynamic Batching is to be enabled, sets the configuration option using "config[PluginConfigParams::KEY_DYN_BATCH_ENABLED] = PluginConfigParams::YES;".  If not, config is empty.
 
-   2. Sets the model object’s plugin (detector.plugin) to the one used
+   2. Calls "plg.LoadNetwork(detector.read(),config)" to load the model returned by “detector.read()” (which we will see later is reading in the model’s IR file) into the plugin.  The resulting object is stored in the model object (detector.net) 
+
+   3. Sets the model object’s plugin (detector.plugin) to the one used
 
 ### BaseDetection Class
 
@@ -463,14 +521,20 @@ An inference request object is created if one has not been already created.  The
 ```
 
 
-The input blob from the request is retrieved and then matU8ToBlob() is used to copy the image image data into the blob.
+If FLAGS_auto_resize is true, the request’s input blob is set to a new blob created using wrapMat2Blob() which reuses the data buffer for the frame (no copy of data is done).  If false, a blob from the request is retrieved and then matU8ToBlob() is used to copy the image image data into the blob.
 
 ```cpp
         width = frame.cols;
         height = frame.rows;
 
-        auto  inputBlob = request->GetBlob(input);
-        matU8ToBlob<uint8_t >(frame, inputBlob);
+	  InferenceEngine::Blob::Ptr inputBlob;
+        if (FLAGS_auto_resize) {
+            inputBlob = wrapMat2Blob(frame);
+            request->SetBlob(input, inputBlob);
+        } else {
+			inputBlob = request->GetBlob(input);
+			matU8ToBlob<uint8_t >(frame, inputBlob, enquedFrames);
+    	  }
         enquedFrames++;
      }
 ```
@@ -517,7 +581,7 @@ The next function we will walkthrough is the VehicleDetection::read() function w
 ```
 
 
-4. The input data format is configured for the proper precision (U8 = 8-bit per BGR channel) and memory layout (NCHW) for the expected model being used.  
+4. The input data format is configured for the proper precision (U8 = 8-bit per BGR channel) for the model. 
 
 ```cpp
         slog::info << "Checking Vehicle Detection inputs" << slog::endl;
@@ -527,11 +591,23 @@ The next function we will walkthrough is the VehicleDetection::read() function w
         }
         auto& inputInfoFirst = inputInfo.begin()->second;
         inputInfoFirst->setInputPrecision(Precision::U8);
-        inputInfoFirst->getInputData()->setLayout(Layout::NCHW);
 ```
 
 
-5. A check to make sure that there is only one output result defined for the expected model being used. 
+5. If FLAGS_auto_resize is true, the input is set to be automatically resized by setting the resizing algorithm to use using setResizeAlgorithm(RESIZE_BILINEAR).  The input data format is configured for the proper memory layout, NHWC when automatically resizing and NCHW when data will be copied using OpenCV.  
+
+```Cpp
+		if (FLAGS_auto_resize) {
+	        // set resizing algorithm
+       inputInfoFirst->getPreProcess().setResizeAlgorithm(RESIZE_BILINEAR);
+			inputInfoFirst->getInputData()->setLayout(Layout::NHWC);
+		} else {
+			inputInfoFirst->getInputData()->setLayout(Layout::NCHW);
+		}
+```
+
+
+6. A check to make sure that there is only one output result defined for the expected model being used. 
 
 ```cpp
         slog::info << "Checking Vehicle Detection outputs" << slog::endl;
@@ -542,7 +618,7 @@ The next function we will walkthrough is the VehicleDetection::read() function w
 ```
 
 
-6. A check to make sure that the output the model will return matches as expected.
+7. A check to make sure that the output the model will return matches as expected.
 
 ```cpp
         auto& _output = outputInfo.begin()->second;
@@ -559,7 +635,7 @@ The next function we will walkthrough is the VehicleDetection::read() function w
 ```
 
 
-7. The output format is configured to use the output precision and memory layout that is expect for results from the model being used.
+8. The output format is configured to use the output precision and memory layout that is expect for results from the model being used.
 
 ```cpp
         _output->setPrecision(Precision::FP32);
@@ -567,7 +643,7 @@ The next function we will walkthrough is the VehicleDetection::read() function w
 ```
 
 
-8. The name of the input blob (inputInfo.begin()->first) is saved for later use when getting a blob for input data.  Finally, the InferenceEngine::CNNNetwork object that references this model is returned.
+9. The name of the input blob (inputInfo.begin()->first) is saved for later use when getting a blob for input data.  Finally, the InferenceEngine::CNNNetwork object that references this model is returned.
 
 ```cpp
         slog::info << "Loading Vehicle Detection model to the "<< FLAGS_d << " plugin" << slog::endl;
@@ -783,7 +859,7 @@ for (auto && option : cmdOptions) {
 6. The model is loaded into the Inference Engine and associated with the device using the Load helper class previously covered.
 
 ```cpp
-Load(VehicleDetection).into(pluginsForDevices[FLAGS_d]);
+Load(VehicleDetection).into(pluginsForDevices[FLAGS_d], false);
 ```
 
 
@@ -937,7 +1013,7 @@ Stage 0 reads in frames, prepares and runs inference, then processes the results
 ```
 
 
-9. The loops iterates through the results and stores the vehicle and license plate results with the associated frame.  The results indicate which input frame from the batch it belongs to using batchIndex.
+9. The loops iterates through the results and stores the vehicle results with the associated frame.  The results indicate which input frame from the batch it belongs to using batchIndex.
 
 ```cpp
                for (auto && result : VehicleDetection.results) {
@@ -983,7 +1059,7 @@ Stage 1 takes the inference results gathered in the previous stage and renders t
 ```
 
 
-2. outputFrame is set to the frame being processed and frame rectangles are drawn for all the vehicles and license plates that were detected during inference.
+2. outputFrame is set to the frame being processed and frame rectangles are drawn for all the vehicles and license plates (if model detects licenses plates too) that were detected during inference.
 
 ```cpp
             cv::Mat& outputFrame = *(ps0s1i.outputFrame);
@@ -1088,7 +1164,7 @@ Now that we have walked through the code and learned what it does, it is time to
 
 ## Build
 
-1. Open up an Xterm window or use an existing window to get to a command shell prompt.
+1. Open up a terminal (such as xterm) or use an existing terminal to get to a command shell prompt.
 
 2. Change to the directory containing Tutorial Step 2:
 
@@ -1126,7 +1202,7 @@ make
 
    1. "-i \<input-image-or-video-file\>" to specify an input image or video file instead of using the USB camera by default
 
-   2. "-m \<model-xml-file\>"  to specify where to find the module.  For example: -m  /opt/intel/computer_vision_sdk/deployment_tools/intel_models/vehicle-license-plate-detection-barrier-0007/FP32/vehicle-license-plate-detection-barrier-0007.xml”
+   2. "-m \<model-xml-file\>"  to specify where to find the module.  For example: -m  /opt/intel/computer_vision_sdk/deployment_tools/intel_models/vehicle-detection-adas-0002/FP32/vehicle-detection-adas-0002.xml”
 
    3. That is a lot to type and keep straight, so to help make the model names shorter to type  and easier to read, let us use the helper script scripts/setupenv.sh that sets up shell variables we can use.  For reference, here are the contents of scripts/setupenv.sh:
 
@@ -1140,7 +1216,7 @@ make
 modelDir=$InferenceEngine_DIR/../../intel_models
 
 # Vehicle and License Plates Detection Model
-modName=vehicle-license-plate-detection-barrier-0007
+modName=vehicle-license-plate-detection-barrier-0106
 export mVLP16=$modelDir/$modName/FP16/$modName.xml
 export mVLP32=$modelDir/$modName/FP32/$modName.xml
 
@@ -1163,14 +1239,14 @@ source ../../scripts/setupenv.sh
 ```
 
 
-   5. You will notice that the script file defines seven variables that can be used to reference vehicle detection models and two for vehicle attributes.  We will be using $mVB1* only for a later step to go over how batch size affects the performance.  
+   5. You will notice that the script file defines four variables that can be used to reference vehicle detection models and two for vehicle attributes.  
 
 2. We will be using images and video files that are included with this tutorial.  Once you have seen the application working, feel free to try it on your own images and videos.
 
 3. Let us first run it on a single image, to see how it works.
 
 ```bash
-./intel64/Release/car_detection_tutorial -m $mVA32 -i ../../data/car_1.bmp
+./intel64/Release/car_detection_tutorial -m $mVDR32 -i ../../data/car_1.bmp
 ```
 
 
@@ -1179,7 +1255,7 @@ source ../../scripts/setupenv.sh
 5. Let us see how the application handles a video file.
 
 ```bash
-./intel64/Release/car_detection_tutorial -m $mVA32 -i ../../car-detection.mp4
+./intel64/Release/car_detection_tutorial -m $mVDR32 -i ../../data/cars_768x768.h264
 ```
 
 
@@ -1188,18 +1264,18 @@ source ../../scripts/setupenv.sh
 7. [Optional]Finally, if a USB camera has been setup, we can use the application to view live video from the connected USB camera.  The camera is the default source, so we do this by running the application without using any parameters.
 
 ```bash
-./intel64/Release/car_detection_tutorial -m $mVA32
+./intel64/Release/car_detection_tutorial -m $mVDR32
 ```
 
 
 Or we can still specify the camera using "cam":
 
 ```bash
-./intel64/Release/car_detection_tutorial -m $mVA32 -i cam
+./intel64/Release/car_detection_tutorial -m $mVDR32 -i cam
 ```
 
 
-8. [Optional]Now you will see a window displaying the input from the USB camera.  If the vehicle detection model sees anything it detects as any type of vehicle (car, van, etc.), it will draw a green rectangle around it.  Red rectangles will be drawn around anything that is detected as a license plate.  Unless you have a car in your office, or a parking lot outside a nearby window, the display may not be very exciting.
+8. [Optional]Now you will see a window displaying the input from the USB camera.  If the vehicle detection model sees anything it detects as any type of vehicle (car, van, etc.), it will draw a green rectangle around it.  Red rectangles will be drawn around anything that is detected as a license plate (if model detects licenses plates too).  Unless you have a car in your office, or a parking lot outside a nearby window, the display may not be very exciting.
 
 9. When you want to exit the program, make sure the output window is active and press a key.  The output window will close and control will return to the terminal window.
 
@@ -1207,7 +1283,7 @@ Or we can still specify the camera using "cam":
 
 In the previous commands the batch size was 1 by default.  This means inference was performed on each image or frame of the video, one at a time.  To work with different sized batches, we will now use the command line argument "-n \<batch size\>" running on a single image and the video to see what happens.  
 
-**Note **: Because the Inference Engine does not fully support dynamically setting batch size for the vehicle and license plates model used, for this exercise we use the vehicle-only (no license plates) detection model pointed to by the mVDR16 and mVDR32 variables.  
+**Note **: The Inference Engine does not fully support dynamically setting batch size for the vehicle and license plates model.  For this exercise we must use the vehicle-only (no license plates) detection model pointed to by the mVDR16 and mVDR32 variables.  
 
 ## Single Image
 
@@ -1233,14 +1309,14 @@ Now let us run on the CPU using the video to see what happens.
 1. First, run the video with a batch size of 1 on the CPU using the command:  
 
 ```Bash
-./intel64/Release/car_detection_tutorial -m $mVDR32 -i ../../data/car-detection.mp4 -n 1
+./intel64/Release/car_detection_tutorial -m $mVDR32 -i ../../data/cars_768x768.h264 -n 1
 ```
 
 
 2. Now, jump to the largest batch size of 16 running the command:
 
 ```Bash
-./intel64/Release/car_detection_tutorial -m $mVDR32 -i ../../data/car-detection.mp4 -n 16
+./intel64/Release/car_detection_tutorial -m $mVDR32 -i ../../data/cars_768x768.h264 -n 16
 ```
 
 
@@ -1255,14 +1331,14 @@ Now we will repeat the same exercise on the GPU using the two commands:
 1. First, run the video with a batch size of 1 on the GPU using the command:  
 
 ```Bash
-./intel64/Release/car_detection_tutorial -m $mVDR16 -d GPU -i ../../data/car-detection.mp4 -n 1
+./intel64/Release/car_detection_tutorial -m $mVDR16 -d GPU -i ../../data/cars_768x768.h264 -n 1
 ```
 
 
 2. Now, jump to the largest batch size of 16 running the command:
 
 ```Bash
-./intel64/Release/car_detection_tutorial -m $mVDR16 -d GPU -i ../../data/car-detection.mp4 -n 16
+./intel64/Release/car_detection_tutorial -m $mVDR16 -d GPU -i ../../data/cars_768x768.h264 -n 16
 ```
 
 
