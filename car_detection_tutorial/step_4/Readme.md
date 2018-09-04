@@ -272,10 +272,16 @@ enqueue() has the changes:
 ```
 
 
-2. The single "request" has been replaced to use current input request “requests[inputRequestIdx]”:
+2. The single "request" has been replaced to use current input request “requests[inputRequestIdx]” when using auto resize or not:
 
-```cpp
-        auto  inputBlob = requests[inputRequestIdx]->GetBlob(input);
+```Cpp
+       if (FLAGS_auto_resize) {
+            inputBlob = wrapMat2Blob(frame);
+            requests[inputRequestIdx]->SetBlob(input, inputBlob);
+       } else {
+		inputBlob = requests[inputRequestIdx]->GetBlob(input);
+		matU8ToBlob<uint8_t >(frame, inputBlob, enquedFrames);
+    	 }
 ```
 
 
@@ -329,10 +335,17 @@ enqueue() has the changes:
 ```
 
 
-2. The single "request" has been replaced to use current input request “requests[inputRequestIdx]”:
+2. The single "request" has been replaced to use current input request “requests[inputRequestIdx]” when using auto resize or not:
 
 ```cpp
-        auto  inputBlob = requests[inputRequestIdx]->GetBlob(input);
+        if (FLAGS_auto_resize) {
+            // ... same cropping code ... 
+            requests[inputRequestIdx]->SetBlob(inputName, inputBlob);
+        } else {
+        	// ... same cropping code ... 
+        	inputBlob = requests[inputRequestIdx]->GetBlob(inputName);
+		matU8ToBlob<uint8_t >(cropped, inputBlob, enquedVehicles);
+    	}
 ```
 
 
@@ -523,7 +536,7 @@ Stage #1 is responsible for checking for and then processing vehicle inference r
 ```
 
 
-6. The results are iterated through putting detected vehicles and license plates with the associated input frame:
+6. The results are iterated through putting detected vehicles and license plates (if model detects licenses plates too) with the associated input frame:
 
 ```Cpp
 				// store results for next pipeline stage
@@ -591,9 +604,7 @@ Stage #1 from Tutorial Step 3 does both submit and wait for a inference request.
 						if (VehicleAttribs.enquedVehicles >= VehicleAttribs.maxBatch) {
 							break;
 						}
-						auto clippedRect = ps1s2i.vehicleLocations[rib] & cv::Rect(0, 0, width, height);
-						auto Vehicle = (*ps1s2i.outputFrame)(clippedRect);
-						VehicleAttribs.enqueue(Vehicle);
+						VehicleAttribs.enqueue(*ps1s2i.outputFrame, ps1s2i.vehicleLocations[rib]);
 					}
 ```
 
@@ -843,14 +854,14 @@ source ../../scripts/setupenv.sh
 1. First, let us see how it works on a single image file using default synchronous mode.
 
 ```bash
-./intel64/Release/car_detection_tutorial -m $mVLP32 -m_va $mVA32 -i ../../data/car_1.bmp
+./intel64/Release/car_detection_tutorial -m $mVDR32 -m_va $mVA32 -i ../../data/car_1.bmp
 ```
 
 
-2. The output window will show the image overlaid with colored rectangles over the cars and license plate along with and the timing statistics for computing the results.  Run the command again in asynchronous mode using the option "-n_async 2":
+2. The output window will show the image overlaid with colored rectangles over the cars and license plate (if model detects licenses plates too) along with and the timing statistics for computing the results.  Run the command again in asynchronous mode using the option "-n_async 2":
 
 ```bash
-./intel64/Release/car_detection_tutorial -m $mVLP32 -m_va $mVA32 -i ../../data/car_1.bmp -n_async 2
+./intel64/Release/car_detection_tutorial -m $mVDR32 -m_va $mVA32 -i ../../data/car_1.bmp -n_async 2
 ```
 
 
@@ -859,14 +870,14 @@ source ../../scripts/setupenv.sh
 4. Next, let us try it on a video file. 
 
 ```bash
-./intel64/Release/car_detection_tutorial -m $mVLP32 -m_va $mVA32 -i ../../data/car-detection.mp4 -n_async 1
+./intel64/Release/car_detection_tutorial -m $mVDR32 -m_va $mVA32 -i ../../data/cars_768x768.h264 -n_async 1
 ```
 
 
 5. Over each frame of the video, you will see green rectangles drawn around the cars as they move through the parking lot.  Now run the command again in asynchronous mode using the option "-n_async 2":
 
 ```bash
-./intel64/Release/car_detection_tutorial -m $mVLP32 -m_va $mVA32 -i ../../data/car-detection.mp4 -n_async 2
+./intel64/Release/car_detection_tutorial -m $mVDR32 -m_va $mVA32 -i ../../data/cars_768x768.h264 -n_async 2
 ```
 
 
@@ -879,11 +890,11 @@ source ../../scripts/setupenv.sh
 1. Now we shift running the models to another device, the GPU.  First we run in synchronous mode then asynchronous with increasing -n_async values using the commands:
 
 ```Bash
-./intel64/Release/car_detection_tutorial -m $mVLP16 -d GPU -m_va $mVA16 -d_va GPU -i ../../data/car-detection.mp4 -n_async 1
-./intel64/Release/car_detection_tutorial -m $mVLP16 -d GPU -m_va $mVA16 -d_va GPU -i ../../data/car-detection.mp4 -n_async 2
-./intel64/Release/car_detection_tutorial -m $mVLP16 -d GPU -m_va $mVA16 -d_va GPU -i ../../data/car-detection.mp4 -n_async 4
-./intel64/Release/car_detection_tutorial -m $mVLP16 -d GPU -m_va $mVA16 -d_va GPU -i ../../data/car-detection.mp4 -n_async 8
-./intel64/Release/car_detection_tutorial -m $mVLP16 -d GPU -m_va $mVA16 -d_va GPU -i ../../data/car-detection.mp4 -n_async 16
+./intel64/Release/car_detection_tutorial -m $mVDR16 -d GPU -m_va $mVA16 -d_va GPU -i ../../data/cars_768x768.h264 -n_async 1
+./intel64/Release/car_detection_tutorial -m $mVDR16 -d GPU -m_va $mVA16 -d_va GPU -i ../../data/cars_768x768.h264 -n_async 2
+./intel64/Release/car_detection_tutorial -m $mVDR16 -d GPU -m_va $mVA16 -d_va GPU -i ../../data/cars_768x768.h264 -n_async 4
+./intel64/Release/car_detection_tutorial -m $mVDR16 -d GPU -m_va $mVA16 -d_va GPU -i ../../data/cars_768x768.h264 -n_async 8
+./intel64/Release/car_detection_tutorial -m $mVDR16 -d GPU -m_va $mVA16 -d_va GPU -i ../../data/cars_768x768.h264 -n_async 16
 ```
 
 
