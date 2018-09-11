@@ -671,20 +671,20 @@ fetchResults() will parse the inference results saving them in the "Results" var
 
    6. Width of ROI
 
-```cpp
-            float image_id = detections[i * objectSize + 0];
-            Result r;
-            r.label = static_cast<int>(detections[i * objectSize + 1]);
-            r.confidence = detections[i * objectSize + 2];
-            if (r.confidence <= FLAGS_t) {
-                continue;
-            }
+   ```cpp
+               float image_id = detections[i * objectSize + 0];
+               Result r;
+               r.label = static_cast<int>(detections[i * objectSize + 1]);
+               r.confidence = detections[i * objectSize + 2];
+               if (r.confidence <= FLAGS_t) {
+                   continue;
+               }
 
-            r.location.x = detections[i * objectSize + 3] * width;
-            r.location.y = detections[i * objectSize + 4] * height;
-            r.location.width = detections[i * objectSize + 5] * width - r.location.x;
-            r.location.height = detections[i * objectSize + 6] * height - r.location.y;
-```
+               r.location.x = detections[i * objectSize + 3] * width;
+               r.location.y = detections[i * objectSize + 4] * height;
+               r.location.width = detections[i * objectSize + 5] * width - r.location.x;
+               r.location.height = detections[i * objectSize + 6] * height - r.location.y;
+   ```
 
 
 6. If the returned image_id is not valid, no more valid outputs are expected so exit the loop.
@@ -957,42 +957,45 @@ make
    2. "-m \<model-xml-file\>"  to specify where to find the module.  For example: -m  /opt/intel/computer_vision_sdk/deployment_tools/intel_models/face-detection-adas-0001/FP32/face-detection-adas-0001.xml”
 
    3. That is a lot to type and keep straight, so to help make the model names shorter to type  and easier to read, let us use the helper script scripts/setupenv.sh that sets up shell variables we can use.  For reference, here are the contents of scripts/setupenv.sh:
+
    ```bash
    # Create variables for all models used by the tutorials to make
    #  it easier to reference them with short names
-   
+
    # check for variable set by setupvars.sh in the SDK, need it to find models
    : ${InferenceEngine_DIR:?Must source the setupvars.sh in the SDK to set InferenceEngine_DIR}
-   
+
    modelDir=$InferenceEngine_DIR/../../intel_models
-   
+
    # Face Detection Model - ADAS
    modName=face-detection-adas-0001
    export mFDA16=$modelDir/$modName/FP16/$modName.xml
    export mFDA32=$modelDir/$modName/FP32/$modName.xml
-   
+
    # Face Detection Model - Retail
    modName=face-detection-retail-0004
    export mFDR16=$modelDir/$modName/FP16/$modName.xml
    export mFDR32=$modelDir/$modName/FP32/$modName.xml
-   
+
    # Age and Gender Model
    modName=age-gender-recognition-retail-0013
    export mAG16=$modelDir/$modName/FP16/$modName.xml
    export mAG32=$modelDir/$modName/FP32/$modName.xml
-   
+
    # Head Pose Estimation Model
    modName=head-pose-estimation-adas-0001
    export mHP16=$modelDir/$modName/FP16/$modName.xml
    export mHP32=$modelDir/$modName/FP32/$modName.xml
    ```
-   
+
+
    4. To use the script we source it: 
 
    ```bash
    source ../../scripts/setupenv.sh 
    ```
-    
+
+
    5. And now we can start referencing the variables for each model as: $mFDA16, $mFDA32, $mFDR16, $mFDR32, $mAG16, $mAG32, $mHP16, $mHP32
 
 2. Again, we will be using images and video files that are included with this tutorial or part of the OpenVINO™ toolkit installation in our sample instructions.  Once you have seen the application working, feel free to try it on your own images and videos.
