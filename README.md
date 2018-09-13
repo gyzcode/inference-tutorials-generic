@@ -10,7 +10,7 @@
     + gflags library to parse command line arguments
     + Using OpenCV for video input and output to window
   + Tutorial Step 2: Add the first Model, Face Detection
-    + Helper functions matU9ToBlob() and Load()
+    + Helper functions matU8ToBlob() and Load()
     + BaseDetection class
     + FaceDetectionClass class
   + Tutorial Step 3: Add the Second Model, Age and Gender
@@ -30,7 +30,7 @@
     + gflags library to parse command line arguments
     + Using OpenCV for video input and output to window
   + Tutorial Step 2: Add the first Model, Vehicle Detection
-    + Helper functions matU9ToBlob() and Load()
+    + Helper functions matU8ToBlob() and Load()
     + BaseDetection class
     + VehicleDetection class
   + Tutorial Step 3: Add the Second Model, Vehicle Attributes Detection
