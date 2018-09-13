@@ -110,14 +110,14 @@ cd tutorials/inference-tutorials-generic
 ```
 
 
-1. Download the subdirectory for just this tutorial for the specific version from the repository:
+3. Download the subdirectory for just this tutorial for the specific version from the repository:
 
 ```Bash
 svn export https://github.com/intel-iot-devkit/inference-tutorials-generic.git/branches/openvino_toolkit_r1_2/face_detection_tutorial
 ```
 
 
-3. Change to the face detection tutorial folder:
+4. Change to the face detection tutorial folder:
 
 ```Bash
 cd face_detection_tutorial
