@@ -629,23 +629,23 @@ fetchResults() will parse the inference results saving them in the "Results" var
 
    7. Height of ROI
 
-```cpp
-      for (int i = 0; i < maxProposalCount; i++) {
-         int proposalOffset = i * objectSize;
-         float image_id = detections[proposalOffset + 0];
-         Result r;
-         r.batchIndex = image_id;
-         r.label = static_cast<int>(detections[proposalOffset + 1]);
-         r.confidence = detections[proposalOffset + 2];
-         if (r.confidence <= FLAGS_t) {
-            continue;
-         }
-         r.location.x = detections[proposalOffset + 3] * width;
-         r.location.y = detections[proposalOffset + 4] * height;
-         r.location.width = detections[proposalOffset + 5] * width - r.location.x;
-         r.location.height = detections[proposalOffset + 6] * height - r.location.y;
+   ```cpp
+         for (int i = 0; i < maxProposalCount; i++) {
+            int proposalOffset = i * objectSize;
+            float image_id = detections[proposalOffset + 0];
+            Result r;
+            r.batchIndex = image_id;
+            r.label = static_cast<int>(detections[proposalOffset + 1]);
+            r.confidence = detections[proposalOffset + 2];
+            if (r.confidence <= FLAGS_t) {
+               continue;
+            }
+            r.location.x = detections[proposalOffset + 3] * width;
+            r.location.y = detections[proposalOffset + 4] * height;
+            r.location.width = detections[proposalOffset + 5] * width - r.location.x;
+            r.location.height = detections[proposalOffset + 6] * height - r.location.y;
 
-```
+   ```
 
 
 6. If the returned image_id is not valid, no more valid outputs are expected so exit the loop.
@@ -1131,40 +1131,40 @@ make
 
    3. That is a lot to type and keep straight, so to help make the model names shorter to type  and easier to read, let us use the helper script scripts/setupenv.sh that sets up shell variables we can use.  For reference, here are the contents of scripts/setupenv.sh:
 
-```bash
-# Create variables for all models used by the tutorials to make
-#  it easier to reference them with short names
+   ```bash
+   # Create variables for all models used by the tutorials to make
+   #  it easier to reference them with short names
 
-# check for variable set by setupvars.sh in the SDK, need it to find models
-: ${InferenceEngine_DIR:?Must source the setupvars.sh in the SDK to set InferenceEngine_DIR}
+   # check for variable set by setupvars.sh in the SDK, need it to find models
+   : ${InferenceEngine_DIR:?Must source the setupvars.sh in the SDK to set InferenceEngine_DIR}
 
-modelDir=$InferenceEngine_DIR/../../intel_models
+   modelDir=$InferenceEngine_DIR/../../intel_models
 
-# Vehicle and License Plates Detection Model
-modName=vehicle-license-plate-detection-barrier-0007
-export mVLP16=$modelDir/$modName/FP16/$modName.xml
-export mVLP32=$modelDir/$modName/FP32/$modName.xml
+   # Vehicle and License Plates Detection Model
+   modName=vehicle-license-plate-detection-barrier-0007
+   export mVLP16=$modelDir/$modName/FP16/$modName.xml
+   export mVLP32=$modelDir/$modName/FP32/$modName.xml
 
-# Vehicle-only Detection Model used with the batch size exercise
-modName=vehicle-detection-adas-0002
-export mVDR16=$modelDir/$modName/FP16/$modName.xml
-export mVDR32=$modelDir/$modName/FP32/$modName.xml
+   # Vehicle-only Detection Model used with the batch size exercise
+   modName=vehicle-detection-adas-0002
+   export mVDR16=$modelDir/$modName/FP16/$modName.xml
+   export mVDR32=$modelDir/$modName/FP32/$modName.xml
 
-# Vehicle Attributes Detection Model
-modName=vehicle-attributes-recognition-barrier-0039
-export mVA16=$modelDir/$modName/FP16/$modName.xml
-export mVA32=$modelDir/$modName/FP32/$modName.xml
-```
+   # Vehicle Attributes Detection Model
+   modName=vehicle-attributes-recognition-barrier-0039
+   export mVA16=$modelDir/$modName/FP16/$modName.xml
+   export mVA32=$modelDir/$modName/FP32/$modName.xml
+   ```
 
 
    4. To use the script we source it using the command: 
 
-```bash
-source ../../scripts/setupenv.sh 
-```
+   ```bash
+   source ../../scripts/setupenv.sh 
+   ```
 
 
-   1. You will notice that the script file defines four variables that can be used to reference vehicle detection models and two for vehicle attributes.
+   5. You will notice that the script file defines four variables that can be used to reference vehicle detection models and two for vehicle attributes.
 
 2. We will be using images and video files that are included with this tutorial.  Once you have seen the application working, feel free to try it on your own images and videos.
 
