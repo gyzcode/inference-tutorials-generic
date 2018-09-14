@@ -235,14 +235,22 @@ Now that we have looked at the code and understand how the program works, let us
 
 ## Build
 
-1. First, we need to configure the build environment when using the OpenVINO™ toolkit by running the "setupvars.sh" script.
+1. Open up a terminal (such as xterm) or use an existing terminal to get to a command shell prompt.
+
+2. Change to the directory containing Tutorial Step 1:
+
+```bash
+cd tutorials/inference-tutorials-generic/face_detection_tutorial/step_1
+```
+
+3. First, we need to configure the build environment when using the OpenVINO™ toolkit by running the "setupvars.sh" script.
 
 ```bash
 source  /opt/intel/computer_vision_sdk/bin/setupvars.sh
 ```
 
 
-2. Now we need to create a directory to build the tutorial in and change to it.
+4. Now we need to create a directory to build the tutorial in and change to it.
 
 ```bash
 mkdir build
@@ -250,7 +258,7 @@ cd build
 ```
 
 
-3. The last thing we need to do before compiling is to configure the build settings and build the executable.  We do this by running CMake to setup the build target and file locations.  Then, we run Make to build the executable:
+5. The last thing we need to do before compiling is to configure the build settings and build the executable.  We do this by running CMake to setup the build target and file locations.  Then, we run Make to build the executable:
 
 ```bash
 cmake -DCMAKE_BUILD_TYPE=Release ../
@@ -258,7 +266,7 @@ make
 ```
 
 
-4. You should now have the executable "face_detection_tutorial" file in the “./intel64/Release/” directory.  We will be using that executable to run our base OpenCV application.
+6. You should now have the executable "face_detection_tutorial" file in the “./intel64/Release/” directory.  We will be using that executable to run our base OpenCV application.
 
 ## Run
 
