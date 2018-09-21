@@ -23,7 +23,11 @@ if("$ENV{InferenceEngine_DIR}" STREQUAL "")
 endif()
 
 message(STATUS "InferenceEngine_DIR=$ENV{InferenceEngine_DIR}")
-set(InferenceEngine_Samples_DIR "$ENV{InferenceEngine_DIR}/../samples" )
+if(NOT(UNIX))
+	get_filename_component(InferenceEngine_Samples_DIR "$ENV{InferenceEngine_DIR}/../samples" ABSOLUTE)
+else()
+	set(InferenceEngine_Samples_DIR "$ENV{InferenceEngine_DIR}/../samples" )
+endif()
 
 list (APPEND CMAKE_MODULE_PATH ${InferenceEngine_Samples_DIR}/cmake)
 message(STATUS "CMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}")
