@@ -14,7 +14,7 @@
 
 cmake_minimum_required (VERSION 2.8)
 
-project(face_detection_tutorial)
+project(car_detection_tutorial)
 
 # environment variable InferenceEngine_DIR is used to find CMake files in installation 
 # point to common pieces in Inference Engine's samples directory
