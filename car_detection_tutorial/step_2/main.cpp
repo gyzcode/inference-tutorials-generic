@@ -362,7 +362,7 @@ int main(int argc, char *argv[]) {
 
         // read input (video) frames, need to keep multiple frames stored for batching
         const int maxNumInputFrames = VehicleDetection.maxBatch + 1;  // +1 to avoid overwrite
-        cv::Mat inputFrames[maxNumInputFrames];
+        cv::Mat* inputFrames = new cv::Mat[maxNumInputFrames];
         std::queue<cv::Mat*> inputFramePtrs;
         for(int fi = 0; fi < maxNumInputFrames; fi++) {
         	inputFramePtrs.push(&inputFrames[fi]);
@@ -579,6 +579,8 @@ int main(int argc, char *argv[]) {
         if (FLAGS_pc) {
         	VehicleDetection.printPerformanceCounts();
         }
+
+		delete [] inputFrames;
     }
     catch (const std::exception& error) {
         slog::err << error.what() << slog::endl;
