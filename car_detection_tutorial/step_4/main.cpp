@@ -277,7 +277,7 @@ struct VehicleDetection : BaseDetection{
         return netReader.getNetwork();
     }
 
-    void fetchResults() {
+    void fetchResults(int inputBatchSize) {
         if (!enabled()) return;
 
         if (nullptr == outputRequest) {
@@ -303,7 +303,7 @@ struct VehicleDetection : BaseDetection{
 			r.location.width = detections[proposalOffset + 5] * width - r.location.x;
 			r.location.height = detections[proposalOffset + 6] * height - r.location.y;
 
-			if ((image_id < 0) || (image_id >= maxBatch)) {  // indicates end of detections
+			if ((image_id < 0) || (image_id >= inputBatchSize)) {  // indicates end of detections
 				break;
 			}
 			if (FLAGS_r) {
@@ -622,7 +622,7 @@ int main(int argc, char *argv[]) {
 
 			/* *** Pipeline Stage 0: Prepare and Start Inferring a Batch of Frames *** */
         	// if there are more frames to do and a request available, then prepare and start batch
-			if (haveMoreFrames && !inputFramePtrs.empty() && VehicleDetection.canSubmitRequest()) {
+			if (haveMoreFrames && (inputFramePtrs.size() >= VehicleDetection.maxBatch) && VehicleDetection.canSubmitRequest()) {
 				// prepare a batch of frames
         		FramePipelineFifoItem ps0s1i;
 				for(numFrames = 0; numFrames < VehicleDetection.maxBatch; numFrames++) {
@@ -674,12 +674,12 @@ int main(int argc, char *argv[]) {
 				t1 = std::chrono::high_resolution_clock::now();
 				detection_time = std::chrono::duration_cast<ms>(t1 - t0);
 
-				// parse inference results internally (e.g. apply a threshold, etc)
-				VehicleDetection.fetchResults();
-
 				// get associated data from last pipeline stage to use with results
 				FramePipelineFifoItem ps0s1i = pipeS0toS1Fifo.front();
 				pipeS0toS1Fifo.pop();
+
+				// parse inference results internally (e.g. apply a threshold, etc)
+				VehicleDetection.fetchResults(ps0s1i.batchOfInputFrames.size());
 
 				// prepare a FramePipelineFifoItem for each batched frame to get its detection results
 				std::vector<FramePipelineFifoItem> batchedFifoItems;
