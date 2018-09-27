@@ -14,7 +14,7 @@
 
 cmake_minimum_required (VERSION 2.8)
 
-project(face_detection_tutorial)
+project(car_detection_tutorial)
 
 # environment variable InferenceEngine_DIR is used to find CMake files in installation 
 # point to common pieces in Inference Engine's samples directory
@@ -23,7 +23,11 @@ if("$ENV{InferenceEngine_DIR}" STREQUAL "")
 endif()
 
 message(STATUS "InferenceEngine_DIR=$ENV{InferenceEngine_DIR}")
-set(InferenceEngine_Samples_DIR "$ENV{InferenceEngine_DIR}/../samples" )
+if(NOT(UNIX))
+	get_filename_component(InferenceEngine_Samples_DIR "$ENV{InferenceEngine_DIR}/../samples" ABSOLUTE)
+else()
+	set(InferenceEngine_Samples_DIR "$ENV{InferenceEngine_DIR}/../samples" )
+endif()
 
 list (APPEND CMAKE_MODULE_PATH ${InferenceEngine_Samples_DIR}/cmake)
 message(STATUS "CMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}")
@@ -55,11 +59,11 @@ endif()
 
 if (NOT (IE_MAIN_SOURCE_DIR))
     set(NEED_EXTENSIONS TRUE)
-    if (WIN32)
-        set (IE_MAIN_SOURCE_DIR ${CMAKE_SOURCE_DIR}/../bin/)
-    else()
+#    if (WIN32)
+#        set (IE_MAIN_SOURCE_DIR ${CMAKE_SOURCE_DIR}/../bin/)
+#    else()
         set (IE_MAIN_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR})
-    endif()
+#    endif()
 endif()
 
 if(NOT(UNIX))

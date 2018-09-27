@@ -250,7 +250,7 @@ struct VehicleDetection : BaseDetection{
         return netReader.getNetwork();
     }
 
-    void fetchResults() {
+    void fetchResults(int inputBatchSize) {
         if (!enabled()) return;
         results.clear();
         if (resultsFetched) return;
@@ -272,7 +272,7 @@ struct VehicleDetection : BaseDetection{
 			r.location.width = detections[proposalOffset + 5] * width - r.location.x;
 			r.location.height = detections[proposalOffset + 6] * height - r.location.y;
 
-			if ((image_id < 0) || (image_id >= maxBatch)) {  // indicates end of detections
+			if ((image_id < 0) || (image_id >= inputBatchSize)) {  // indicates end of detections
 				break;
 			}
 			if (FLAGS_r) {
@@ -484,7 +484,7 @@ int main(int argc, char *argv[]) {
 
         // read input (video) frames, need to keep multiple frames stored for batching
         const int maxNumInputFrames = VehicleDetection.maxBatch + 1;  // +1 to avoid overwrite
-        cv::Mat inputFrames[maxNumInputFrames];
+        cv::Mat* inputFrames = new cv::Mat[maxNumInputFrames];
         std::queue<cv::Mat*> inputFramePtrs;
         for(int fi = 0; fi < maxNumInputFrames; fi++) {
         	inputFramePtrs.push(&inputFrames[fi]);
@@ -526,7 +526,7 @@ int main(int argc, char *argv[]) {
 
 			/* *** Pipeline Stage 0: Prepare and Infer a Batch of Frames *** */
         	// if there are more frames to do then prepare and start batch
-			if (haveMoreFrames) {
+			if (haveMoreFrames && (inputFramePtrs.size() >= VehicleDetection.maxBatch)) {
 				// prepare a batch of frames
         		FramePipelineFifoItem ps0s1i;
 				for(numFrames = 0; numFrames < VehicleDetection.maxBatch; numFrames++) {
@@ -571,7 +571,7 @@ int main(int argc, char *argv[]) {
 					detection_time = std::chrono::duration_cast<ms>(t1 - t0);
 
 					// parse inference results internally (e.g. apply a threshold, etc)
-					VehicleDetection.fetchResults();
+					VehicleDetection.fetchResults(ps0s1i.batchOfInputFrames.size());
 
 					// prepare a FramePipelineFifoItem for each batched frame to get its detection results
 					for (auto && bFrame : ps0s1i.batchOfInputFrames) {
@@ -797,6 +797,8 @@ int main(int argc, char *argv[]) {
         	VehicleDetection.printPerformanceCounts();
         	VehicleAttribs.printPerformanceCounts();
         }
+
+		delete [] inputFrames;
     }
     catch (const std::exception& error) {
         slog::err << error.what() << slog::endl;
