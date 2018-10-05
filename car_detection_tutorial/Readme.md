@@ -44,7 +44,7 @@ A summary of what is needed:
 
 * Software
 
-   * OpenVINO™ toolkit supported Linux operating system.  This tutorial was run on 64-bit Ubuntu 16.04.3 LTS updated to kernel 14.4.20 following the OpenVINO™ toolkit installation instructions.
+   * OpenVINO™ toolkit supported Linux operating system.  This tutorial was run on 64-bit Ubuntu 16.04.3 LTS updated to kernel 4.14.20 following the OpenVINO™ toolkit installation instructions.
 
    * The latest OpenVINO™ toolkit installed and verified.  This tutorial was written using version 2018 R2.0.
 
