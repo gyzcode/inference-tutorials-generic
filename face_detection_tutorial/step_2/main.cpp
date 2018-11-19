@@ -39,7 +39,6 @@
 #include <samples/slog.hpp>
 
 #include "face_detection.hpp"
-#include "mkldnn/mkldnn_extension_ptr.hpp"
 #include <ext_list.hpp>
 
 #include <opencv2/opencv.hpp>
@@ -306,8 +305,8 @@ int main(int argc, char *argv[]) {
         if (!(FLAGS_i == "cam" ? cap.open(0) : cap.open(FLAGS_i))) {
             throw std::logic_error("Cannot open input file or camera: " + FLAGS_i);
         }
-        const size_t width  = (size_t) cap.get(CV_CAP_PROP_FRAME_WIDTH);
-        const size_t height = (size_t) cap.get(CV_CAP_PROP_FRAME_HEIGHT);
+        const size_t width  = (size_t) cap.get(cv::CAP_PROP_FRAME_WIDTH);
+        const size_t height = (size_t) cap.get(cv::CAP_PROP_FRAME_HEIGHT);
 
         // read input (video) frame
         cv::Mat frame;
@@ -346,8 +345,8 @@ int main(int argc, char *argv[]) {
 
                 if (!FLAGS_l.empty()) {
                     // CPU(MKLDNN) extensions are loaded as a shared library and passed as a pointer to base extension
-                    auto extension_ptr = make_so_pointer<InferenceEngine::MKLDNNPlugin::IMKLDNNExtension>(FLAGS_l);
-                    plugin.AddExtension(std::static_pointer_cast<IExtension>(extension_ptr));
+                    auto extension_ptr = make_so_pointer<IExtension>(FLAGS_l);
+                    plugin.AddExtension(extension_ptr);
                 }
             } else if (!FLAGS_c.empty()) {
                 // Load Extensions for other plugins not CPU

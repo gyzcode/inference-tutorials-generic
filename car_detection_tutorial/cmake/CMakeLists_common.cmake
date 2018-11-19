@@ -168,10 +168,6 @@ endif()
 #add_subdirectory(segmentation_sample)
 #add_subdirectory(style_transfer_sample)
 
-if (NEED_EXTENSIONS)
-    add_subdirectory(${InferenceEngine_Samples_DIR}/extension ${CMAKE_CURRENT_BINARY_DIR}/extension)
-endif()
-
 #if (OpenCV_FOUND)
 #    add_subdirectory(validation_app)
 #else()
