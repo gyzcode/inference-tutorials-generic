@@ -128,8 +128,8 @@ if (!(FLAGS_i == "cam" ? cap.open(0) : cap.open(FLAGS_i))) {
 2. The width and height of the image source are stored for use later.  
 
 ```cpp
-const size_t width  = (size_t) cap.get(CV_CAP_PROP_FRAME_WIDTH);
-const size_t height = (size_t) cap.get(CV_CAP_PROP_FRAME_HEIGHT);
+const size_t width  = (size_t) cap.get(cv::CAP_PROP_FRAME_WIDTH);
+const size_t height = (size_t) cap.get(cv::CAP_PROP_FRAME_HEIGHT);
 ```
 
 

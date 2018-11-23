@@ -747,7 +747,6 @@ cd tutorials/inference-tutorials-generic/face_detection_tutorial/step_2
 
 ```cpp
 #include "face_detection.hpp"
-#include "mkldnn/mkldnn_extension_ptr.hpp"
 #include <ext_list.hpp>
 using namespace InferenceEngine;
 ```

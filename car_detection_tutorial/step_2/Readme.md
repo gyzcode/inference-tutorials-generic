@@ -784,7 +784,6 @@ cd tutorials/inference-tutorials-generic/car_detection_tutorial/step_2
 
 ```cpp
 #include "car_detection.hpp"
-#include "mkldnn/mkldnn_extension_ptr.hpp"
 #include <ext_list.hpp>
 using namespace InferenceEngine;
 ```
@@ -838,8 +837,8 @@ for (auto && option : cmdOptions) {
 
       if (!FLAGS_l.empty()) {
          // CPU(MKLDNN) extensions are loaded as a shared library and passed as a pointer to base extension
-         auto extension_ptr = make_so_pointer<InferenceEngine::MKLDNNPlugin::IMKLDNNExtension>(FLAGS_l);
-          plugin.AddExtension(std::static_pointer_cast<IExtension>(extension_ptr));
+         auto extension_ptr = make_so_pointer<IExtension>(FLAGS_l);
+         plugin.AddExtension(extension_ptr);
       }
    } else if (!FLAGS_c.empty()) {
       // Load Extensions for other plugins not CPU
