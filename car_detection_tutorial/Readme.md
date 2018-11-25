@@ -1,6 +1,6 @@
 # Car Detection Tutorial
 
-**Note**: This tutorial has been written using OpenVINO™ toolkit version 2018 R3.0 and is for use with this version only.   Using this tutorial with any other version may not be correct.
+**Note**: This tutorial has been written using OpenVINO™ toolkit version 2018 R4.0 and is for use with this version only.   Using this tutorial with any other version may not be correct.
 
 # Table of Contents
 
@@ -46,7 +46,7 @@ A summary of what is needed:
 
    * OpenVINO™ toolkit supported Linux operating system.  This tutorial was run on 64-bit Ubuntu 16.04.3 LTS updated to kernel 4.14.20 following the OpenVINO™ toolkit installation instructions.
 
-   * The latest OpenVINO™ toolkit installed and verified.  This tutorial was written using version 2018 R3.0.
+   * The latest OpenVINO™ toolkit installed and verified.  This tutorial was written using version 2018 R4.0.
 
    * At least one utility for downloading from the GitHub repository: Subversion (svn), Git (git), or both
 
