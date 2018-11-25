@@ -89,7 +89,7 @@ git clone https://github.com/intel-iot-devkit/inference-tutorials-generic.git
 
 ```Bash
 cd inference-tutorials-generic
-git checkout openvino_toolkit_r3_0
+git checkout openvino_toolkit_r4_0
 ```
 
 
@@ -115,7 +115,7 @@ cd tutorials/inference-tutorials-generic
 3. Download the subdirectory for just this tutorial from the repository:
 
 ```Bash
-svn export https://github.com/intel-iot-devkit/inference-tutorials-generic.git/branches/openvino_toolkit_r3_0/car_detection_tutorial
+svn export https://github.com/intel-iot-devkit/inference-tutorials-generic.git/branches/openvino_toolkit_r4_0/car_detection_tutorial
 ```
 
 
