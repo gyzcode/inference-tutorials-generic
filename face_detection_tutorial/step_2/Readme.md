@@ -8,7 +8,7 @@
 
 # Introduction
 
-Welcome to the Face Detection Tutorial Step 2.  This is the step of the tutorial where it gets its name by processing image data and detecting faces.  We get this ability by having the application use the Inference Engine to load and run the Intermediate Representation (IR) of a CNN model on the selected hardware device CPU, GPU, or Myriad to perform face detection.  You may recall from the OpenVINO™ toolkit overview, an IR model is a compiled version of a CNN (e.g. from Caffe) that has been optimized using the Model Optimizer for use with the Inference Engine.  This is where we start to see the power of the OpenVINO™ toolkit to load and run models on devices.  In this tutorial step, we will use the Inference Engine to run a pre-compiled model to do face detection on the input image and then output the results.  
+Welcome to the Face Detection Tutorial Step 2.  This is the step of the tutorial where it gets its name by processing image data and detecting faces.  We get this ability by having the application use the Inference Engine to load and run the Intermediate Representation (IR) of a CNN model on the selected hardware device CPU, GPU, or Myriad to perform face detection.  You may recall from the Intel® Distribution of OpenVINO™ toolkit overview, an IR model is a compiled version of a CNN (e.g. from Caffe) that has been optimized using the Model Optimizer for use with the Inference Engine.  This is where we start to see the power of the Intel® Distribution of OpenVINO™ toolkit to load and run models on devices.  In this tutorial step, we will use the Inference Engine to run a pre-compiled model to do face detection on the input image and then output the results.  
 
 A sample output showing the results where a Region of Interest (ROI) box appears around the detected face below.  The metrics reported include the time for OpenCV capture and display along with the time to run the face detection model.  The detected face gets a box around it along with a label as shown below.
 
@@ -16,7 +16,7 @@ A sample output showing the results where a Region of Interest (ROI) box appears
 
 # Face Detection Models
 
-The OpenVINO™ toolkit includes two pre-compiled face detection models located at:
+The Intel® Distribution of OpenVINO™ toolkit includes two pre-compiled face detection models located at:
 
 * /opt/intel/computer_vision_sdk/deployment_tools/intel_models/face-detection-adas-0001
 
@@ -26,7 +26,7 @@ The OpenVINO™ toolkit includes two pre-compiled face detection models located 
 
       * FP32: /opt/intel/computer_vision_sdk/deployment_tools/intel_models/face-detection-adas-0001/FP32/face-detection-adas-0001.xml
 
-   * More detail may be found the OpenVINO™ toolkit at:       file:///opt/intel/computer_vision_sdk/deployment_tools/intel_models/face-detection-adas-0001/description/face-detection-adas-0001.html
+   * More detail may be found the Intel® Distribution of OpenVINO™ toolkit at:       file:///opt/intel/computer_vision_sdk/deployment_tools/intel_models/face-detection-adas-0001/description/face-detection-adas-0001.html
 
 * /opt/intel/computer_vision_sdk/deployment_tools/intel_models/face-detection-retail-0004
 
@@ -36,7 +36,7 @@ The OpenVINO™ toolkit includes two pre-compiled face detection models located 
 
       * FP32: /opt/intel/computer_vision_sdk/deployment_tools/intel_models/face-detection-retail-0004/FP32/face-detection-retail-0004.xml
 
-   * More detail may be found in the OpenVINO™ toolkit at: file:///opt/intel/computer_vision_sdk/deployment_tools/intel_models/face-detection-retail-0004/description/face-detection-retail-0004.html
+   * More detail may be found in the Intel® Distribution of OpenVINO™ toolkit at: file:///opt/intel/computer_vision_sdk/deployment_tools/intel_models/face-detection-retail-0004/description/face-detection-retail-0004.html
 
 Each model may be used to perform face detection, the difference is how complex each underlying model is for the results it is capable of producing as shown in the summary below (for more details, see the descriptions HTML pages for each model): 
 
@@ -924,7 +924,7 @@ cd tutorials/inference-tutorials-generic/face_detection_tutorial/step_2
 ```
 
 
-3. The first step is to configure the build environment for the OpenVINO™ toolkit by sourcing the "setupvars.sh" script.
+3. The first step is to configure the build environment for the Intel® Distribution of OpenVINO™ toolkit by sourcing the "setupvars.sh" script.
 
 ```bash
 source  /opt/intel/computer_vision_sdk/bin/setupvars.sh
@@ -997,7 +997,7 @@ make
 
    5. And now we can start referencing the variables for each model as: $mFDA16, $mFDA32, $mFDR16, $mFDR32, $mAG16, $mAG32, $mHP16, $mHP32
 
-2. Again, we will be using images and video files that are included with this tutorial or part of the OpenVINO™ toolkit installation in our sample instructions.  Once you have seen the application working, feel free to try it on your own images and videos.
+2. Again, we will be using images and video files that are included with this tutorial or part of the Intel® Distribution of OpenVINO™ toolkit installation in our sample instructions.  Once you have seen the application working, feel free to try it on your own images and videos.
 
 3. Let us first run it on a single image, to see how it works.
 

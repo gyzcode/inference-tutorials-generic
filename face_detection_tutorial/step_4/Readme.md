@@ -16,7 +16,7 @@ In the image above, the three axes intersect in the center of the head.  The blu
 
 # Head Pose Estimation Model
 
-The OpenVINO™ toolkit includes a pre-compiled model for estimating head pose from an image of a face.  You can find it at:
+The Intel® Distribution of Intel® Distribution of OpenVINO™ toolkit includes a pre-compiled model for estimating head pose from an image of a face.  You can find it at:
 
 * /opt/intel/computer_vision_sdk/deployment_tools/intel_models/head-pose-estimation-adas-0001
 
@@ -475,7 +475,7 @@ cd tutorials/inference-tutorials-generic/face_detection_tutorial/step_4
 ```
 
 
-3. The first step is to configure the build environment for the OpenVINO™ toolkit by running the "setupvars.sh" script.
+3. The first step is to configure the build environment for the Intel® Distribution of OpenVINO™ toolkit by running the "setupvars.sh" script.
 
 ```bash
 source  /opt/intel/computer_vision_sdk/bin/setupvars.sh
@@ -567,7 +567,7 @@ The easy answer is "yes."  The more complex answer is that it can be more comple
 
 ## Are Some Devices Better for Certain Types of Models Than Other Devices?
 
-Again, the easy answer is "yes."  The truth is that it can be difficult to know what model will run best on what device without actually loading the model on a device and seeing how it performs.  This is one of the most powerful features of the Inference Engine and the OpenVINO™ toolkit.  It is very easy to write applications that allow you to get up and running quickly to test many combinations of models and devices, without requiring significant code changes or even recompiling.  Our face detection application can do exactly that.  So let us see what we can learn about how these models work on different devices by running through the options.
+Again, the easy answer is "yes."  The truth is that it can be difficult to know what model will run best on what device without actually loading the model on a device and seeing how it performs.  This is one of the most powerful features of the Inference Engine and the Intel® Distribution of OpenVINO™ toolkit.  It is very easy to write applications that allow you to get up and running quickly to test many combinations of models and devices, without requiring significant code changes or even recompiling.  Our face detection application can do exactly that.  So let us see what we can learn about how these models work on different devices by running through the options.
 
 ### Command Line and All the Arguments
 
@@ -610,7 +610,7 @@ Let us look at a sample command line that uses all the parameters so that we can
 ```
 
 
-From this command line, we see that the application will load the FP32 face detection model onto the GPU, the FP16 age and gender model on the Myriad, using a batch size of 1, and the FP16 head pose model onto the GPU, with a batch size of 16.  We also specify "-i ../../data/head-pose-face-detection-female-and-male.mp4" so that we have a “known” data set to do our performance tests with.  This MP4 video file used from the OpenVINO™ toolkit samples is a hand-drawn face with a moving camera.  
+From this command line, we see that the application will load the FP32 face detection model onto the GPU, the FP16 age and gender model on the Myriad, using a batch size of 1, and the FP16 head pose model onto the GPU, with a batch size of 16.  We also specify "-i ../../data/head-pose-face-detection-female-and-male.mp4" so that we have a “known” data set to do our performance tests with.  This MP4 video file used from the Intel® Distribution of OpenVINO™ toolkit samples is a hand-drawn face with a moving camera.  
 
 You can see that it is easy to change the model precision to match the device you want to run it on by changing the model to use the FP16 or FP32 using "16" and “32” built into the names of the variables..  It is easy to make up several test cases to see how the application and each of the inference model, perform.  Just remember that all models run on the CPU must be FP32, and all models run on the Myriad must be FP16.  Models run on the Myriad must also have their batch size set to 1.  Models run on the GPU can be either FP16 or FP32.
 
@@ -760,7 +760,7 @@ Something to note too is that the Myriad is only capable of running two analysis
 
 # Conclusion
 
-By adding the head pose estimation model to the application from Tutorial Step 3, you have now seen the final step in assembling the full application.  This again shows the power the OpenVINO™ toolkit brings to applications by quickly being able to add another inference model.  We also discussed how to load the inference models onto different devices to distribute the workload and find the optimal device to get the best performance from the models.
+By adding the head pose estimation model to the application from Tutorial Step 3, you have now seen the final step in assembling the full application.  This again shows the power the Intel® Distribution of OpenVINO™ toolkit brings to applications by quickly being able to add another inference model.  We also discussed how to load the inference models onto different devices to distribute the workload and find the optimal device to get the best performance from the models.
 
 # Navigation
 

@@ -8,7 +8,7 @@
 
 # Introduction
 
-Welcome to the Car Detection Tutorial Step 2.  This is the step of the tutorial where the application starts making use of the OpenVINO™ toolkit to make inferences on image data and detect vehicles.  We get this ability by having the application use the Inference Engine to load and run the Intermediate Representation (IR) of a CNN model on the selected hardware device CPU, GPU, or Intel® Movidius™ Myriad™.  You may recall from the OpenVINO™ toolkit overview, an IR model is a compiled version of a CNN (e.g. from Caffe) that has been optimized using the Model Optimizer for use with the Inference Engine.  This is where we start to see the power of the OpenVINO™ toolkit to load and run models on several devices.  In this tutorial step, we will use the Inference Engine to run a pre-compiled model to do vehicle detection on the input image and then output the results.  
+Welcome to the Car Detection Tutorial Step 2.  This is the step of the tutorial where the application starts making use of the Intel® Distribution of OpenVINO™ toolkit to make inferences on image data and detect vehicles.  We get this ability by having the application use the Inference Engine to load and run the Intermediate Representation (IR) of a CNN model on the selected hardware device CPU, GPU, or Intel® Movidius™ Myriad™.  You may recall from the Intel® Distribution of OpenVINO™ toolkit overview, an IR model is a compiled version of a CNN (e.g. from Caffe) that has been optimized using the Model Optimizer for use with the Inference Engine.  This is where we start to see the power of the Intel® Distribution of OpenVINO™ toolkit to load and run models on several devices.  In this tutorial step, we will use the Inference Engine to run a pre-compiled model to do vehicle detection on the input image and then output the results.  
 
 Below, you can see a sample output showing the results, where a Region of Interest (ROI) box appears around the detected vehicle.  The metrics reported include the time for OpenCV capture and display along with the time to run the vehicle detection model.
 
@@ -16,7 +16,7 @@ Below, you can see a sample output showing the results, where a Region of Intere
 
 # Vehicle Detection Models
 
-The OpenVINO™ toolkit provides a pre-compiled model that has been trained to detect vehicles.  You can find it at:
+The Intel® Distribution of OpenVINO™ toolkit provides a pre-compiled model that has been trained to detect vehicles.  You can find it at:
 
 * /opt/intel/computer_vision_sdk/deployment_tools/intel_models/vehicle-detection-adas-0002
 
@@ -1172,7 +1172,7 @@ cd tutorials/inference-tutorials-generic/car_detection_tutorial/step_2
 ```
 
 
-3. The first step is to configure the build environment for the OpenVINO™ toolkit by sourcing the "setupvars.sh" script.
+3. The first step is to configure the build environment for the Intel® Distribution of OpenVINO™ toolkit by sourcing the "setupvars.sh" script.
 
 ```bash
 source  /opt/intel/computer_vision_sdk/bin/setupvars.sh
