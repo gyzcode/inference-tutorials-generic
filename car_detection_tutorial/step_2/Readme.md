@@ -208,7 +208,7 @@ In the samples themselves and the common libraries they use are many useful help
 
 ### Blob Conversion
 
-There will need to be a function that takes the input image and turns it into a "blob".  Which begs the question “What is a blob?”.  In short, a blob, specifically the class InferenceEngine::Blob, is the data container type used by the Inference Engine for holding input and output data.  To get data into the model, the image data will need to be converted from the OpenCV cv::Mat to an InferenceEngine::Blob.  For doing that there are the two helper functions, “matU8ToBlob” (copies data) and “wrapMat2Blob” (does not copy data) which are both located in the file   “\opt\intel\computer_vision_sdk\inference_engine\samples\common\samples\common.hpp“.
+There will need to be a function that takes the input image and turns it into a "blob".  Which begs the question “What is a blob?”.  In short, a blob, specifically the class InferenceEngine::Blob, is the data container type used by the Inference Engine for holding input and output data.  To get data into the model, the image data will need to be converted from the OpenCV cv::Mat to an InferenceEngine::Blob.  For doing that there are the two helper functions, “matU8ToBlob” (copies data) and “wrapMat2Blob” (does not copy data) which are both located in the file   “\opt\intel\computer_vision_sdk\inference_engine\samples\common\samples\ocv_common.hpp“.
 
 #### matU8ToBlob
 
