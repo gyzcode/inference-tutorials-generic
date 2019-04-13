@@ -3,7 +3,7 @@
 
 # use relative location of script to specify where to find downloaded models
 scriptDir=`cd $(dirname $BASH_SOURCE); pwd`
-modelDir=`cd $scriptDir/../../../tutorial_models; pwd`
+modelDir=`cd $scriptDir/../../../tutorial_models/face_detection; pwd`
 
 # Face Detection Model - ADAS
 modName=face-detection-adas-0001

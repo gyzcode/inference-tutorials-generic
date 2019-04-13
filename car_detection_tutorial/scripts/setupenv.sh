@@ -3,7 +3,7 @@
 
 # use relative location of script to specify where to find downloaded models
 scriptDir=`cd $(dirname $BASH_SOURCE); pwd`
-modelDir=`cd $scriptDir/../../../tutorial_models; pwd`
+modelDir=`cd $scriptDir/../../../tutorial_models/car_detection; pwd`
 
 # Vehicle and License Plates Detection Model
 modName=vehicle-license-plate-detection-barrier-0106
