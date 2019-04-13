@@ -1,5 +1,5 @@
 # This script uses the model downloader script located in the OpenVINO installation
-#  to download all the necessary models used in the tutorial
+# to download all the necessary models used in the tutorial
 
 # model downloader Python script
 modelDownloader=/opt/intel/openvino/deployment_tools/tools/model_downloader/downloader.py
