@@ -150,7 +150,7 @@ In the "face_detection_tutorial" directory you will see:
 
 * Readme.md - The top level of this tutorial (this page)
 
-## Intel® Distribution of OpenVINO™ toolkit Overview and Terminology 
+## Intel® Distribution of OpenVINO™ Toolkit Overview and Terminology 
 
 Let us begin with a brief overview of the Intel® Distribution of OpenVINO™ toolkit and what this tutorial will be covering.  The Intel® Distribution of OpenVINO™ toolkit enables the quick deployment of convolutional neural networks (CNN) for heterogeneous execution on Intel® hardware while maximizing performance. This is done using the Intel® Deep Learning Deployment Toolkit (Intel® DL Deployment Toolkit) included within the Intel® Distribution of OpenVINO™ toolkit with its main components shown below.
 
@@ -234,7 +234,7 @@ More details on the Inference Engine can be found in the "Integrating Inference 
 
 and the Inference Engine API documentation located at: /opt/intel/computer_vision_sdk/deployment_tools/documentation/docs/IntegrateIEInAppNewAPI.html
 
-#### Setting Up Command Line to Use the Intel® Distribution of OpenVINO™ toolkit Executables and Libraries
+#### Setting Up Command Line to Use the Intel® Distribution of OpenVINO™ Toolkit Executables and Libraries
 
 Whenever running the Intel® Distribution of OpenVINO™ toolkit tools, compiling, or running the user application, always remember to source the script:
 
@@ -411,7 +411,7 @@ Performance counts (times) are kept per layer executed during an inference.  Inc
 
 2. After running inference, retrieve performance counts using InferenceEngine::InferRequest::GetPerformanceCounts()
 
-**Note**: All code in this tutorial that runs inference includes the necessary code to optionally enable and display performance counts.  Performance counts are enabled using the "pc" option which is covered in Tutorial Step 2. 
+**Note**: All code in this tutorial that runs inference includes the necessary code to optionally enable and display performance counts.  Performance counts are enabled using the "pc" option which is covered in Tutorial Step 2.
 
 ## Tutorial Step 1: Create the Base OpenCV Application
 

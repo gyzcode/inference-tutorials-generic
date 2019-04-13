@@ -39,7 +39,7 @@
   + Tutorial Step 3: Add the Second Model, Vehicle Attributes Detection
     + VehicleAttribsDetection class 
     + Dynamic Batching (exercise)
-    + Input Preprocessing (exercise) 
+    + Input Preprocessing (exercise)
     + Running combinations of models on devices (exercise)
   + Tutorial Step 4: Using the Asynchronous API
     + Changes made to Tutorial Step 3 for converting from synchronous to asynchronous
