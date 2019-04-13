@@ -8,7 +8,7 @@ modelDownloader=/opt/intel/openvino/deployment_tools/tools/model_downloader/down
 scriptDir=`cd $(dirname $BASH_SOURCE); pwd`
 mkdir $scriptDir/../../../tutorial_models
 mkdir $scriptDir/../../../tutorial_models/face_detection
-modelDir=`cd $scriptDir/../../../tutorial_models; pwd`
+modelDir=`cd $scriptDir/../../../tutorial_models/face_detection; pwd`
 
 # prefix to see output from this script 
 prefix="[get_models.sh]:"
