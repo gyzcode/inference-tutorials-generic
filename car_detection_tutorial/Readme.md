@@ -1,6 +1,6 @@
 # Car Detection Tutorial
 
-**Note**: This tutorial has been written using OpenVINO™ toolkit version 2018 R5.0 and is for use with this version only.   Using this tutorial with any other version may not be correct.
+**Note**: This tutorial has been written using Intel® Distribution of OpenVINO™ toolkit version 2018 R5.0 and is for use with this version only.   Using this tutorial with any other version may not be correct.
 
 # Table of Contents
 
@@ -150,9 +150,9 @@ In the "car_detection_tutorial" directory you will see:
 
 * Readme.md - The top level of this tutorial (this page)
 
-## OpenVINO™ Toolkit Overview and Terminology 
+## Intel® Distribution of OpenVINO™ Toolkit Overview and Terminology 
 
-Let us begin with a brief overview of the OpenVINO™ toolkit and what this tutorial will be covering.  The OpenVINO™ toolkit enables the quick deployment of convolutional neural networks (CNN) for heterogeneous execution on Intel® hardware while maximizing performance. This is done using the Intel® Deep Learning Deployment Toolkit (Intel® DL Deployment Toolkit) included within the OpenVINO™ toolkit with its main components shown below.
+Let us begin with a brief overview of the Intel® Distribution of OpenVINO™ toolkit and what this tutorial will be covering.  The Intel® Distribution of OpenVINO™ toolkit enables the quick deployment of convolutional neural networks (CNN) for heterogeneous execution on Intel® hardware while maximizing performance. This is done using the Intel® Deep Learning Deployment Toolkit (Intel® DL Deployment Toolkit) included within the Intel® Distribution of OpenVINO™ toolkit with its main components shown below.
 
 ![image alt text](./doc_support/step0_image_0.png)
 
@@ -234,26 +234,26 @@ More details on the Inference Engine can be found in the "Integrating Inference 
 
 and the Inference Engine API documentation located at: /opt/intel/computer_vision_sdk/deployment_tools/documentation/docs/IntegrateIEInAppNewAPI.html
 
-#### Setting Up Command Line to Use the OpenVINO™ Toolkit Executables and Libraries
+#### Setting Up Command Line to Use the Intel® Distribution of OpenVINO™ Toolkit Executables and Libraries
 
-Whenever running the OpenVINO™ toolkit tools, compiling, or running the user application, always remember to source the script:
+Whenever running the Intel® Distribution of OpenVINO™ toolkit tools, compiling, or running the user application, always remember to source the script:
 
 ```Bash
 source /opt/intel/computer_vision_sdk/bin/setupvars.sh
 ```
 
 
-This script sets up the executable and library paths along with environment variables used by the OpenVINO™ toolkit tools as well as this tutorial.
+This script sets up the executable and library paths along with environment variables used by the Intel® Distribution of OpenVINO™ toolkit tools as well as this tutorial.
 
 ### Where Do the Inference Models Come from?
 
-An inference model may come from any of the supported sources and workflows such as Caffe, TensorFlow, and Apache MXNet.  For this tutorial, we will use models that have already been compiled by the Model Optimizer into .bin and .xml files and supplied within the OpenVINO™ toolkit samples.  The development and compiling of models is beyond the scope of this tutorial, for more information see [https://software.intel.com/openvino-toolkit/deep-learning-cv](https://software.intel.com/en-us/openvino-toolkit/deep-learning-cv)
+An inference model may come from any of the supported sources and workflows such as Caffe, TensorFlow, and Apache MXNet.  For this tutorial, we will use models that have already been compiled by the Model Optimizer into .bin and .xml files and supplied within the Intel® Distribution of OpenVINO™ toolkit samples.  The development and compiling of models is beyond the scope of this tutorial, for more information see [https://software.intel.com/openvino-toolkit/deep-learning-cv](https://software.intel.com/en-us/openvino-toolkit/deep-learning-cv)
 
 # Key Concepts
 
 Before going into the samples in the tutorial steps, first we will go over some key concepts that will be covered in this tutorial.  For more related concepts, please see the  [Face Detection Tutorials](../face_detection_tutorial/Readme.md) that covers and answers the questions:
 
-* Intel® OpenCV - Why is it included in the OpenVINO™ toolkit?
+* Intel® OpenCV - Why is it included in the Intel® Distribution of OpenVINO™ toolkit?
 
 * Floating Point Precision - What is it and why does it matter?
 
@@ -283,7 +283,7 @@ Batch size refers to the number of input data to be inferred during a single inf
 
 * By default, batch size is a fixed number of inputs that will be inferred for each submitted request to the Inference Engine API regardless of how many inputs contain valid data.  Depending upon the model, invalid inputs may also result in false detections and additional unnecessary processing.  
 
-* The Dynamic Batching feature, available as of OpenVINO™ toolkit 2018 R3.0, makes batch size a maximum number of inputs that will be inferred for each submitted request to the Inference Engine API with the actual number of inputs set per request.  To enable and use the Dynamic Batching feature in the API:
+* The Dynamic Batching feature, available as of Intel® Distribution of OpenVINO™ toolkit 2018 R3.0, makes batch size a maximum number of inputs that will be inferred for each submitted request to the Inference Engine API with the actual number of inputs set per request.  To enable and use the Dynamic Batching feature in the API:
 
    * Enable Dynamic Batching while loading the model using InferenceEngine::InferencePlugin::LoadNetwork(), set the configuration option "PluginConfigParams::KEY_DYN_BATCH_ENABLED" to “PluginConfigParams::YES” 
 
@@ -313,7 +313,7 @@ Often, the dimensions of the input data does not match the required dimensions o
 
 2. Resize the ROI data from its dimensions to match the required dimensions of the inference model’s input 
 
-This tutorial and the many samples in the OpenVINO™ toolkit use OpenCV or the Inference Engine’s image pre-processing API (available as of 2018 R3.0) to perform resizing and cropping of input data.  The next sections outline how both are used.
+This tutorial and the many samples in the Intel® Distribution of OpenVINO™ toolkit use OpenCV or the Inference Engine’s image pre-processing API (available as of 2018 R3.0) to perform resizing and cropping of input data.  The next sections outline how both are used.
 
 ### OpenCV
 
@@ -483,9 +483,9 @@ Congratulations! you have completed the Car Detection Tutorial.  After going thr
 
 # References and More Information
 
-OpenVINO™ toolkit main page: [https://software.intel.com/openvino-toolkit](https://software.intel.com/openvino-toolkit)
+Intel® Distribution of OpenVINO™ toolkit main page: [https://software.intel.com/openvino-toolkit](https://software.intel.com/openvino-toolkit)
 
-OpenVINO™ toolkit documentation page: [https://software.intel.com/openvino-toolkit/documentation](https://software.intel.com/openvino-toolkit/documentation)
+Intel® Distribution of OpenVINO™ toolkit documentation page: [https://software.intel.com/openvino-toolkit/documentation](https://software.intel.com/openvino-toolkit/documentation)
 
 Intel® Deep Learning Deployment Toolkit (Intel® DL Deployment Toolkit): [https://software.intel.com/openvino-toolkit/deep-learning-cv](https://software.intel.com/openvino-toolkit/deep-learning-cv)
 
