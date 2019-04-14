@@ -262,7 +262,7 @@ That takes care of specializing the BaseDetector class into the AgeGenderDetecti
 
 ## main()
 
-1. In the main() function, the command line arguments FLAGS_d_ag and FLAGS_m_ag are added to cmdOptions.  Remember that the flags are defined in the car_detection.hpp file.
+1. In the main() function, the command line arguments FLAGS_d_ag and FLAGS_m_ag are added to cmdOptions.  Remember that the flags are defined in the face_detection.hpp file.
 
 ```cpp
 std::vector<std::pair<std::string, std::string>> cmdOptions = {

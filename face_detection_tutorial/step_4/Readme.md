@@ -288,7 +288,7 @@ drawAxes() is a utility function that is used to create the Yaw, Pitch and Roll 
 
 That takes care of specializing the BaseDetector class into the Head PoseDetection class for the head pose detection model.  We now move down into the main() function to see what additions have been made to use the head pose detection model to process detected faces.
 
-1. In the main() function, the command line arguments FLAGS_d_hp and FLAGS_m_hp are added to cmdOptions.  Remember that the flags are defined in the car_detection.hpp file.
+1. In the main() function, the command line arguments FLAGS_d_hp and FLAGS_m_hp are added to cmdOptions.  Remember that the flags are defined in the face_detection.hpp file.
 
 ```cpp
 std::vector<std::pair<std::string, std::string>> cmdOptions = {

@@ -157,7 +157,7 @@ source ./scripts/get_models.sh
 ```
 When the script completes, you should see a listing of the eight models' .xml files similar to below.
 ```Bash
-[get_models.sh]:: Models have been downloaded to: /home/<user>/tutorials/tutorial_models/car_detection
+[get_models.sh]:: Models have been downloaded to: /home/<user>/tutorials/tutorial_models/face_detection
 [get_models.sh]:Downloaded model: /home/<user>/tutorials/tutorial_models/face_detection/..../head-pose-estimation-adas-0001-fp16.xml
 [get_models.sh]:Downloaded model: /home/<user>/tutorials/tutorial_models/face_detection/..../head-pose-estimation-adas-0001.xml
 [get_models.sh]:Downloaded model: /home/<user>/tutorials/tutorial_models/face_detection/..../face-detection-adas-0001.xml
