@@ -4,6 +4,11 @@
 # **NOTE**: Tutorials exist on branches according to the targeted Intel® Distribution of OpenVINO™ toolkit release.  The "master" branch, specifically this file, is only used for pointing to the different versions of the tutorials.
 
 # Branches
+## Version 2019 R1.0
+- ### [Branch Top](https://github.com/intel-iot-devkit/inference-tutorials-generic/tree/openvino_toolkit_2019_r1_0)
+- ### [Face Detection Tutorial](https://github.com/intel-iot-devkit/inference-tutorials-generic/tree/openvino_toolkit_2019_r1_0/face_detection_tutorial/Readme.md)
+- ### [Car Detection Tutorial](https://github.com/intel-iot-devkit/inference-tutorials-generic/tree/openvino_toolkit_2019_r1_0/car_detection_tutorial/Readme.md)
+
 ## Version 2018 R5.0
 - ### [Branch Top](https://github.com/intel-iot-devkit/inference-tutorials-generic/tree/openvino_toolkit_r5_0)
 - ### [Face Detection Tutorial](https://github.com/intel-iot-devkit/inference-tutorials-generic/tree/openvino_toolkit_r5_0/face_detection_tutorial/Readme.md)
