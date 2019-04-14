@@ -1,6 +1,6 @@
 # Face Detection Tutorial
 
-**Note**: This tutorial has been written using Intel® Distribution of OpenVINO™ toolkit version 2018 R5.0 and is for use with this version only.   Using this tutorial with any other version may not be correct.
+**Note**: This tutorial has been written using Intel® Distribution of OpenVINO™ toolkit version 2019 R1.0 and is for use with this version only.   Using this tutorial with any other version may not be correct.
 
 # Table of Contents
 
@@ -46,7 +46,7 @@ A summary of what is needed:
 
    * Intel® Distribution of OpenVINO™ toolkit supported Linux operating system.  This tutorial was run on 64-bit Ubuntu 16.04.3 LTS updated to kernel 4.14.20 following the Intel® Distribution of OpenVINO™ toolkit installation instructions.
 
-   * The latest Intel® Distribution of OpenVINO™ toolkit installed and verified.  This tutorial was written using version 2018 R5.0.
+   * The latest Intel® Distribution of OpenVINO™ toolkit installed and verified.  This tutorial was written using version 2019 R1.0.
 
    * At least one utility for downloading from the GitHub repository: Subversion (svn), Git (git), or both
 
@@ -89,7 +89,7 @@ git clone https://github.com/intel-iot-devkit/inference-tutorials-generic.git
 
 ```Bash
 cd inference-tutorials-generic
-git checkout openvino_toolkit_r5_0
+git checkout openvino_toolkit_2019_r1_0
 ```
 
 
@@ -115,7 +115,7 @@ cd tutorials/inference-tutorials-generic
 3. Download the subdirectory for just this tutorial for the specific version from the repository:
 
 ```Bash
-svn export https://github.com/intel-iot-devkit/inference-tutorials-generic.git/branches/openvino_toolkit_r5_0/face_detection_tutorial
+svn export https://github.com/intel-iot-devkit/inference-tutorials-generic.git/branches/openvino_toolkit_2019_r1_0/face_detection_tutorial
 ```
 
 
@@ -249,16 +249,14 @@ Using the Inference Engine API follows the basic steps briefly described below. 
 
 In tutorial Steps 2, 3, and 4 we will walkthrough the code that specifically integrates each of the models used in the application.  
 
-More details on the Inference Engine can be found in the "Integrating Inference Engine into Your Application" section of the Inference Engine Development Guide [https://software.intel.com/inference-engine-devguide](https://software.intel.com/inference-engine-devguide)
-
-and the Inference Engine API documentation located at: /opt/intel/computer_vision_sdk/deployment_tools/documentation/docs/IntegrateIEInAppNewAPI.html
+More details on the Inference Engine can be found in the "Integrate the Inference Engine New Request API with Your Application" section of the [Inference Engine Development Guide](https://docs.openvinotoolkit.org/latest/_docs_IE_DG_Deep_Learning_Inference_Engine_DevGuide.html).
 
 #### Setting Up Command Line to Use the Intel® Distribution of OpenVINO™ Toolkit Executables and Libraries
 
 Whenever running the Intel® Distribution of OpenVINO™ toolkit tools, compiling, or running the user application, always remember to source the script:
 
 ```Bash
-source /opt/intel/computer_vision_sdk/bin/setupvars.sh
+source /opt/intel/openvino/bin/setupvars.sh
 ```
 
 
@@ -280,13 +278,9 @@ The second big reason: All the extensions and additional libraries that come wit
 
 Additional information may be found at:
 
-Source for the OpenCV libraries: [https://github.com/opencv/opencv/releases/tag/3.4.1-cvsdk](https://github.com/opencv/opencv/releases/tag/3.4.1-cvsdk)
+Source for the OpenCV libraries: [https://github.com/opencv/opencv/releases/](https://github.com/opencv/opencv/releases/)
 
-Samples for OpenCV on Linux*: /opt/intel/computer_vision_sdk/opencv/share/OpenCV/sample/Readme.md
-
-Intel® OpenCV PVL library sample on Linux*:
-
-/opt/intel/computer_vision_sdk/opencv/share/OpenCV/sample/pvl
+Samples for OpenCV on Linux*: /opt/intel/openvino/opencv/samples/Readme.md
 
 ## Floating Point Precision
 
@@ -345,7 +339,7 @@ For more detail on 16-bit "half-precision" floating point down to the bit-level,
 
 For more detail on the Model Optimizer, see the OpenVINO™ documentation at:
 
-[https://software.intel.com/openvino-toolkit/documentation](https://software.intel.com/openvino-toolkit/documentation)
+[https://docs.openvinotoolkit.org/](https://docs.openvinotoolkit.org/)
 
 ## Batch Size
 
@@ -363,7 +357,7 @@ Batch size refers to the number of input data to be inferred during a single inf
 
    * May be set explicitly using the Inference Engine API setBatchSize() function
 
-   * **Note**: For the getBatchSize() and setBatchSize() functions, see the InferenceEngine::ICNNNetwork class in the documentation at: /opt/intel/computer_vision_sdk/deployment_tools/documentation/docs/classInferenceEngine_1_1CNNNetwork.html
+   * **Note**: For the getBatchSize() and setBatchSize() functions, see the [InferenceEngine::ICNNNetwork](https://docs.openvinotoolkit.org/latest/classInferenceEngine_1_1ICNNNetwork.html) class in the documentation.
 
 * Batch size is a fixed number of inputs that will be inferred for each submitted request to the Inference Engine API regardless of how many inputs contain valid data.  Depending upon the model, invalid inputs may also result in false detections and additional unnecessary processing.
 
@@ -484,7 +478,7 @@ Congratulations! you have completed the Face Detection Tutorial.  After going th
 
 Intel® Distribution of OpenVINO™ toolkit main page: [https://software.intel.com/openvino-toolkit](https://software.intel.com/openvino-toolkit)
 
-Intel® Distribution of OpenVINO™ toolkit documentation page: [https://software.intel.com/openvino-toolkit/documentation](https://software.intel.com/openvino-toolkit/documentation)
+Intel® Distribution of OpenVINO™ toolkit documentation page: [https://docs.openvinotoolkit.org/](https://docs.openvinotoolkit.org/)
 
 Intel® Deep Learning Deployment Toolkit (Intel® DL Deployment Toolkit): [https://software.intel.com/openvino-toolkit/deep-learning-cv](https://software.intel.com/openvino-toolkit/deep-learning-cv)
 

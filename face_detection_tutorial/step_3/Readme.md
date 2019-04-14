@@ -14,19 +14,11 @@ Welcome to Face Detection Tutorial Step 3.  Now that the application can detect 
 
 # Age and Gender Detection Model
 
-The Intel® Distribution of OpenVINO™ toolkit provides a pre-compiled model for estimating age and gender from an image of a face.  You can find it at:
+The Intel® Distribution of OpenVINO™ toolkit provides pre-trained models in the Open Model Zoo that have been trained to estimate the age and gender from an image of a face.  The model used by this tutorial is the "[age-gender-recognition-retail-0013](https://github.com/opencv/open_model_zoo/blob/master/intel_models/age-gender-recognition-retail-0013/description/age-gender-recognition-retail-0013.md)" which was downloaded and compiled for FP16 and FP32 during setup using the model downloader script.  The available model locations are:
 
-* /opt/intel/computer_vision_sdk/deployment_tools/intel_models/age-gender-recognition-retail-0013
-
-   * Available model locations:
-
-      * FP16: /opt/intel/computer_vision_sdk/deployment_tools/intel_models/age-gender-recognition-retail-0013/FP16/age-gender-recognition-retail-0013.xml
-
-      * FP32: /opt/intel/computer_vision_sdk/deployment_tools/intel_models/age-gender-recognition-retail-0013/FP32/age-gender-recognition-retail-0013.xml
-
-   * More details can be found at:
-
-      * file:///opt/intel/computer_vision_sdk/deployment_tools/intel_models/age-gender-recognition-retail-0013/description/age-gender-recognition-retail-0013.html
+* FP16: tutorials/tutorial_models/face_detection/Retail/object_attributes/age_gender/dldt/age-gender-recognition-retail-0013-fp16.xml
+* FP32: tutorials/tutorial_models/face_detection/Retail/object_attributes/age_gender/dldt/age-gender-recognition-retail-0013.xml
+* More details on the model can be found at: https://github.com/opencv/open_model_zoo/blob/master/intel_models/age-gender-recognition-retail-0013/description/age-gender-recognition-retail-0013.md
 
 The results it is capable of producing are shown in the summary below (for more details, see the descriptions HTML pages for each model): 
 
@@ -46,6 +38,7 @@ Gender accuracy: 96.66%</td>
   </tr>
 </table>
 
+Note that the model is already compiled for both FP16 and FP32.  You will need to make sure you choose the correct precision for the device you want to run it on.
 
 # Adding the Age and Gender Detection Model
 
@@ -492,7 +485,7 @@ cd tutorials/inference-tutorials-generic/face_detection_tutorial/step_3
 3. The first step is to configure the build environment for the Intel® Distribution of OpenVINO™ toolkit by running the "setupvars.sh" script.
 
 ```bash
-source  /opt/intel/computer_vision_sdk/bin/setupvars.sh
+source  /opt/intel/openvino/bin/setupvars.sh
 ```
 
 

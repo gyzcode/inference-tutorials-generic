@@ -16,19 +16,11 @@ Below, you can see a sample output showing the results, where a Region of Intere
 
 # Vehicle Detection Models
 
-The Intel® Distribution of OpenVINO™ toolkit provides a pre-compiled model that has been trained to detect vehicles.  You can find it at:
+The Intel® Distribution of OpenVINO™ toolkit provides pre-trained models in the Open Model Zoo that have been trained to detect vehicles.  The model used by this tutorial is the "[vehicle-detection-adas-0002](https://github.com/opencv/open_model_zoo/blob/master/intel_models/vehicle-detection-adas-0002/description/vehicle-detection-adas-0002.md)" which was downloaded and compiled for FP16 and FP32 during setup using the model downloader script.  The available model locations are:
 
-* /opt/intel/computer_vision_sdk/deployment_tools/intel_models/vehicle-detection-adas-0002
-
-   * Available model locations are:
-
-      * FP16: /opt/intel/computer_vision_sdk/deployment_tools/intel_models/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml
-
-      * FP32: /opt/intel/computer_vision_sdk/deployment_tools/intel_models/vehicle-detection-adas-0002/FP32/vehicle-detection-adas-0002.xml
-
-   * More details on the model can be found at:
-
-      * file:///opt/intel/computer_vision_sdk/deployment_tools/intel_models/vehicle-detection-adas-0002/description/vehicle-detection-adas-0002.html
+* FP16: tutorials/tutorial_models/car_detection/Transportation/object_detection/vehicle/mobilenet-reduced-ssd/dldt/vehicle-detection-adas-0002-fp16.xml
+* FP32: tutorials/tutorial_models/car_detection/Transportation/object_detection/vehicle/mobilenet-reduced-ssd/dldt/vehicle-detection-adas-0002.xml
+* More details on the model can be found at: https://github.com/opencv/open_model_zoo/blob/master/intel_models/vehicle-detection-adas-0002/description/vehicle-detection-adas-0002.md
 
 <table>
   <tr>
@@ -45,8 +37,7 @@ The Intel® Distribution of OpenVINO™ toolkit provides a pre-compiled model th
   </tr>
 </table>
 
-
-Note that the model comes pre-compiled for FP16 and FP32.  So you will need to make sure you choose the correct precision for the device you want to run it on.
+Note that the model is already compiled for both FP16 and FP32.  You will need to make sure you choose the correct precision for the device you want to run it on.
 
 ## How Do I Specify Which Device the Model Will Run On?
 
@@ -208,7 +199,7 @@ In the samples themselves and the common libraries they use are many useful help
 
 ### Blob Conversion
 
-There will need to be a function that takes the input image and turns it into a "blob".  Which begs the question “What is a blob?”.  In short, a blob, specifically the class InferenceEngine::Blob, is the data container type used by the Inference Engine for holding input and output data.  To get data into the model, the image data will need to be converted from the OpenCV cv::Mat to an InferenceEngine::Blob.  For doing that there are the two helper functions, “matU8ToBlob” (copies data) and “wrapMat2Blob” (does not copy data) which are both located in the file   “\opt\intel\computer_vision_sdk\inference_engine\samples\common\samples\ocv_common.hpp“.
+There will need to be a function that takes the input image and turns it into a "blob".  Which begs the question “What is a blob?”.  In short, a blob, specifically the class InferenceEngine::Blob, is the data container type used by the Inference Engine for holding input and output data.  To get data into the model, the image data will need to be converted from the OpenCV cv::Mat to an InferenceEngine::Blob.  For doing that there are the two helper functions, “matU8ToBlob” (copies data) and “wrapMat2Blob” (does not copy data) which are both located in the file   “\opt\intel\openvino\inference_engine\samples\common\samples\ocv_common.hpp“.
 
 #### matU8ToBlob
 
@@ -257,7 +248,7 @@ void matU8ToBlob(const cv::Mat& orig_image, InferenceEngine::Blob::Ptr& blob, in
 ```
 
 
-For more details on the InferenceEngine::Blob class, see "Understanding Inference Engine Memory primitives" in the documentation: [https://software.intel.com/en-us/articles/OpenVINO-InferEngine](https://software.intel.com/en-us/articles/OpenVINO-InferEngine)
+For more details on the InferenceEngine::Blob class, see "Inference Engine Memory primitives" in the documentation: [https://docs.openvinotoolkit.org/latest/_docs_IE_DG_Memory_primitives.html](https://docs.openvinotoolkit.org/latest/_docs_IE_DG_Memory_primitives.html)
 
 #### wrapMat2Blob
 
@@ -306,7 +297,7 @@ static InferenceEngine::Blob::Ptr wrapMat2Blob(const cv::Mat &mat) {
 ```
 
 
-For more details on the InferenceEngine::Blob class, see "Understanding Inference Engine Memory primitives" in the documentation: [https://software.intel.com/en-us/articles/OpenVINO-InferEngine](https://software.intel.com/en-us/articles/OpenVINO-InferEngine)
+For more details on the InferenceEngine::Blob class, see "Inference Engine Memory primitives" in the documentation: [https://docs.openvinotoolkit.org/latest/_docs_IE_DG_Memory_primitives.html](https://docs.openvinotoolkit.org/latest/_docs_IE_DG_Memory_primitives.html)
 
 ### Load
 
@@ -1175,7 +1166,7 @@ cd tutorials/inference-tutorials-generic/car_detection_tutorial/step_2
 3. The first step is to configure the build environment for the Intel® Distribution of OpenVINO™ toolkit by sourcing the "setupvars.sh" script.
 
 ```bash
-source  /opt/intel/computer_vision_sdk/bin/setupvars.sh
+source  /opt/intel/openvino/bin/setupvars.sh
 ```
 
 
@@ -1201,35 +1192,33 @@ make
 
    1. "-i \<input-image-or-video-file\>" to specify an input image or video file instead of using the USB camera by default
 
-   2. "-m \<model-xml-file\>"  to specify where to find the module.  For example: -m  /opt/intel/computer_vision_sdk/deployment_tools/intel_models/vehicle-detection-adas-0002/FP32/vehicle-detection-adas-0002.xml”
+   2. "-m \<model-xml-file\>"  to specify where to find the module.  For example: -m ~/tutorials/tutorial_models/car_detection/Transportation/object_detection/vehicle/mobilenet-reduced-ssd/dldt/vehicle-detection-adas-0002.xml
 
    3. That is a lot to type and keep straight, so to help make the model names shorter to type  and easier to read, let us use the helper script scripts/setupenv.sh that sets up shell variables we can use.  For reference, here are the contents of scripts/setupenv.sh:
 
    ```bash
-   # Create variables for all models used by the tutorials to make
+   # Create variables for all models used by the tutorials to make 
    #  it easier to reference them with short names
-
-   # check for variable set by setupvars.sh in the SDK, need it to find models
-   : ${InferenceEngine_DIR:?Must source the setupvars.sh in the SDK to set InferenceEngine_DIR}
-
-   modelDir=$InferenceEngine_DIR/../../intel_models
-
+   
+   # use relative location of script to specify where to find downloaded models
+   scriptDir=`cd $(dirname $BASH_SOURCE); pwd`
+   modelDir=`cd $scriptDir/../../../tutorial_models/car_detection; pwd`
+   
    # Vehicle and License Plates Detection Model
    modName=vehicle-license-plate-detection-barrier-0106
-   export mVLP16=$modelDir/$modName/FP16/$modName.xml
-   export mVLP32=$modelDir/$modName/FP32/$modName.xml
-
+   export mVLP16=`find $modelDir -name "${modName}-fp16.xml"`
+   export mVLP32=`find $modelDir -name "${modName}.xml"`
+   
    # Vehicle-only Detection Model used with the batch size exercise
    modName=vehicle-detection-adas-0002
-   export mVDR16=$modelDir/$modName/FP16/$modName.xml
-   export mVDR32=$modelDir/$modName/FP32/$modName.xml
-
+   export mVDR16=`find $modelDir -name "${modName}-fp16.xml"`
+   export mVDR32=`find $modelDir -name "${modName}.xml"`
+   
    # Vehicle Attributes Detection Model
    modName=vehicle-attributes-recognition-barrier-0039
-   export mVA16=$modelDir/$modName/FP16/$modName.xml
-   export mVA32=$modelDir/$modName/FP32/$modName.xml
+   export mVA16=`find $modelDir -name "${modName}-fp16.xml"`
+   export mVA32=`find $modelDir -name "${modName}.xml"`
    ```
-
 
    4. To use the script we source it using the command: 
 

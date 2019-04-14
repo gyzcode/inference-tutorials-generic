@@ -14,19 +14,11 @@ Welcome to Car Detection Tutorial Step 3.  Now that the application can detect v
 
 # Vehicle Attributes Detection Model
 
-The Intel® Distribution of OpenVINO™ toolkit provides a pre-compiled model for inferring vehicle type and color from an image of a car.  You can find it at:
+The Intel® Distribution of OpenVINO™ toolkit provides pre-trained models in the Open Model Zoo that have been trained to recognize vehicle attributes.  The model used by this tutorial is the "[vehicle-attributes-recognition-barrier-0039](https://github.com/opencv/open_model_zoo/blob/master/intel_models/vehicle-attributes-recognition-barrier-0039/description/vehicle-attributes-recognition-barrier-0039.md)" which was downloaded and compiled for FP16 and FP32 during setup using the model downloader script.  The available model locations are:
 
-* /opt/intel/computer_vision_sdk/deployment_tools/intel_models/vehicle-attributes-recognition-barrier-0039
-
-   * Available model locations:
-
-      * FP16: /opt/intel/computer_vision_sdk/deployment_tools/intel_models/vehicle-attributes-recognition-barrier-0039/FP16/vehicle-attributes-recognition-barrier-0039.xml
-
-      * FP32: /opt/intel/computer_vision_sdk/deployment_tools/intel_models/vehicle-attributes-recognition-barrier-0039/FP32/vehicle-attributes-recognition-barrier-0039.xml
-
-   * More details can be found at:
-
-      * file:///opt/intel/computer_vision_sdk/deployment_tools/intel_models/vehicle-attributes-recognition-barrier-0039/description/vehicle-attributes-recognition-barrier-0039.html
+* FP16: tutorials/tutorial_models/car_detection/Security/object_attributes/vehicle/resnet10_update_1/dldt/vehicle-attributes-recognition-barrier-0039-fp16.xml
+* FP32: tutorials/tutorial_models/car_detection/Security/object_attributes/vehicle/resnet10_update_1/dldt/vehicle-attributes-recognition-barrier-0039.xml
+* More details on the model can be found at: https://github.com/opencv/open_model_zoo/blob/master/intel_models/vehicle-attributes-recognition-barrier-0039/description/vehicle-attributes-recognition-barrier-0039.md
 
 The results it is capable of producing are shown in the summary below (for more details, see the descriptions HTML pages for each model): 
 
@@ -39,13 +31,14 @@ The results it is capable of producing are shown in the summary below (for more 
   </tr>
   <tr>
     <td>vehicle-attributes-recognition-barrier-0039</td>
-    <td>0.125</td>
+    <td>0.126</td>
     <td>0.626</td>
     <td>Color accuracy: 82.04%
 Type accuracy: 87.70%</td>
   </tr>
 </table>
 
+Note that the model is already compiled for both FP16 and FP32.  You will need to make sure you choose the correct precision for the device you want to run it on.
 
 # Adding the Vehicle Attributes Detection Model
 
@@ -560,7 +553,7 @@ cd tutorials/inference-tutorials-generic/car_detection_tutorial/step_3
 3. The first step is to configure the build environment for the Intel® Distribution of OpenVINO™ toolkit by sourcing the "setupvars.sh" script.
 
 ```bash
-source  /opt/intel/computer_vision_sdk/bin/setupvars.sh
+source  /opt/intel/openvino/bin/setupvars.sh
 ```
 
 

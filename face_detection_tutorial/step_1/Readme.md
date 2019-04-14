@@ -19,7 +19,7 @@ Every application needs some way of getting data in and data out.  Let us now ta
 To make it easier to set everything from the input video file to which model and device is to be used, command line arguments to the application will be used.  To parse the command line arguments, the application will use the "gflags" helper library that comes with the Intel® Distribution of OpenVINO™ toolkit samples.  Here we will briefly go over the primary functions that are used, for reference the full source code for the gflags library may be found in the Intel® Distribution of OpenVINO™ toolkit samples directory: 
 
 ```bash
-/opt/intel/computer_vision_sdk/deployment_tools/inference_engine/samples/thirdparty/gflags
+/opt/intel/openvino/deployment_tools/inference_engine/samples/thirdparty/gflags
 ```
 
 
@@ -246,7 +246,7 @@ cd tutorials/inference-tutorials-generic/face_detection_tutorial/step_1
 3. First, we need to configure the build environment when using the Intel® Distribution of OpenVINO™ toolkit by running the "setupvars.sh" script.
 
 ```bash
-source  /opt/intel/computer_vision_sdk/bin/setupvars.sh
+source  /opt/intel/openvino/bin/setupvars.sh
 ```
 
 

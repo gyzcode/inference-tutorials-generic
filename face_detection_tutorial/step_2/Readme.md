@@ -16,27 +16,17 @@ A sample output showing the results where a Region of Interest (ROI) box appears
 
 # Face Detection Models
 
-The Intel® Distribution of OpenVINO™ toolkit includes two pre-compiled face detection models located at:
+The Intel® Distribution of OpenVINO™ toolkit provides pre-trained models in the Open Model Zoo that have been trained to detect faces.  The models used by this tutorial is the "[face-detection-adas-0001](https://github.com/opencv/open_model_zoo/blob/master/intel_models/face-detection-adas-0001/description/face-detection-adas-0001.md)" and "[face-detection-retail-0004](https://github.com/opencv/open_model_zoo/blob/master/intel_models/face-detection-retail-0004/description/face-detection-retail-0004.md)" which were downloaded and compiled for FP16 and FP32 during setup using the model downloader script.  The available model locations are:
 
-* /opt/intel/computer_vision_sdk/deployment_tools/intel_models/face-detection-adas-0001
-
-   * Available model locations:
-
-      * FP16: /opt/intel/computer_vision_sdk/deployment_tools/intel_models/face-detection-adas-0001/FP16/face-detection-adas-0001.xml
-
-      * FP32: /opt/intel/computer_vision_sdk/deployment_tools/intel_models/face-detection-adas-0001/FP32/face-detection-adas-0001.xml
-
-   * More detail may be found the Intel® Distribution of OpenVINO™ toolkit at:       file:///opt/intel/computer_vision_sdk/deployment_tools/intel_models/face-detection-adas-0001/description/face-detection-adas-0001.html
-
-* /opt/intel/computer_vision_sdk/deployment_tools/intel_models/face-detection-retail-0004
-
-   * Available model locations:
-
-      * FP16: /opt/intel/computer_vision_sdk/deployment_tools/intel_models/face-detection-retail-0004/FP16/face-detection-retail-0004.xml
-
-      * FP32: /opt/intel/computer_vision_sdk/deployment_tools/intel_models/face-detection-retail-0004/FP32/face-detection-retail-0004.xml
-
-   * More detail may be found in the Intel® Distribution of OpenVINO™ toolkit at: file:///opt/intel/computer_vision_sdk/deployment_tools/intel_models/face-detection-retail-0004/description/face-detection-retail-0004.html
+* face-detection-adas-0001
+  * FP16: tutorials/tutorial_models/face_detection/Transportation/object_detection/face/pruned_mobilenet_reduced_ssd_shared_weights/dldt/face-detection-adas-0001-fp16.xml
+  * FP32: tutorials/tutorial_models/face_detection/Transportation/object_detection/face/pruned_mobilenet_reduced_ssd_shared_weights/dldt/face-detection-adas-0001.xml
+  * More details on the model can be found at: https://github.com/opencv/open_model_zoo/blob/master/intel_models/face-detection-adas-0001/description/face-detection-adas-0001.md
+ 
+* face-detection-retail-0004
+  * FP16: tutorials/tutorial_models/face_detection/Retail/object_detection/face/sqnet1.0modif-ssd/0004/dldt/face-detection-retail-0004-fp16.xml
+  * FP32: tutorials/tutorial_models/face_detection/Retail/object_detection/face/sqnet1.0modif-ssd/0004/dldt/face-detection-retail-0004.xml
+  * More details on the model can be found at: https://github.com/opencv/open_model_zoo/blob/master/intel_models/face-detection-retail-0004/description/face-detection-retail-0004.md
 
 Each model may be used to perform face detection, the difference is how complex each underlying model is for the results it is capable of producing as shown in the summary below (for more details, see the descriptions HTML pages for each model): 
 
@@ -62,8 +52,7 @@ AP (head height >100px) 94.1%</td>
   </tr>
 </table>
 
-
-Note that each model comes pre-compiled for both FP16 and FP32, when choosing which precision always be sure to make sure the hardware device supports it.   
+Note that the model is already compiled for both FP16 and FP32.  You will need to make sure you choose the correct precision for the device you want to run it on.
 
 ## How Do I Specify Which Device the Model Will Run On?
 
@@ -217,7 +206,7 @@ From Tutorial Step 1, we have the base application that can read and display ima
 
 ## Helper Functions and Classes
 
-There will need to be a function that takes the input image and turns it into a "blob".  Which begs the question “What is a blob?”  In short, a blob, specifically the class InferenceEngine::Blob, is the data container type used by the Inference Engine for holding input and output data.  To get data into the model, the image data will need to be converted from the OpenCV cv::Mat to an InferenceEngine::Blob.  For doing that is the helper function “matU8ToBlob” in \opt\intel\computer_vision_sdk\inference_engine\samples\common\samples\ocv_common.hpp: 
+There will need to be a function that takes the input image and turns it into a "blob".  Which begs the question “What is a blob?”  In short, a blob, specifically the class InferenceEngine::Blob, is the data container type used by the Inference Engine for holding input and output data.  To get data into the model, the image data will need to be converted from the OpenCV cv::Mat to an InferenceEngine::Blob.  For doing that is the helper function “matU8ToBlob” in /opt/intel/openvino/deployment_tools/inference_engine/samples/common/samples/ocv_common.hpp:
 
 ### matU8ToBlob
 
@@ -267,7 +256,7 @@ void matU8ToBlob(const cv::Mat& orig_image, InferenceEngine::Blob::Ptr& blob, in
 ```
 
 
-For more details on the InferenceEngine::Blob class, see "Understanding Inference Engine Memory primitives" in the documentation: [https://software.intel.com/en-us/articles/OpenVINO-InferEngine](https://software.intel.com/en-us/articles/OpenVINO-InferEngine)
+For more details on the InferenceEngine::Blob class, see "Inference Engine Memory primitives" in the documentation: [https://docs.openvinotoolkit.org/latest/_docs_IE_DG_Memory_primitives.html](https://docs.openvinotoolkit.org/latest/_docs_IE_DG_Memory_primitives.html)
 
 ### Load
 
@@ -927,7 +916,7 @@ cd tutorials/inference-tutorials-generic/face_detection_tutorial/step_2
 3. The first step is to configure the build environment for the Intel® Distribution of OpenVINO™ toolkit by sourcing the "setupvars.sh" script.
 
 ```bash
-source  /opt/intel/computer_vision_sdk/bin/setupvars.sh
+source  /opt/intel/openvino/bin/setupvars.sh
 ```
 
 
@@ -953,40 +942,38 @@ make
 
    1. "-i \<input-image-or-video-file\>" to specify an input image or video file instead of using the USB camera by default
 
-   2. "-m \<model-xml-file\>"  to specify where to find the module.  For example: -m  /opt/intel/computer_vision_sdk/deployment_tools/intel_models/face-detection-adas-0001/FP32/face-detection-adas-0001.xml”
+   2. "-m \<model-xml-file\>"  to specify where to find the module.  For example: -m ~/tutorials/tutorial_models/face_detection/Transportation/object_detection/face/pruned_mobilenet_reduced_ssd_shared_weights/dldt/face-detection-adas-0001.xml
 
    3. That is a lot to type and keep straight, so to help make the model names shorter to type  and easier to read, let us use the helper script scripts/setupenv.sh that sets up shell variables we can use.  For reference, here are the contents of scripts/setupenv.sh:
 
    ```bash
-   # Create variables for all models used by the tutorials to make
+   # Create variables for all models used by the tutorials to make 
    #  it easier to reference them with short names
-
-   # check for variable set by setupvars.sh in the SDK, need it to find models
-   : ${InferenceEngine_DIR:?Must source the setupvars.sh in the SDK to set InferenceEngine_DIR}
-
-   modelDir=$InferenceEngine_DIR/../../intel_models
-
+   
+   # use relative location of script to specify where to find downloaded models
+   scriptDir=`cd $(dirname $BASH_SOURCE); pwd`
+   modelDir=`cd $scriptDir/../../../tutorial_models/face_detection; pwd`
+   
    # Face Detection Model - ADAS
    modName=face-detection-adas-0001
-   export mFDA16=$modelDir/$modName/FP16/$modName.xml
-   export mFDA32=$modelDir/$modName/FP32/$modName.xml
-
+   export mFDA16=`find $modelDir -name "${modName}-fp16.xml"`
+   export mFDA32=`find $modelDir -name "${modName}.xml"`
+   
    # Face Detection Model - Retail
    modName=face-detection-retail-0004
-   export mFDR16=$modelDir/$modName/FP16/$modName.xml
-   export mFDR32=$modelDir/$modName/FP32/$modName.xml
-
+   export mFDR16=`find $modelDir -name "${modName}-fp16.xml"`
+   export mFDR32=`find $modelDir -name "${modName}.xml"`
+   
    # Age and Gender Model
    modName=age-gender-recognition-retail-0013
-   export mAG16=$modelDir/$modName/FP16/$modName.xml
-   export mAG32=$modelDir/$modName/FP32/$modName.xml
-
+   export mAG16=`find $modelDir -name "${modName}-fp16.xml"`
+   export mAG32=`find $modelDir -name "${modName}.xml"`
+   
    # Head Pose Estimation Model
    modName=head-pose-estimation-adas-0001
-   export mHP16=$modelDir/$modName/FP16/$modName.xml
-   export mHP32=$modelDir/$modName/FP32/$modName.xml
+   export mHP16=`find $modelDir -name "${modName}-fp16.xml"`
+   export mHP32=`find $modelDir -name "${modName}.xml"`
    ```
-
 
    4. To use the script we source it: 
 
