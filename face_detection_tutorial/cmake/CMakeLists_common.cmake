@@ -19,7 +19,7 @@ project(face_detection_tutorial)
 # environment variable InferenceEngine_DIR is used to find CMake files in installation 
 # point to common pieces in Inference Engine's samples directory
 if("$ENV{InferenceEngine_DIR}" STREQUAL "")
-    message(FATAL_ERROR "Environment variable 'InferenceEngine_DIR' is not defined.  Before running CMake, please be sure to source the setupvars.sh in the OpenVINO installation directory using the command:\n\tsource /opt/intel/computer_vision_sdk/bin/setupvars.sh\n")
+    message(FATAL_ERROR "Environment variable 'InferenceEngine_DIR' is not defined.  Before running CMake, please be sure to source the setupvars.sh in the OpenVINO installation directory using the command:\n\tsource /opt/intel/openvino/bin/setupvars.sh\n")
 endif()
 
 message(STATUS "InferenceEngine_DIR=$ENV{InferenceEngine_DIR}")
