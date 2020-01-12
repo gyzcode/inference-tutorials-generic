@@ -112,7 +112,7 @@ struct BaseDetection {
             return;
         }
         slog::info << "Performance counts for " << topoName << slog::endl << slog::endl;
-        ::printPerformanceCounts(request->GetPerformanceCounts(), std::cout, false);
+        //::printPerformanceCounts(request->GetPerformanceCounts(), std::cout, false);
     }
 };
 
@@ -337,7 +337,7 @@ int main(int argc, char *argv[]) {
             InferencePlugin plugin = PluginDispatcher({"../../../lib/intel64", ""}).getPluginByDevice(deviceName);
 
             /** Printing plugin version **/
-            printPluginVersion(plugin, std::cout);
+            //printPluginVersion(plugin, std::cout);
 
             /** Load extensions for the CPU plugin **/
             if ((deviceName.find("CPU") != std::string::npos)) {
@@ -407,6 +407,9 @@ int main(int argc, char *argv[]) {
                 << 1000.f / detection.count() << " fps)";
             cv::putText(frame, out.str(), cv::Point2f(0, 45), cv::FONT_HERSHEY_TRIPLEX, 0.5,
                         cv::Scalar(255, 0, 0));
+            if (FLAGS_no_show) {
+	    	std::cout << out.str() << std::endl;
+	    }
 
             int i = 0;
             for (auto & result : FaceDetection.results) {
